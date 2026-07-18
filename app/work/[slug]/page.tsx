@@ -67,7 +67,7 @@ export default async function CaseStudyPage({
     <>
       <CaseStudyNav />
 
-      <main className="mx-auto w-full max-w-[720px] px-6 pb-32 pt-28">
+      <main className="mx-auto w-full max-w-[720px] px-6 pb-24 pt-20 sm:pb-32 sm:pt-28">
         {/* ---------------- Overview / header ---------------- */}
         <section id="overview" className="relative scroll-mt-28">
           {/* back button — fixed in the left gutter so it stays visible on scroll */}
@@ -83,7 +83,10 @@ export default async function CaseStudyPage({
             <span>·</span>
             <span>{project.year}</span>
           </div>
-          <h1 className="w-full" style={{ ...t(type.headline), fontSize: 28 }}>
+          <h1
+            className="w-full"
+            style={{ ...t(type.headline), fontSize: "clamp(1.375rem, 5.5vw, 1.75rem)", lineHeight: 1.25 }}
+          >
             {project.title}
           </h1>
           <div className="mt-6">
@@ -126,7 +129,10 @@ export default async function CaseStudyPage({
         {/* ---------------- Problem ---------------- */}
         <section id="problem" className="scroll-mt-28">
           <Eyebrow>Problem</Eyebrow>
-          <h2 className="max-w-[600px]" style={t(type.caseH2)}>
+          <h2
+            className="max-w-[600px]"
+            style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+          >
             {project.problem.heading}
           </h2>
           <div className="mt-5">
@@ -171,7 +177,10 @@ export default async function CaseStudyPage({
             {/* ---------------- Outcomes ---------------- */}
             <section id="outcomes" className="scroll-mt-28">
               <Eyebrow>Outcomes</Eyebrow>
-              <h2 className="max-w-[600px]" style={t(type.caseH2)}>
+              <h2
+            className="max-w-[600px]"
+            style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+          >
                 {project.outcomes.heading}
               </h2>
               <div className="mt-5">
@@ -181,7 +190,7 @@ export default async function CaseStudyPage({
               <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 {project.outcomes.metrics.map((m) => (
                   <div key={m.label} className="rounded-2xl bg-zinc-50 p-6">
-                    <div style={t(type.caseMetric)}>{m.value}</div>
+                    <div style={{ ...t(type.caseMetric), fontSize: "clamp(1.5rem, 6vw, 2rem)" }}>{m.value}</div>
                     <p className="mt-2" style={{ ...t(type.expMeta), color: "#666D85" }}>
                       {m.label}
                     </p>
@@ -197,7 +206,10 @@ export default async function CaseStudyPage({
         {/* ---------------- Solution ---------------- */}
         <section id="solution" className="scroll-mt-28">
           <Eyebrow>Solution</Eyebrow>
-          <h2 className="max-w-[600px]" style={t(type.caseH2)}>
+          <h2
+            className="max-w-[600px]"
+            style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+          >
             {project.solution.heading}
           </h2>
           <div className="mt-5">
@@ -266,7 +278,10 @@ export default async function CaseStudyPage({
         {/* ---------------- Process ---------------- */}
         <section id="process" className="scroll-mt-28">
           <Eyebrow>Process</Eyebrow>
-          <h2 className="max-w-[600px]" style={t(type.caseH2)}>
+          <h2
+            className="max-w-[600px]"
+            style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+          >
             {project.process.heading}
           </h2>
           <div className="mt-5">

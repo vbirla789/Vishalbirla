@@ -39,7 +39,7 @@ const projects: Project[] = [
     year: "2025",
     logo: "/logos/fibr.avif",
     title: "A Framer CMS that scaled Fibr.ai's traffic by 35%",
-    image: "/work/fibr/liv.webp",
+    image: "/work/fibr/liv.png",
   },
 ];
 
@@ -141,7 +141,7 @@ export default function WorkSection() {
           {projects.map((p) => (
             <Link key={p.company} href={`/work/${p.slug}`} className="group block">
               {/* single image container */}
-              <div className="h-[480px] overflow-hidden rounded-2xl bg-zinc-100">
+              <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 sm:h-[360px] lg:h-[480px]">
                 {p.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -194,7 +194,7 @@ export default function WorkSection() {
           {experience.map((e) => (
             <div
               key={e.company + e.role}
-              className="flex items-start justify-between gap-4"
+              className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
             >
               <div>
                 <h3 style={t(type.expOrg)}>{e.role}</h3>

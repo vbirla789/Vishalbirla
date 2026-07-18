@@ -206,7 +206,7 @@ export const projects: Project[] = [
     overview:
       "At Fibr.ai, I led the design and development of their complete website infrastructure built on Framer — including agent-specific pages for Liv, Max, and Aya, and a scalable CMS for conversion rate optimization across all 50 US states.",
     collaborators: [],
-    hero: { image: "/work/fibr/cro-agency.avif" },
+    hero: { image: "/work/fibr/cro-agency.png" },
     problem: {
       heading: "Scaling a CRO web presence across 50 states — without the maintenance overhead",
       body: "Fibr.ai needed a web presence that could target diverse geographic markets while holding to CRO best practices. It had to support multiple AI-agent pages with dynamic content and deliver localized experiences across all 50 US states — all without ballooning into an unmaintainable pile of pages.",
@@ -242,22 +242,22 @@ export const projects: Project[] = [
           title: "Conversion-optimized AI agent pages",
           body: "Three dedicated pages — Aya (website monitoring), Liv (ad-to-page personalization), and Max (A/B testing) — each with interactive hero elements and layouts built around a clear, single conversion goal, while sharing one design language.",
           images: [
-            "/work/fibr/aya.webp",
-            "/work/fibr/liv.webp",
-            "/work/fibr/max.avif",
+            "/work/fibr/aya.png",
+            "/work/fibr/liv.png",
+            "/work/fibr/max.png",
           ],
           caption: "Agent pages for Aya, Liv, and Max",
         },
         {
           title: "A scalable CMS for 50 states",
           body: "A CMS architecture drives 50 state-specific pages from a single set of templates. Localized content and targeted messaging flow in through CMS fields, so the marketing team can expand into a new market without touching layout or code.",
-          image: "/work/fibr/cro-agency.avif",
+          image: "/work/fibr/cro-agency.png",
           caption: "One system, every market — on-brand by construction",
         },
         {
           title: "A dynamic FAQ system powered by Google Sheets",
           body: "I integrated Framer CMS with Google Sheets so the FAQ section — categories and answers alike — stays dynamic and easy to maintain. Non-technical teammates update a sheet and the site follows, no redeploy required.",
-          image: "/work/fibr/faq.webp",
+          image: "/work/fibr/faq.png",
           caption: "CMS-driven FAQ, editable straight from a spreadsheet",
         },
       ],

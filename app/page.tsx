@@ -8,14 +8,17 @@ export default function Home() {
   return (
     <>
       <SideNav />
-      <main className="mx-auto w-full max-w-[800px] px-6 pb-32 pt-32">
+      <main className="mx-auto w-full max-w-[800px] px-6 pb-24 pt-20 sm:pb-32 sm:pt-32">
         {/* dynamic timeline widget */}
         <div id="intro" className="scroll-mt-28">
           <TimelineWidget />
         </div>
 
         {/* hero */}
-        <h1 className="mt-16 max-w-[820px]" style={t(type.headline)}>
+        <h1
+          className="mt-12 max-w-[820px] sm:mt-16"
+          style={{ ...t(type.headline), fontSize: "clamp(1.5rem, 6.5vw, 2rem)", lineHeight: 1.2 }}
+        >
           Vishal Birla is a Product Designer &amp; Framer Expert.
         </h1>
 
