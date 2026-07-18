@@ -34,6 +34,7 @@ export const projects: Project[] = [
     slug: "ambitio",
     company: "Ambitio",
     year: "2025",
+    role: "Product Designer — end-to-end",
     title: "Driving 14% dashboard adoption through a strategic UX redesign",
     overview:
       "Rebuilt Ambitio's postgraduate application platform into a decision-making engine — turning a static status tracker into a dashboard that thousands of learners open every day to know exactly what to do next.",
@@ -98,6 +99,7 @@ export const projects: Project[] = [
     slug: "fibr",
     company: "Fibr.ai",
     year: "2025",
+    role: "Product Designer (Contract)",
     title: "Driving 35% traffic growth through a strategic CMS design in Framer",
     overview:
       "Designed and built Fibr.ai's web presence as a scalable CMS in Framer — a system that let a small marketing team ship localized landing pages across 50 states without a designer in the loop.",
