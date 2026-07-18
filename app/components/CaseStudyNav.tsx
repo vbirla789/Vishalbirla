@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
-import { playHover, primeAudio } from "../lib/sound";
-import { rulerLines, useScrollTicks } from "../lib/useScrollTicks";
+import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 
 const items = [
   { id: "overview", label: "Overview" },
@@ -18,11 +17,10 @@ export default function CaseStudyNav() {
   // while true, ignore scroll-spy so a click's chosen section stays active mid-scroll
   const lockRef = useRef(false);
   const lockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // scroll ticks: one subtle tick per ruler line as the page scrolls
-  useScrollTicks(rulerLines(items.length));
+  const lastActiveRef = useRef<string | null>(null); // for the per-section scroll tick
 
   useEffect(() => {
+    preloadAudio(); // build the audio graph up-front
     const prime = () => primeAudio();
     window.addEventListener("pointerdown", prime, { once: true });
     return () => window.removeEventListener("pointerdown", prime);
@@ -35,7 +33,13 @@ export default function CaseStudyNav() {
         const hit = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (hit) setActive(hit.target.id);
+        if (!hit) return;
+        const id = hit.target.id;
+        if (id !== lastActiveRef.current) {
+          if (lastActiveRef.current !== null) playScroll(); // tick per section, not on first
+          lastActiveRef.current = id;
+        }
+        setActive(id);
       },
       { rootMargin: "-40% 0px -40% 0px", threshold: [0, 0.25, 0.5, 1] },
     );
@@ -49,6 +53,7 @@ export default function CaseStudyNav() {
   const go = (id: string) => {
     playHover(); // subtle tick on click (was the loud playSelect knock)
     setActive(id); // activate the clicked section immediately
+    lastActiveRef.current = id; // keep in sync so no stray tick when the lock releases
     lockRef.current = true;
     if (lockTimer.current) clearTimeout(lockTimer.current);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });

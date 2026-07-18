@@ -50,6 +50,73 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "noon",
+    company: "noon",
+    year: "2026",
+    role: "Product Designer Intern",
+    title: "Redesigning noon's reviews & ratings flow with AI",
+    overview:
+      "noon is the Middle East's largest homegrown e-commerce platform. On every product page, reviews and ratings are the closest thing a shopper gets to picking an item up in a store — and they're noon's cheapest salesperson: they replace the tactile trust of a physical shop at scale, flag bad catalog before ops catches it, and compound into ranking signals that make good products easier to find. I redesigned the review-submission flow end-to-end, using AI to turn a star-tap-and-leave moment into a rich review left in seconds.",
+    collaborators: [
+      "Abdelrahman Baher (PM)",
+      "Siddhant Ghosh (SPD)",
+      "Saransh Rawat (MD)",
+    ],
+    hero: { media: "phone" }, // TODO: replace with real submission-flow screenshot
+    problem: {
+      heading: "Reviews are everywhere on noon — but almost all of them are a single star tap",
+      body: "Photo and text reviews are the most persuasive content on a product page: shoppers who engage with photo reviews add to cart at nearly 2× the PDP average. Yet the flow that creates those reviews is so heavy that the vast majority never get made — the star tap is where most people stop.",
+      points: [
+        {
+          title: "The star tap is the path of least resistance",
+          body: "~4 in 5 reviews are a star tap — no text, no photo. The moment the flow asks for anything more, most people exit. The effort-to-reward ratio feels off: the user does the work, and the platform gets the content.",
+        },
+        {
+          title: "The most valuable reviews are the rarest to create",
+          body: "Fewer than 1 in 25 reviews includes a photo or video — even though photo reviews are exactly what moves shoppers to buy. The people with the most useful experience rarely clear the effort bar to add media.",
+        },
+        {
+          title: "Review quality is skewed by who bothers to write",
+          body: "The people who write are the outliers — deeply delighted or genuinely angry. The satisfied 'quiet majority' — repeat buyers with real product knowledge — tap a star and leave. That makes the review corpus systematically unrepresentative, distorting both the trust signal for future buyers and the catalog-quality signal for ops. Lowering the effort floor with AI is the unlock.",
+        },
+      ],
+    },
+    outcomes: {
+      // In development — no live numbers yet. Framed as directional targets.
+      heading: "What success looks like",
+      body: "The flow is still in development, so there are no live numbers yet. Success is defined as more reviews that carry real text — and, over time, media — with fewer people opening the form only to abandon it.",
+      metrics: [
+        { value: "↑", label: "Reviews that include written text" },
+        { value: "↑", label: "Review-form completion" },
+        { value: "↓", label: "Review-form abandonment" },
+      ],
+    },
+    solution: {
+      heading: "Make writing a review as easy as tapping",
+      body: "The old flow wasn't broken step-by-step — the real blocker was the blank text box. Faced with an empty field, most people just tapped a star and left. So instead of asking people to write, the new flow lets them tap: rating-aware chips capture the gist, and AI turns those taps into a real, first-person review.",
+      sections: [
+        {
+          title: "Rating-aware question chips",
+          body: "Based on the rating you give, the flow surfaces the right prompts — what worked, what didn't, fit, quality, delivery — as tappable chips. You just tap the ones that match your experience. No typing, no blank page.",
+          media: "phone",
+          caption: "Placeholder — chip selection (screens to attach)",
+        },
+        {
+          title: "One tap to generate the review",
+          body: "Hit Generate and AI writes a natural, first-person review from the chips you tapped — ready to post as-is or tweak. Editing a draft is far easier than starting from nothing, and that's exactly what gets the quiet majority to leave real text.",
+          media: "panel",
+          caption: "Placeholder — AI-generated review (screens to attach)",
+        },
+      ],
+    },
+    process: {
+      // TODO: attach the prototype + usability findings here.
+      heading: "Testing & rollout",
+      body: "In development and heading into usability testing. This section will hold — (1) the interactive prototype, (2) usability sessions and what changed between rounds, and (3) a before/after of the submission flow.  ⟵ [Vishal to attach assets & findings here]",
+      note: "",
+    },
+  },
+  {
     slug: "ambitio",
     company: "Ambitio",
     year: "2025",

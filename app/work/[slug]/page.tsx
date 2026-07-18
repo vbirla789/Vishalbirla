@@ -35,12 +35,12 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Case-study paragraph body — muted tertiary tone across the whole page.
-const BODY_COLOR = colors.tertiary;
+// Case-study paragraph body — secondary tone, regular weight.
+const BODY_COLOR = colors.secondary;
 
 function Body({ children }: { children: React.ReactNode }) {
   return (
-    <p className="max-w-[560px]" style={{ ...t(type.aboutBody), color: BODY_COLOR }}>
+    <p className="max-w-[560px]" style={{ ...t(type.aboutBody), color: BODY_COLOR, fontWeight: 400 }}>
       {children}
     </p>
   );
@@ -69,8 +69,13 @@ export default async function CaseStudyPage({
 
       <main className="mx-auto w-full max-w-[720px] px-6 pb-32 pt-28">
         {/* ---------------- Overview / header ---------------- */}
-        <section id="overview" className="scroll-mt-28">
-          <div className="mb-8">
+        <section id="overview" className="relative scroll-mt-28">
+          {/* back button — fixed in the left gutter so it stays visible on scroll */}
+          <div className="fixed left-[calc(50%-400px)] top-28 z-40 hidden lg:block">
+            <BackButton />
+          </div>
+          {/* narrow screens (no gutter): back button above the title */}
+          <div className="mb-6 lg:hidden">
             <BackButton />
           </div>
           <div className="mb-3 flex items-center gap-2" style={t(type.projectMeta)}>
@@ -138,7 +143,7 @@ export default async function CaseStudyPage({
                 </span>
                 <div>
                   <h3 style={t(type.caseH3)}>{pt.title}</h3>
-                  <p className="mt-1.5 max-w-[520px]" style={{ ...t(type.aboutBody), color: BODY_COLOR }}>
+                  <p className="mt-1.5 max-w-[520px]" style={{ ...t(type.aboutBody), color: BODY_COLOR, fontWeight: 400 }}>
                     {pt.body}
                   </p>
                 </div>
@@ -198,7 +203,7 @@ export default async function CaseStudyPage({
             {project.solution.sections.map((s) => (
               <div key={s.title}>
                 <h3 style={t(type.caseH3)}>{s.title}</h3>
-                <p className="mt-2 max-w-[560px]" style={{ ...t(type.aboutBody), color: BODY_COLOR }}>
+                <p className="mt-2 max-w-[560px]" style={{ ...t(type.aboutBody), color: BODY_COLOR, fontWeight: 400 }}>
                   {s.body}
                 </p>
                 {s.media || s.image || s.images ? (

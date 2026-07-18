@@ -18,6 +18,27 @@ type Project = {
 
 const projects: Project[] = [
   {
+    slug: "noon",
+    company: "noon",
+    year: "2026",
+    logo: "/logos/noon.jpeg",
+    title: "Redesigning noon's reviews & ratings flow with AI",
+    // prototype video preview
+    preview: (
+      <div className="flex h-full w-full items-center justify-center">
+        <video
+          className="h-full w-auto rounded-2xl object-contain"
+          src="/work/noon/proto.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+        />
+      </div>
+    ),
+  },
+  {
     slug: "ambitio",
     company: "Ambitio",
     year: "2025",

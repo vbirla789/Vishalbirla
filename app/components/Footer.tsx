@@ -11,7 +11,7 @@ export default function Footer() {
       </p>
       <div className="flex items-center gap-5">
         <a
-          href="https://x.com/"
+          href="https://x.com/VishalB10042696"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="X (Twitter)"
@@ -23,7 +23,7 @@ export default function Footer() {
           </svg>
         </a>
         <a
-          href="https://www.linkedin.com/"
+          href="https://www.linkedin.com/in/vishal-birla-587235187/"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="LinkedIn"

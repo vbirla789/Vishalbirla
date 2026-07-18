@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
-import { playHover, primeAudio } from "../lib/sound";
-import { rulerLines, useScrollTicks } from "../lib/useScrollTicks";
+import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 
 // `href` items open in a new tab instead of scroll-spying to a section.
 const RESUME_URL = "/resume.pdf"; // placeholder — swap for the shared résumé link
@@ -21,18 +20,18 @@ export default function SideNav() {
   // while true, ignore scroll-spy so a click's chosen section stays active mid-scroll
   const lockRef = useRef(false);
   const lockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastActiveRef = useRef<string | null>(null); // for the per-section scroll tick
 
   // unlock audio on first gesture
   useEffect(() => {
+    preloadAudio(); // build the audio graph up-front
     const prime = () => primeAudio();
     window.addEventListener("pointerdown", prime, { once: true });
     return () => window.removeEventListener("pointerdown", prime);
   }, []);
 
-  // scroll ticks: one subtle tick per ruler line as the page scrolls
-  useScrollTicks(rulerLines(items.length));
-
-  // scroll-spy: whichever section crosses the viewport middle becomes active
+  // scroll-spy: whichever section crosses the viewport middle becomes active,
+  // and play one satisfying tick each time a new section is entered (both ways)
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => {
@@ -40,7 +39,13 @@ export default function SideNav() {
         const hit = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (hit) setActive(hit.target.id);
+        if (!hit) return;
+        const id = hit.target.id;
+        if (id !== lastActiveRef.current) {
+          if (lastActiveRef.current !== null) playScroll(); // tick per section, not on first
+          lastActiveRef.current = id;
+        }
+        setActive(id);
       },
       { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] },
     );
@@ -54,6 +59,7 @@ export default function SideNav() {
   const go = (id: string) => {
     playHover(); // subtle tick on click (was the loud playSelect knock)
     setActive(id); // activate the clicked section immediately
+    lastActiveRef.current = id; // keep in sync so no stray tick when the lock releases
     lockRef.current = true;
     if (lockTimer.current) clearTimeout(lockTimer.current);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });

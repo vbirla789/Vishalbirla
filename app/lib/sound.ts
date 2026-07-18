@@ -1,114 +1,105 @@
 "use client";
 
 /* ----------------------------------------------------------------------------
- * Tiny Web Audio synth for tactile UI sounds (original — no external assets).
- * "Woody knock": a resonant band-passed noise burst (the wooden ring) + a sharp
- * high-passed transient (the click) + a low triangle body (the thump).
- * Two distinct voices — a light high tick for hover, a fuller low knock for click.
- * AudioContext is created lazily and resumed on the first user gesture.
+ * Tactile UI sounds via Tone.js.
+ * Every voice runs through a master limiter and uses a real attack/decay
+ * envelope, so there's no pop on the first click and levels stay consistent.
+ * Tone is imported dynamically (client-only) to stay clear of SSR, and the
+ * audio graph is built up-front (preloadAudio) while the AudioContext is only
+ * resumed on the first user gesture (primeAudio).
  * --------------------------------------------------------------------------*/
 
-let ctx: AudioContext | null = null;
-let noise: AudioBuffer | null = null;
+type ToneMod = typeof import("tone");
 
-function ac(): AudioContext | null {
-  if (typeof window === "undefined") return null;
-  if (!ctx) {
-    const AC =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return null;
-    ctx = new AC();
-  }
-  if (ctx.state === "suspended") void ctx.resume();
-  return ctx;
+let Tone: ToneMod | null = null;
+let built = false;
+let resumed = false;
+
+let voices: {
+  hover: import("tone").MembraneSynth;
+  select: import("tone").MembraneSynth;
+  scroll: import("tone").MembraneSynth;
+} | null = null;
+
+/** Build the audio graph. Safe before any gesture — the context stays suspended. */
+async function load() {
+  if (built || typeof window === "undefined") return;
+  if (!Tone) Tone = await import("tone");
+
+  // Master limiter keeps every hit at a consistent, controlled level.
+  const limiter = new Tone.Limiter(-6).toDestination();
+
+  // High-pass for the section pock — strips the low-end boom, leaves a tight tick.
+  const scrollHP = new Tone.Filter({
+    type: "highpass",
+    frequency: 500,
+    rolloff: -24,
+  }).connect(limiter);
+
+  voices = {
+    // light, high, quick tick
+    hover: new Tone.MembraneSynth({
+      volume: -19,
+      octaves: 2,
+      pitchDecay: 0.006,
+      envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.02 },
+    }).connect(limiter),
+    // fuller, lower knock
+    select: new Tone.MembraneSynth({
+      volume: -11,
+      octaves: 4,
+      pitchDecay: 0.03,
+      envelope: { attack: 0.002, decay: 0.16, sustain: 0, release: 0.06 },
+    }).connect(limiter),
+    // satisfying tight "tock" as each section is entered — high-passed, no boom
+    scroll: new Tone.MembraneSynth({
+      volume: -10,
+      octaves: 1,
+      pitchDecay: 0.01,
+      envelope: { attack: 0.001, decay: 0.08, sustain: 0, release: 0.03 },
+    }).connect(scrollHP),
+  };
+
+  built = true;
 }
 
-function getNoise(c: AudioContext): AudioBuffer {
-  if (!noise) {
-    const len = Math.floor(c.sampleRate * 0.08);
-    noise = c.createBuffer(1, len, c.sampleRate);
-    const d = noise.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-  }
-  return noise;
+/** Build the audio graph early (call on mount). No sound, no gesture needed. */
+export function preloadAudio() {
+  void load();
 }
 
-type KnockOpts = {
-  level?: number; // overall volume
-  dur?: number; // wooden ring decay
-  tone?: number; // wood resonance freq
-  q?: number; // resonance sharpness (higher = woodier ring)
-  body?: number; // low thump freq
-  click?: number; // amount of sharp high transient (0–1)
-};
-
-function knock({ level = 0.16, dur = 0.08, tone = 430, q = 6, body = 180, click = 0.6 }: KnockOpts = {}) {
-  const c = ac();
-  if (!c) return;
-  const t = c.currentTime;
-
-  // 1) wooden ring — noise through a resonant bandpass
-  const ring = c.createBufferSource();
-  ring.buffer = getNoise(c);
-  const bp = c.createBiquadFilter();
-  bp.type = "bandpass";
-  bp.frequency.value = tone;
-  bp.Q.value = q;
-  const rg = c.createGain();
-  rg.gain.setValueAtTime(level, t);
-  rg.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  ring.connect(bp);
-  bp.connect(rg);
-  rg.connect(c.destination);
-  ring.start(t);
-  ring.stop(t + dur + 0.02);
-
-  // 2) click transient — very short high-passed noise
-  const clk = c.createBufferSource();
-  clk.buffer = getNoise(c);
-  const hp = c.createBiquadFilter();
-  hp.type = "highpass";
-  hp.frequency.value = 2800;
-  const cg = c.createGain();
-  cg.gain.setValueAtTime(level * click, t);
-  cg.gain.exponentialRampToValueAtTime(0.0001, t + 0.007);
-  clk.connect(hp);
-  hp.connect(cg);
-  cg.connect(c.destination);
-  clk.start(t);
-  clk.stop(t + 0.02);
-
-  // 3) low body thump
-  const osc = c.createOscillator();
-  osc.type = "triangle";
-  osc.frequency.setValueAtTime(body, t);
-  osc.frequency.exponentialRampToValueAtTime(body * 0.65, t + dur);
-  const og = c.createGain();
-  og.gain.setValueAtTime(level * 0.5, t);
-  og.gain.exponentialRampToValueAtTime(0.0001, t + dur * 1.3);
-  osc.connect(og);
-  og.connect(c.destination);
-  osc.start(t);
-  osc.stop(t + dur * 1.5 + 0.02);
-}
-
-/** Ensure the context exists/resumes — call on first user gesture. */
+/** Resume the audio context — call on the first user gesture. */
 export function primeAudio() {
-  ac();
+  void load().then(async () => {
+    if (!Tone) return;
+    await Tone.start();
+    resumed = true;
+  });
+}
+
+function play(kind: "hover" | "select" | "scroll", note: string, dur: number) {
+  if (!built || !resumed || !voices) {
+    primeAudio(); // warm up; the next interaction will sound
+    return;
+  }
+  try {
+    voices[kind].triggerAttackRelease(note, dur);
+  } catch {
+    /* ignore rapid-retrigger scheduling collisions (e.g. fast scroll) */
+  }
 }
 
 /** Hover: a light, high, quick woody tick. */
 export function playHover() {
-  knock({ level: 0.07, dur: 0.035, tone: 900, q: 8, body: 420, click: 0.4 });
+  play("hover", "C5", 0.03);
 }
 
 /** Click: a fuller, lower, satisfying woody knock. */
 export function playSelect() {
-  knock({ level: 0.2, dur: 0.1, tone: 430, q: 6, body: 175, click: 0.8 });
+  play("select", "C3", 0.14);
 }
 
-/** Scroll detent: the same light woody tick as hover, a touch quieter since it repeats. */
+/** Section change: a tight, satisfying tock as each section scrolls into view. */
 export function playScroll() {
-  knock({ level: 0.05, dur: 0.035, tone: 900, q: 8, body: 420, click: 0.4 });
+  play("scroll", "C4", 0.08);
 }
