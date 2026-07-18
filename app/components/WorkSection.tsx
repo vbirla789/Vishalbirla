@@ -2,28 +2,36 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { t, type } from "../theme";
+import { colors, t, type } from "../theme";
 
 /* ---------- Work case studies ---------- */
 
-const projects = [
+type Project = {
+  slug: string;
+  company: string;
+  year: string;
+  logo: string;
+  title: string;
+  preview?: React.ReactNode; // abstract preview when no real image
+  image?: string; // real screenshot for the card
+};
+
+const projects: Project[] = [
   {
     slug: "ambitio",
     company: "Ambitio",
     year: "2025",
+    logo: "/logos/ambitio.avif",
     title: "Driving 14% Dashboard Adoption Through Strategic UX Redesign",
-    subtitle:
-      "How I transformed Ambitio's postgrad platform into a decision-making engine.",
     preview: <AmbitioPreview />,
   },
   {
     slug: "fibr",
     company: "Fibr.ai",
     year: "2025",
+    logo: "/logos/fibr.avif",
     title: "Driving 35% Traffic Growth Through Strategic CMS Design in Framer",
-    subtitle:
-      "How I scaled Fibr.ai's web presence across 50 states and improved CAC efficiency by 20%.",
-    preview: <FibrPreview />,
+    image: "/work/fibr/max.avif",
   },
 ];
 
@@ -55,44 +63,6 @@ function AmbitioPreview() {
   );
 }
 
-function FibrPreview() {
-  return (
-    <div className="h-full w-full rounded-lg bg-white p-4 shadow-sm ring-1 ring-black/5">
-      <div className="mb-2 flex items-center justify-between text-[10px] text-zinc-400">
-        <span className="font-medium uppercase tracking-wider">
-          Traffic · 50 states
-        </span>
-        <span className="rounded-full bg-orange-50 px-1.5 py-0.5 font-semibold text-orange-600">
-          +35%
-        </span>
-      </div>
-      <svg viewBox="0 0 220 90" className="h-24 w-full">
-        <defs>
-          <linearGradient id="fibrFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f97316" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M0 78 L30 70 L60 72 L90 55 L120 58 L150 40 L180 30 L220 12"
-          fill="none"
-          stroke="#f97316"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M0 78 L30 70 L60 72 L90 55 L120 58 L150 40 L180 30 L220 12 L220 90 L0 90 Z"
-          fill="url(#fibrFill)"
-        />
-      </svg>
-      <div className="mt-2 flex justify-between text-[10px] text-zinc-400">
-        <span>Apr</span>
-        <span>Jul</span>
-      </div>
-    </div>
-  );
-}
 
 /* ---------- Experience ---------- */
 
@@ -195,26 +165,51 @@ export default function WorkSection() {
     <div className="space-y-20">
       {/* WORK */}
       <Section id="work" label="Work">
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-16">
           {projects.map((p) => (
-            <Link
-              key={p.company}
-              href={`/work/${p.slug}`}
-              className="group block h-fit self-start rounded-2xl bg-zinc-50 p-5 transition-colors hover:bg-zinc-100"
-            >
-              <div className="h-[304px] overflow-hidden rounded-xl bg-zinc-100 p-4">
-                {p.preview}
+            <Link key={p.company} href={`/work/${p.slug}`} className="group block">
+              {/* single image container */}
+              <div className="h-[320px] overflow-hidden rounded-2xl bg-zinc-100">
+                {p.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={p.image}
+                    alt={`${p.company} preview`}
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                  />
+                ) : (
+                  <div className="h-full w-full p-8 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
+                    {p.preview}
+                  </div>
+                )}
               </div>
-              <div className="mt-4">
-                <div className="mb-1 flex items-center gap-2" style={t(type.projectMeta)}>
-                  <span>{p.company}</span>
-                  <span>·</span>
-                  <span>{p.year}</span>
-                </div>
-                <h3 style={t(type.projectTitle)}>{p.title}</h3>
-                <p className="mt-1" style={t(type.projectSub)}>
-                  {p.subtitle}
-                </p>
+
+              {/* title */}
+              <h3 className="mt-6 max-w-[560px]" style={t(type.caseH2)}>
+                {p.title}
+              </h3>
+
+              {/* company logo · name · year */}
+              <div className="mt-3 flex items-center gap-2.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.logo}
+                  alt=""
+                  className="h-6 w-6 shrink-0 rounded-md object-cover ring-1 ring-black/5"
+                />
+                <span
+                  className="font-mono uppercase"
+                  style={{ fontSize: 13, letterSpacing: "0.02em", color: colors.tertiary }}
+                >
+                  {p.company}
+                </span>
+                <span style={{ color: colors.tertiary }}>·</span>
+                <span
+                  className="font-mono uppercase"
+                  style={{ fontSize: 13, letterSpacing: "0.02em", color: colors.tertiary }}
+                >
+                  {p.year}
+                </span>
               </div>
             </Link>
           ))}
