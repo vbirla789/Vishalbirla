@@ -188,29 +188,50 @@ export default function WorkSection() {
           {experience.map((e) => (
             <div
               key={e.company + e.role}
-              className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1.5 border-b border-black/5 py-4 sm:grid-cols-[240px_1fr_auto] sm:gap-y-0"
+              className="border-b border-black/5 py-4"
             >
-              {/* logo + company (below role on mobile, first column on desktop) */}
-              <div className="col-start-1 row-start-2 col-span-2 flex items-center gap-3.5 sm:col-auto sm:row-auto">
+              {/* mobile: LinkedIn-style — logo · (role / company) · date-right */}
+              <div className="flex gap-3.5 sm:hidden">
                 <LogoMark src={e.logo} alt={e.company} />
-                <span style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}>
-                  {e.company}
+                <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div style={{ fontSize: 15, fontWeight: 500, color: colors.primary }}>
+                      {e.role}
+                    </div>
+                    <div className="mt-0.5" style={{ fontSize: 14, color: colors.secondary }}>
+                      {e.company}
+                    </div>
+                  </div>
+                  <span
+                    className="whitespace-nowrap text-right"
+                    style={{ fontSize: 13, color: colors.tertiary }}
+                  >
+                    {e.period}
+                  </span>
+                </div>
+              </div>
+
+              {/* desktop: company · role · date */}
+              <div className="hidden sm:grid sm:grid-cols-[240px_1fr_auto] sm:items-center sm:gap-4">
+                <div className="flex items-center gap-3.5">
+                  <LogoMark src={e.logo} alt={e.company} />
+                  <span style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}>
+                    {e.company}
+                  </span>
+                </div>
+                <span
+                  className="justify-self-start"
+                  style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}
+                >
+                  {e.role}
+                </span>
+                <span
+                  className="justify-self-end whitespace-nowrap"
+                  style={{ fontSize: 15, color: colors.tertiary }}
+                >
+                  {e.period}
                 </span>
               </div>
-              {/* role (top-left on mobile, middle column on desktop) */}
-              <span
-                className="col-start-1 row-start-1 justify-self-start sm:col-auto sm:row-auto"
-                style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}
-              >
-                {e.role}
-              </span>
-              {/* period (top-right on mobile, right column on desktop) */}
-              <span
-                className="col-start-2 row-start-1 justify-self-end whitespace-nowrap sm:col-auto sm:row-auto"
-                style={{ fontSize: 15, color: colors.tertiary }}
-              >
-                {e.period}
-              </span>
             </div>
           ))}
         </div>
