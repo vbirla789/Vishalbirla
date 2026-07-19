@@ -40,6 +40,7 @@ export type Project = {
   };
   outcomes?: { heading: string; body: string; metrics: Metric[] };
   solution: { heading: string; body: string; sections: DetailSection[] };
+  experiments?: { heading: string; body: string; videos?: string[] };
   process: {
     heading: string;
     body: string;
@@ -109,6 +110,11 @@ export const projects: Project[] = [
           caption: "From picks to a first-person review — post, tweak, or add photos",
         },
       ],
+    },
+    experiments: {
+      heading: "Pushing the flow further with AI",
+      body: "Beyond the shipped feature, I love prototyping with AI to explore what an AI-assisted review experience could become. A few of the experiments I built on top of this design:",
+      videos: ["/work/noon/ai-1.mp4"],
     },
     process: {
       // TODO: attach the prototype + usability findings here.

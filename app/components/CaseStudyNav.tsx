@@ -9,6 +9,7 @@ const items = [
   { id: "problem", label: "Problem" },
   { id: "outcomes", label: "Outcomes" },
   { id: "solution", label: "Solution" },
+  { id: "experiments", label: "AI Experiments" },
   { id: "process", label: "Process" },
 ];
 

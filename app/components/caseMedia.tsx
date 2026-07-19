@@ -172,7 +172,7 @@ export function CaseMedia({
   if (video) {
     return (
       <div className="flex items-center justify-center rounded-2xl bg-zinc-100 px-6 py-12">
-        <div className="overflow-hidden rounded-[38px]">
+        <div className="overflow-hidden rounded-[28px]">
           <video
             className="block h-[440px] w-auto object-contain"
             src={video}

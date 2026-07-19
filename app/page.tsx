@@ -34,14 +34,14 @@ export default function Home() {
           {/* description */}
           <div className="mt-4 space-y-4">
             <p style={t(type.aboutBody)}>
-              I&apos;m a design engineer (design + code) based out of India,
-              currently working at{" "}
-              <span className="font-semibold">noon</span>.
+              I&apos;m a product designer based out of India, currently working
+              at <span className="font-semibold">noon</span>.
             </p>
             <p style={t(type.aboutBody)}>
-              I like shaping how things look, then bringing them to life with
-              code — and I&apos;m a{" "}
-              <span className="font-semibold">Framer expert</span> too.
+              I love shaping how things look, then bringing them to life with the
+              help of <span className="font-semibold">AI</span> — always
+              experimenting to turn the designs I create into living, interactive
+              experiences.
             </p>
           </div>
 

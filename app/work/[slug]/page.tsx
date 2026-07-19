@@ -273,6 +273,39 @@ export default async function CaseStudyPage({
           </div>
         </section>
 
+        {/* ---------------- AI Experiments ---------------- */}
+        {project.experiments ? (
+          <>
+            <div className="my-16 h-px w-full" style={{ background: colors.line }} />
+            <section id="experiments" className="scroll-mt-28">
+              <Eyebrow>AI Experiments</Eyebrow>
+              <h2
+                className="max-w-[600px]"
+                style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+              >
+                {project.experiments.heading}
+              </h2>
+              <div className="mt-5">
+                <Body>{project.experiments.body}</Body>
+              </div>
+              {project.experiments.videos && project.experiments.videos.length > 0 ? (
+                <div className="mt-10 flex flex-col gap-6">
+                  {project.experiments.videos.map((v) => (
+                    <CaseMedia key={v} video={v} />
+                  ))}
+                </div>
+              ) : (
+                <div
+                  className="mt-8 flex h-[320px] items-center justify-center rounded-2xl bg-zinc-100 text-center"
+                  style={{ ...t(type.expMeta), color: colors.tertiary }}
+                >
+                  AI-prototype videos to be added here
+                </div>
+              )}
+            </section>
+          </>
+        ) : null}
+
         <div className="my-16 h-px w-full" style={{ background: colors.line }} />
 
         {/* ---------------- Process ---------------- */}
