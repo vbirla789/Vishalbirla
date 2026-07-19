@@ -188,25 +188,25 @@ export default function WorkSection() {
           {experience.map((e) => (
             <div
               key={e.company + e.role}
-              className="grid grid-cols-1 gap-1 border-b border-black/5 py-4 sm:grid-cols-[240px_1fr_auto] sm:items-center sm:gap-4"
+              className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1.5 border-b border-black/5 py-4 sm:grid-cols-[240px_1fr_auto] sm:gap-y-0"
             >
-              {/* logo + company */}
-              <div className="flex items-center gap-3.5">
+              {/* logo + company (below role on mobile, first column on desktop) */}
+              <div className="col-start-1 row-start-2 col-span-2 flex items-center gap-3.5 sm:col-auto sm:row-auto">
                 <LogoMark src={e.logo} alt={e.company} />
                 <span style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}>
                   {e.company}
                 </span>
               </div>
-              {/* role */}
+              {/* role (top-left on mobile, middle column on desktop) */}
               <span
-                className="justify-self-start"
+                className="col-start-1 row-start-1 justify-self-start sm:col-auto sm:row-auto"
                 style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}
               >
                 {e.role}
               </span>
-              {/* period */}
+              {/* period (top-right on mobile, right column on desktop) */}
               <span
-                className="whitespace-nowrap sm:text-right"
+                className="col-start-2 row-start-1 justify-self-end whitespace-nowrap sm:col-auto sm:row-auto"
                 style={{ fontSize: 15, color: colors.tertiary }}
               >
                 {e.period}
