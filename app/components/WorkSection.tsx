@@ -168,17 +168,11 @@ export default function WorkSection() {
 
                 {/* company logo · name · year */}
                 <div className="flex shrink-0 items-center gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={p.logo}
-                    alt=""
-                    className="h-5 w-5 shrink-0 rounded object-cover ring-1 ring-black/5"
-                  />
                   <span style={{ fontSize: 14, color: colors.secondary }}>
                     {p.company}
                   </span>
                   <span style={{ color: colors.secondary }}>·</span>
-                  <span style={{ fontSize: 14, color: colors.secondary }}>
+                  <span style={{ fontSize: 13, color: colors.secondary }}>
                     {p.year}
                   </span>
                 </div>

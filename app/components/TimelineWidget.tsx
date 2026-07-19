@@ -27,7 +27,7 @@ type Card = { rotate: number; render: React.ReactNode };
 /* Photos shown in the draggable timeline polaroids. */
 const photo = (src: string) => (
   // eslint-disable-next-line @next/next/no-img-element
-  <img src={src} alt="" className="h-[60px] w-[58px] max-w-none object-cover" />
+  <img src={src} alt="" className="h-full w-full object-cover" />
 );
 
 const cards: Card[] = [
@@ -129,7 +129,7 @@ export default function TimelineWidget() {
   };
 
   return (
-    <div className={`w-[330px] max-w-full select-none ${dragging ? "cursor-grabbing" : ""}`}>
+    <div className={`w-[376px] max-w-full select-none ${dragging ? "cursor-grabbing" : ""}`}>
       {/* location + timezone */}
       <div
         className="mb-1.5 flex items-center justify-between"
@@ -189,7 +189,7 @@ export default function TimelineWidget() {
                 className="rounded-[4px] border px-[3px] pb-[7px] pt-[3px]"
                 style={{ backgroundColor: colors.panel, borderColor: colors.line }}
               >
-                <div className="flex h-[46px] w-[44px] items-center justify-center overflow-hidden rounded-[2px]">
+                <div className="h-[56px] w-[52px] overflow-hidden rounded-[2px]">
                   {card.render}
                 </div>
               </div>
