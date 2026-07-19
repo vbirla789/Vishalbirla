@@ -57,7 +57,7 @@ export const projects: Project[] = [
     role: "Product Designer Intern",
     title: "Redesigning noon's reviews & ratings flow with AI",
     overview:
-      "noon is the Middle East's largest homegrown e-commerce platform. On every product page, reviews and ratings are the closest thing a shopper gets to picking an item up in a store — and they're noon's cheapest salesperson: they replace the tactile trust of a physical shop at scale, flag bad catalog before ops catches it, and compound into ranking signals that make good products easier to find. I redesigned the review-submission flow end-to-end, using AI to turn a star-tap-and-leave moment into a rich review left in seconds.",
+      "On noon, reviews are the cheapest salesperson — they replace in-store trust at scale, weed out weak catalog, and help good products rank. I redesigned the review-submission flow so a helpful, media-rich review takes seconds, not effort.",
     collaborators: [
       "Abdelrahman Baher (PM)",
       "Siddhant Ghosh (SPD)",
@@ -65,30 +65,30 @@ export const projects: Project[] = [
     ],
     hero: { video: "/work/noon/proto.mp4" },
     problem: {
-      heading: "Reviews are everywhere on noon — but almost all of them are a single star tap",
-      body: "Photo and text reviews are the most persuasive content on a product page: shoppers who engage with photo reviews add to cart at nearly 2× the PDP average. Yet the flow that creates those reviews is so heavy that the vast majority never get made — the star tap is where most people stop.",
+      heading: "Almost every review on noon is a single star tap",
+      body: "Photo and text reviews are what actually move shoppers — photo-review viewers add to cart at nearly 2× the PDP average. But the flow to create them is so heavy that most people stop at the star.",
       points: [
         {
-          title: "The star tap is the path of least resistance",
-          body: "~4 in 5 reviews are a star tap — no text, no photo. The moment the flow asks for anything more, most people exit. The effort-to-reward ratio feels off: the user does the work, and the platform gets the content.",
+          title: "The star tap is the easy way out",
+          body: "~4 in 5 reviews are just a star — no text, no photo. Ask for anything more and most people drop off.",
         },
         {
-          title: "The most valuable reviews are the rarest to create",
-          body: "Fewer than 1 in 25 reviews includes a photo or video — even though photo reviews are exactly what moves shoppers to buy. The people with the most useful experience rarely clear the effort bar to add media.",
+          title: "The best reviews are the rarest",
+          body: "Fewer than 1 in 25 reviews has a photo or video — the very content that sells. The effort bar is simply too high.",
         },
         {
-          title: "Review quality is skewed by who bothers to write",
-          body: "The people who write are the outliers — deeply delighted or genuinely angry. The satisfied 'quiet majority' — repeat buyers with real product knowledge — tap a star and leave. That makes the review corpus systematically unrepresentative, distorting both the trust signal for future buyers and the catalog-quality signal for ops. Lowering the effort floor with AI is the unlock.",
+          title: "The wrong people write",
+          body: "Reviews skew to the extremes — delighted or angry. The satisfied majority taps a star and leaves, so the picture isn't representative.",
         },
       ],
     },
     solution: {
       heading: "Make writing a review as easy as tapping",
-      body: "The old flow wasn't broken step-by-step — the real blocker was the blank text box. Faced with an empty field, most people just tapped a star and left. So instead of asking people to write, the new flow lets them tap: rating-aware chips capture the gist, and AI turns those taps into a real, first-person review.",
+      body: "The real blocker was the blank text box — so people just tapped a star. Now they tap chips instead, and AI turns those into a real review.",
       sections: [
         {
           title: "Rating-aware question chips",
-          body: "Eight product parameters power the chips — the star rating decides how they split across two prompts. A 5-star review only offers positives to affirm; a 1-star only surfaces things to improve; the middle ratings mix both. The questions always match the sentiment, so tapping is all it takes.",
+          body: "Eight parameters, split by the rating you give — all positives at 5 stars, all improvements at 1, a mix in between. Just tap what fits; no blank page.",
           image: "/work/noon/rating-states.png",
           caption: "The same 8 parameters, split by rating (5★ → 1★)",
           table: {
@@ -104,7 +104,7 @@ export const projects: Project[] = [
         },
         {
           title: "One tap to generate the review",
-          body: "Hit Generate and AI writes a natural, first-person review from the chips you tapped — ready to post as-is, tweak, or add photos. Editing a draft is far easier than starting from nothing, and that's exactly what gets the quiet majority to leave real text.",
+          body: "Hit Generate and AI turns your taps into a first-person review — post as-is, tweak, or add photos. Editing a draft beats a blank box, so more people actually write.",
           image: "/work/noon/generate.png",
           caption: "From picks to a first-person review — post, tweak, or add photos",
         },
@@ -113,7 +113,8 @@ export const projects: Project[] = [
     process: {
       // TODO: attach the prototype + usability findings here.
       heading: "Testing & rollout",
-      body: "In development and heading into usability testing. This section will hold — (1) the interactive prototype, (2) usability sessions and what changed between rounds, and (3) a before/after of the submission flow.  ⟵ [Vishal to attach assets & findings here]",
+      body: "I built a design system for the flow — chips, toggles, AI states, photo-upload states, and review cards — so every screen stays consistent as the feature scales. It's in development now, heading into usability testing.",
+      images: ["/work/noon/system.png"],
       note: "",
     },
   },
