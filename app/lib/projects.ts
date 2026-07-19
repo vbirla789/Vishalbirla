@@ -111,9 +111,13 @@ export const projects: Project[] = [
       ],
     },
     experiments: {
-      heading: "Pushing the flow further with AI",
-      body: "Beyond the shipped feature, I love prototyping with AI to explore what an AI-assisted review experience could become. A few of the experiments I built on top of this design:",
-      videos: ["/work/noon/proto.mp4"],
+      heading: "Three approaches to edit a review",
+      body: "With the help of Claude, I built three working approaches to editing a review in React and presented them to stakeholders.",
+      videos: [
+        "/work/noon/exp-1.mp4",
+        "/work/noon/exp-2.mp4",
+        "/work/noon/exp-3.mp4",
+      ],
     },
     process: {
       heading: "A design system, heading into testing",

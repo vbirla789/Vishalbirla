@@ -307,9 +307,24 @@ export default async function CaseStudyPage({
                 <Body>{project.experiments.body}</Body>
               </div>
               {project.experiments.videos && project.experiments.videos.length > 0 ? (
-                <div className="mt-10 flex flex-col gap-6">
+                <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
                   {project.experiments.videos.map((v) => (
-                    <CaseMedia key={v} video={v} />
+                    <div
+                      key={v}
+                      className="flex justify-center rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
+                    >
+                      <div className="overflow-hidden rounded-[22px]">
+                        <video
+                          className="block h-[320px] w-auto object-contain"
+                          src={v}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : (
