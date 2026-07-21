@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Appear from "../../components/Appear";
 import BackButton from "../../components/BackButton";
+import ToggleMedia from "../../components/ToggleMedia";
 import CaseStudyNav from "../../components/CaseStudyNav";
 import Footer from "../../components/Footer";
 import { CaseMedia } from "../../components/caseMedia";
@@ -109,7 +110,7 @@ function MediaBlock({ media, alt }: { media: StoryMedia; alt: string }) {
 
 function DataTable({ table }: { table: { columns: string[]; rows: string[][] } }) {
   return (
-    <div className="mt-6 max-w-[560px] overflow-x-auto rounded-xl ring-1 ring-black/5">
+    <div className="mt-6 w-full overflow-x-auto rounded-xl ring-1 ring-black/5">
       <table className="w-full text-left">
         <thead>
           <tr className="border-b border-black/5">
@@ -161,6 +162,26 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
             <div className="mt-5">
               <Body>{section.body}</Body>
             </div>
+          ) : null}
+          {section.bullets && section.bullets.length > 0 ? (
+            <ul className="mt-5 flex max-w-[560px] flex-col gap-3">
+              {section.bullets.map((b, bi) => (
+                <li key={bi} className="flex gap-3">
+                  <span
+                    className="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-full"
+                    style={{ background: colors.tertiary }}
+                  />
+                  <p style={ITEM_BODY_STYLE}>
+                    <RichText text={b} />
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {section.closing ? (
+            <p className="mt-5 max-w-[560px]" style={ITEM_BODY_STYLE}>
+              <RichText text={section.closing} />
+            </p>
           ) : null}
           {section.media ? (
             <MediaBlock media={section.media} alt={`${company} ${section.navLabel}`} />
@@ -215,6 +236,11 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                     </ul>
                   ) : null}
                   {it.table ? <DataTable table={it.table} /> : null}
+                  {it.toggle ? (
+                    <div className="mt-8">
+                      <ToggleMedia options={it.toggle} alt={it.title ?? company} />
+                    </div>
+                  ) : null}
                   {it.media ? (
                     <MediaBlock media={it.media} alt={it.title ?? company} />
                   ) : null}
@@ -225,24 +251,34 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
 
           {section.videos && section.videos.length > 0 ? (
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
-              {section.videos.map((v) => (
-                <div
-                  key={v}
-                  className="flex justify-center rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
-                >
-                  <div className="overflow-hidden rounded-[22px]">
-                    <video
-                      className="block h-[320px] w-auto object-contain"
-                      src={v}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                    />
+              {section.videos.map((v, i) => {
+                const label = String.fromCharCode(65 + i);
+                const chosen = section.chosenVideo === i;
+                return (
+                  <div
+                    key={v}
+                    className="flex flex-col items-center gap-8 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
+                  >
+                    <div className="overflow-hidden rounded-[22px]">
+                      <video
+                        className="block h-[320px] w-auto object-contain"
+                        src={v}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
+                    </div>
+                    <span
+                      className="text-[13px] font-medium"
+                      style={{ color: chosen ? "#000000" : colors.tertiary }}
+                    >
+                      {chosen ? `Approach ${label} · chosen` : `Approach ${label}`}
+                    </span>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : null}
         </Appear>
@@ -314,12 +350,19 @@ export default async function CaseStudyPage({
           {project.hero ? (
             <Appear delay={0.24}>
               <div className="mt-10">
-                <CaseMedia
-                  image={project.hero.image}
-                  media={project.hero.media}
-                  video={project.hero.video}
-                  alt={`${project.company} overview`}
-                />
+                {project.hero.toggle ? (
+                  <ToggleMedia
+                    options={project.hero.toggle}
+                    alt={`${project.company} overview`}
+                  />
+                ) : (
+                  <CaseMedia
+                    image={project.hero.image}
+                    media={project.hero.media}
+                    video={project.hero.video}
+                    alt={`${project.company} overview`}
+                  />
+                )}
               </div>
             </Appear>
           ) : null}
@@ -375,7 +418,7 @@ export default async function CaseStudyPage({
                       {i + 1}
                     </span>
                     <div>
-                      <h3 style={H2_STYLE}>{pt.title}</h3>
+                      <h3 style={{ ...H2_STYLE, fontSize: 20 }}>{pt.title}</h3>
                       <p className="mt-1.5 max-w-[520px]" style={ITEM_BODY_STYLE}>
                         {pt.body}
                       </p>
@@ -458,7 +501,7 @@ export default async function CaseStudyPage({
                   {s.body}
                 </p>
                 {s.table ? (
-                  <div className="mt-6 max-w-[560px] overflow-x-auto rounded-xl ring-1 ring-black/5">
+                  <div className="mt-6 w-full overflow-x-auto rounded-xl ring-1 ring-black/5">
                     <table className="w-full text-left">
                       <thead>
                         <tr className="border-b border-black/5">

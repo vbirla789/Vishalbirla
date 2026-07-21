@@ -88,7 +88,7 @@ export default function CaseStudyNav({ items = DEFAULT_ITEMS }: { items?: NavIte
       style={cssVars}
       aria-label="Case study navigation"
     >
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2.5">
         {shown.flatMap((it, i) => {
           const isActive = active === it.id;
           const rows = [];

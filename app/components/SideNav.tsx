@@ -86,7 +86,7 @@ export default function SideNav() {
       style={cssVars}
       aria-label="Section navigation"
     >
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-3">
         {items.flatMap((it, i) => {
           const isActive = active === it.id;
           const rows = [];

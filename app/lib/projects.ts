@@ -39,6 +39,8 @@ export type StoryItem = {
   body?: string;
   bullets?: string[];
   media?: StoryMedia;
+  // A set of labelled media rendered behind a segmented toggle (e.g. Auto / Manual).
+  toggle?: { label: string; media: StoryMedia }[];
   table?: { columns: string[]; rows: string[][] };
 };
 
@@ -51,6 +53,10 @@ export type StorySection = {
   eyebrow: string;
   heading?: string;
   body?: string;
+  // Bulleted points under the body (**double-asterisks** = bold).
+  bullets?: string[];
+  // A closing paragraph rendered after the bullets.
+  closing?: string;
   media?: StoryMedia;
   // Small bold-labelled paragraphs (e.g. Problem / Solution) shown under the heading.
   briefs?: { label: string; body: string }[];
@@ -59,6 +65,8 @@ export type StorySection = {
   // the section itself has no heading, so items become the top-level headings).
   bigItemTitles?: boolean;
   videos?: string[];
+  // Index (0-based) of the video labelled as the chosen approach.
+  chosenVideo?: number;
 };
 
 export type Project = {
@@ -69,7 +77,12 @@ export type Project = {
   title: string;
   overview: string;
   collaborators: string[];
-  hero?: { image?: string; media?: MediaKind; video?: string };
+  hero?: {
+    image?: string;
+    media?: MediaKind;
+    video?: string;
+    toggle?: { label: string; media: StoryMedia }[];
+  };
   // Richer case studies use a flexible `story`; simpler ones use the fixed
   // Problem → (Outcomes) → Solution → (Experiments) → Process structure below.
   story?: StorySection[];
@@ -107,7 +120,24 @@ export const projects: Project[] = [
       "Siddhant Ghosh (SPD)",
       "Saransh Rawat (MD)",
     ],
-    hero: { video: "/work/noon/ai-1.mp4" },
+    hero: {
+      toggle: [
+        {
+          label: "Before",
+          media: {
+            video: "/work/noon/before.mp4",
+            caption: "Before: the old flow, a blank text box and a photo upload",
+          },
+        },
+        {
+          label: "After",
+          media: {
+            video: "/work/noon/ai-1.mp4",
+            caption: "After: tap a few chips and AI writes the review",
+          },
+        },
+      ],
+    },
     story: [
       {
         id: "context",
@@ -129,6 +159,18 @@ export const projects: Project[] = [
               "**Photo and text reviews** carry the most weight: shoppers who reach a review convert about **59% more often** than those who don't.",
               "But **almost nobody writes them**: only about **1 in 69 shoppers** who views a product leaves a review (~1.46%), a rate that barely moves day to day.",
             ],
+            table: {
+              columns: [
+                "Exposure group",
+                "PDP sessions",
+                "ATC count",
+                "PDP-to-ATC conversion rate",
+              ],
+              rows: [
+                ["Exposed to Review", "11.7M", "1.95M", "16.67%"],
+                ["Not Exposed", "52.0M", "5.46M", "10.49%"],
+              ],
+            },
           },
         ],
       },
@@ -163,11 +205,11 @@ export const projects: Project[] = [
         briefs: [
           {
             label: "Problem",
-            body: "Most shoppers rate but never write, because a full review feels like effort. So the photo-and-text reviews that actually sell rarely get created.",
+            body: "Most shoppers **rate but never write**, because a full review feels like effort. So the photo-and-text reviews that actually sell rarely get created.",
           },
           {
             label: "Solution",
-            body: "Make writing feel like tapping. Shoppers pick a few rating-aware chips and AI turns them into a real, first-person review they can post in seconds.",
+            body: "Shoppers already tap to give a star, so the whole flow works the same way: **tap, tap, done**. They pick a few rating-aware chips and AI turns them into a real review they can post in seconds.",
           },
         ],
         items: [
@@ -190,12 +232,24 @@ export const projects: Project[] = [
             },
           },
           {
-            title: "One tap to generate the review",
-            body: "Hit Generate and AI turns your taps into a first-person review that you can post as-is, tweak a line, or add photos to. Editing a ready draft beats writing from scratch, so far more people carry it through.",
-            media: {
-              image: "/work/noon/generate.png",
-              caption: "From picks to a first-person review: post, tweak, or add photos",
-            },
+            title: "Two ways to write a review",
+            body: "Now there are two ways to write a review: an AI mode, where AI turns your taps into a first-person draft you can post or tweak, and a Manual mode, for writing it yourself. Either way, there's no blank page to start from.",
+            toggle: [
+              {
+                label: "AI",
+                media: {
+                  video: "/work/noon/ai-mode.mp4",
+                  caption: "AI mode: tap a few chips and AI writes the review",
+                },
+              },
+              {
+                label: "Manual",
+                media: {
+                  video: "/work/noon/manual.mp4",
+                  caption: "Manual mode: skip AI and write the review yourself",
+                },
+              },
+            ],
           },
         ],
       },
@@ -204,12 +258,18 @@ export const projects: Project[] = [
         navLabel: "AI Experiments",
         eyebrow: "AI Experiments",
         heading: "Three ways to edit the draft",
-        body: "A generated draft is only useful if editing it feels effortless; otherwise we've just moved the blank page. So instead of guessing, we prototyped three different editing patterns as working React screens with the help of Claude, and put them in front of stakeholders to feel which one flowed best before committing.",
+        body: "A generated draft only helps if editing it feels effortless, so we prototyped three editing patterns as working React screens with the help of Claude. Two things mattered most:",
+        bullets: [
+          "**Focus on the input:** the user's attention should stay on the text box, with nothing competing around it.",
+          "**Smooth scrolling:** as the review runs longer, scrolling inside the input should stay smooth and natural.",
+        ],
+        closing: "All three approaches below solve for this, but **B** felt the most intuitive, so that's the one we moved forward with.",
         videos: [
           "/work/noon/exp-1.mp4",
           "/work/noon/exp-2.mp4",
           "/work/noon/exp-3.mp4",
         ],
+        chosenVideo: 1,
       },
       {
         id: "process",
