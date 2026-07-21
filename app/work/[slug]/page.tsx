@@ -235,6 +235,29 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                       ))}
                     </ul>
                   ) : null}
+                  {it.versions && it.versions.length > 0 ? (
+                    <div className="mt-8 rounded-2xl bg-zinc-50 p-6 ring-1 ring-black/5">
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
+                        {it.versions.map((v) => (
+                          <figure key={v.label} className="flex flex-col gap-3">
+                            <figcaption
+                              className="text-center text-[13px] font-medium"
+                              style={{ color: colors.primary }}
+                            >
+                              {v.label}
+                            </figcaption>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={v.image}
+                              alt={v.label}
+                              className="mx-auto w-full max-w-[150px] rounded-xl ring-1 ring-black/5"
+                              loading="lazy"
+                            />
+                          </figure>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                   {it.table ? <DataTable table={it.table} /> : null}
                   {it.toggle ? (
                     <div className="mt-8">

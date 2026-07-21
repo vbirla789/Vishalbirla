@@ -41,6 +41,8 @@ export type StoryItem = {
   media?: StoryMedia;
   // A set of labelled media rendered behind a segmented toggle (e.g. Auto / Manual).
   toggle?: { label: string; media: StoryMedia }[];
+  // A horizontal filmstrip of labelled iteration images (e.g. Version 1, 2, …).
+  versions?: { label: string; image: string }[];
   table?: { columns: string[]; rows: string[][] };
 };
 
@@ -192,10 +194,6 @@ export const projects: Project[] = [
             title: "What shoppers actually told us",
             body: "When we talked to friends and people on the team, the same feedback kept surfacing: they just don't write reviews. From their point of view it's a **high-effort, low-impact** task, a lot of typing for little payoff, so the intent to help never turns into an actual review.",
           },
-          {
-            title: "Naming the real blocker",
-            body: "It was the blank text box: writing feels like real effort, because very few people are comfortable putting their thoughts into words.",
-          },
         ],
       },
       {
@@ -205,7 +203,7 @@ export const projects: Project[] = [
         briefs: [
           {
             label: "Problem",
-            body: "Most shoppers **rate but never write**, because a full review feels like effort. So the photo-and-text reviews that actually sell rarely get created.",
+            body: "Most shoppers **rate but never write**. The blank text box is the blocker: writing feels like effort, so the reviews that actually sell rarely get created.",
           },
           {
             label: "Solution",
@@ -213,6 +211,18 @@ export const projects: Project[] = [
           },
         ],
         items: [
+          {
+            title: "Iterating on the input",
+            body: "Before the chips landed, we ran through several layouts for capturing what a shopper wants to say, from plain checkboxes to grouped chips, each tuned for focus and speed. Here's how it evolved.",
+            versions: [
+              { label: "Version 1", image: "/work/noon/iter-1.png" },
+              { label: "Version 2", image: "/work/noon/iter-2.png" },
+              { label: "Version 3", image: "/work/noon/iter-3.png" },
+              { label: "Version 4", image: "/work/noon/iter-4.png" },
+              { label: "Version 5", image: "/work/noon/iter-5.png" },
+              { label: "Final", image: "/work/noon/iter-final.png" },
+            ],
+          },
           {
             title: "Rating-aware question chips",
             body: "Eight parameters, split by the rating you give: all positives at 5 stars, all improvements at 1, a mix in between. You just tap what fits; there's no blank page to stare at.",
