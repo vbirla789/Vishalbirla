@@ -1,9 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { colors, t, type } from "../theme";
 import { playHover, playScroll } from "../lib/sound";
+import PhotoLightbox from "./PhotoLightbox";
 
 /** Fraction (0–1) across the "waking day" window 9:00 AM → 2:00 AM (next day), IST. */
 function scheduleFractionIST(date: Date) {
@@ -22,29 +23,26 @@ function scheduleFractionIST(date: Date) {
   return Math.min(1, Math.max(0, f));
 }
 
-type Card = { rotate: number; render: React.ReactNode };
-
 /* Photos shown in the draggable timeline polaroids. */
-const photo = (src: string) => (
-  // eslint-disable-next-line @next/next/no-img-element
-  <img src={src} alt="" className="h-full w-full object-cover" />
-);
-
-const cards: Card[] = [
-  { rotate: -6, render: photo("/timeline/1.jpg") },
-  { rotate: 3, render: photo("/timeline/2.jpg") },
-  { rotate: -3, render: photo("/timeline/3.jpg") },
-  { rotate: 5, render: photo("/timeline/4.jpg") },
-  { rotate: -4, render: photo("/timeline/5.jpg") },
+const photoSrcs = [
+  "/timeline/1.jpg",
+  "/timeline/2.jpg",
+  "/timeline/3.jpg",
+  "/timeline/4.jpg",
+  "/timeline/5.jpg",
 ];
+const rotations = [-6, 3, -3, 5, -4];
 
 // horizontal center of each card, as a % across the panel
-const centers = cards.map((_, i) => 12 + (i * (88 - 12)) / (cards.length - 1));
+const centers = photoSrcs.map(
+  (_, i) => 12 + (i * (88 - 12)) / (photoSrcs.length - 1),
+);
 
 export default function TimelineWidget() {
   const [now, setNow] = useState<Date | null>(null);
   const [pinPct, setPinPct] = useState(90);
   const [dragging, setDragging] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const lastCardRef = useRef(-1);
 
@@ -123,7 +121,7 @@ export default function TimelineWidget() {
     return {
       scale: 1 + 0.34 * boost,
       translateY: -14 * boost,
-      rotate: cards[i].rotate * (1 - boost),
+      rotate: rotations[i] * (1 - boost),
       zIndex: boost > 0.4 ? 30 : 10 + i,
     };
   };
@@ -170,7 +168,7 @@ export default function TimelineWidget() {
         />
 
         {/* cards */}
-        {cards.map((card, i) => {
+        {photoSrcs.map((src, i) => {
           const s = cardState(i);
           return (
             <motion.div
@@ -185,14 +183,18 @@ export default function TimelineWidget() {
               }}
               transition={{ type: "spring", stiffness: 340, damping: 26 }}
             >
-              <div
-                className="rounded-[4px] border px-[3px] pb-[7px] pt-[3px]"
+              <button
+                type="button"
+                onClick={() => setLightboxIndex(i)}
+                aria-label="Open photo"
+                className="block cursor-pointer rounded-[4px] border px-[3px] pb-[7px] pt-[3px] outline-none transition-shadow hover:shadow-md"
                 style={{ backgroundColor: colors.panel, borderColor: colors.line }}
               >
                 <div className="h-[56px] w-[52px] overflow-hidden rounded-[2px]">
-                  {card.render}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt="" className="h-full w-full object-cover" />
                 </div>
-              </div>
+              </button>
             </motion.div>
           );
         })}
@@ -218,6 +220,17 @@ export default function TimelineWidget() {
           />
         </div>
       </div>
+
+      {/* lightbox / carousel */}
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+          <PhotoLightbox
+            photos={photoSrcs}
+            initialIndex={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

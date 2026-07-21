@@ -168,11 +168,11 @@ export default function WorkSection() {
 
                 {/* company logo · name · year */}
                 <div className="flex shrink-0 items-center gap-2">
-                  <span style={{ fontSize: 16, color: colors.secondary }}>
+                  <span style={{ fontSize: 16, color: colors.tertiary }}>
                     {p.company}
                   </span>
-                  <span style={{ color: colors.secondary }}>·</span>
-                  <span style={{ fontSize: 15, color: colors.secondary }}>
+                  <span style={{ color: colors.tertiary }}>·</span>
+                  <span style={{ fontSize: 15, color: colors.tertiary }}>
                     {p.year}
                   </span>
                 </div>
