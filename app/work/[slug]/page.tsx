@@ -56,10 +56,14 @@ function Caption({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Single headline style used for every heading on the case study (24px medium).
+// Only two content type styles exist: this headline + the body/description.
 const H2_STYLE = {
   ...t(type.caseH2),
-  fontSize: "clamp(1.25rem, 5vw, 1.625rem)",
-  lineHeight: 1.25,
+  fontSize: 24,
+  fontWeight: 500,
+  lineHeight: 1.3,
+  color: colors.primary,
 } as React.CSSProperties;
 
 const ITEM_BODY_STYLE = {
@@ -127,7 +131,7 @@ function DataTable({ table }: { table: { columns: string[]; rows: string[][] } }
                 <td
                   key={ci}
                   className="px-4 py-3 text-[14px]"
-                  style={{ color: ci === 0 ? colors.primary : BODY_COLOR }}
+                  style={{ fontWeight: 500, color: colors.primary }}
                 >
                   {cell}
                 </td>
@@ -163,13 +167,10 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
           ) : null}
 
           {section.briefs && section.briefs.length > 0 ? (
-            <div className="mt-8 flex flex-col gap-7">
+            <div className="mt-2 flex flex-col gap-7">
               {section.briefs.map((b) => (
                 <div key={b.label}>
-                  <p
-                    className="mb-2"
-                    style={{ fontSize: 20, fontWeight: 500, color: colors.primary }}
-                  >
+                  <p className="mb-2" style={H2_STYLE}>
                     {b.label}
                   </p>
                   <p className="max-w-[560px]" style={ITEM_BODY_STYLE}>
@@ -185,13 +186,9 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
               {section.items.map((it, idx) => (
                 <div key={it.title ?? idx}>
                   {it.title ? (
-                    section.bigItemTitles ? (
-                      <h2 className="max-w-[600px]" style={H2_STYLE}>
-                        {it.title}
-                      </h2>
-                    ) : (
-                      <h3 style={{ ...t(type.caseH3), fontSize: 20 }}>{it.title}</h3>
-                    )
+                    <h2 className="max-w-[600px]" style={H2_STYLE}>
+                      {it.title}
+                    </h2>
                   ) : null}
                   {it.body ? (
                     <div className="mt-2 flex max-w-[560px] flex-col gap-4">
@@ -378,7 +375,7 @@ export default async function CaseStudyPage({
                       {i + 1}
                     </span>
                     <div>
-                      <h3 style={t(type.caseH3)}>{pt.title}</h3>
+                      <h3 style={H2_STYLE}>{pt.title}</h3>
                       <p className="mt-1.5 max-w-[520px]" style={ITEM_BODY_STYLE}>
                         {pt.body}
                       </p>
@@ -412,7 +409,7 @@ export default async function CaseStudyPage({
               <Eyebrow>Outcomes</Eyebrow>
               <h2
             className="max-w-[600px]"
-            style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+            style={H2_STYLE}
           >
                 {project.outcomes.heading}
               </h2>
@@ -445,7 +442,7 @@ export default async function CaseStudyPage({
           <Eyebrow>Solution</Eyebrow>
           <h2
             className="max-w-[600px]"
-            style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+            style={H2_STYLE}
           >
             {project.solution.heading}
           </h2>
@@ -456,7 +453,7 @@ export default async function CaseStudyPage({
           <div className="mt-14 flex flex-col gap-20">
             {project.solution.sections.map((s) => (
               <div key={s.title}>
-                <h3 style={t(type.caseH3)}>{s.title}</h3>
+                <h3 style={H2_STYLE}>{s.title}</h3>
                 <p className="mt-2 max-w-[560px]" style={{ ...t(type.aboutBody), color: BODY_COLOR, fontWeight: 400 }}>
                   {s.body}
                 </p>
@@ -522,7 +519,7 @@ export default async function CaseStudyPage({
               <Eyebrow>AI Experiments</Eyebrow>
               <h2
                 className="max-w-[600px]"
-                style={{ ...t(type.caseH2), fontSize: "clamp(1.25rem, 5vw, 1.625rem)", lineHeight: 1.25 }}
+                style={H2_STYLE}
               >
                 {project.experiments.heading}
               </h2>

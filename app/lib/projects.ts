@@ -160,7 +160,6 @@ export const projects: Project[] = [
         id: "solution",
         navLabel: "The idea",
         eyebrow: "The problem & the idea",
-        heading: "Turn writing into tapping",
         briefs: [
           {
             label: "Problem",
