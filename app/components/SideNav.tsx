@@ -6,7 +6,7 @@ import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 
 // `href` items open in a new tab instead of scroll-spying to a section.
 const RESUME_URL =
-  "https://drive.google.com/file/d/1HLuKRf01fXCTchbaZ5n1oUGwSRCo70wM/view?usp=sharing";
+  "https://drive.google.com/file/d/1BYmEkLNnls8_dyRPnGYt1W6e2-sC950F/view?usp=sharing";
 
 const items: { id: string; label: string; href?: string }[] = [
   { id: "about", label: "About" },
