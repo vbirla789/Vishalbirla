@@ -6,6 +6,7 @@ import ToggleMedia from "../../components/ToggleMedia";
 import CaseStudyNav from "../../components/CaseStudyNav";
 import Footer from "../../components/Footer";
 import { CaseMedia } from "../../components/caseMedia";
+import { MediaViewerProvider, Zoomable } from "../../components/MediaViewer";
 import { getProject, projects } from "../../lib/projects";
 import type { StoryMedia, StorySection } from "../../lib/projects";
 import { colors, t, type } from "../../theme";
@@ -239,8 +240,8 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                     <div className="mt-8 rounded-2xl bg-zinc-50 p-6 ring-1 ring-black/5">
                       <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
                         {it.versions.map((v) => (
-                          <figure key={v.label} className="flex flex-col gap-3">
-                            <figcaption
+                          <Zoomable key={v.label} label={v.label} className="flex flex-col gap-3">
+                            <span
                               className="text-center text-[13px] font-medium"
                               style={{
                                 color:
@@ -250,7 +251,7 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                               }}
                             >
                               {v.label}
-                            </figcaption>
+                            </span>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={v.image}
@@ -258,7 +259,7 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                               className="mx-auto w-full max-w-[150px] rounded-xl ring-1 ring-black/5"
                               loading="lazy"
                             />
-                          </figure>
+                          </Zoomable>
                         ))}
                       </div>
                     </div>
@@ -283,8 +284,9 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                 const label = String.fromCharCode(65 + i);
                 const chosen = section.chosenVideo === i;
                 return (
-                  <div
+                  <Zoomable
                     key={v}
+                    label={`Approach ${label}`}
                     className="flex flex-col items-center gap-8 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
                   >
                     <div className="overflow-hidden rounded-[22px]">
@@ -304,7 +306,7 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                     >
                       {chosen ? `Approach ${label} · chosen` : `Approach ${label}`}
                     </span>
-                  </div>
+                  </Zoomable>
                 );
               })}
             </div>
@@ -340,7 +342,7 @@ export default async function CaseStudyPage({
       ];
 
   return (
-    <>
+    <MediaViewerProvider>
       <CaseStudyNav items={navItems} />
 
       <main className="mx-auto w-full max-w-[720px] px-6 pb-24 pt-20 sm:pb-32 sm:pt-28">
@@ -600,8 +602,9 @@ export default async function CaseStudyPage({
               {project.experiments.videos && project.experiments.videos.length > 0 ? (
                 <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
                   {project.experiments.videos.map((v) => (
-                    <div
+                    <Zoomable
                       key={v}
+                      label="AI prototype"
                       className="flex justify-center rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
                     >
                       <div className="overflow-hidden rounded-[22px]">
@@ -615,7 +618,7 @@ export default async function CaseStudyPage({
                           preload="metadata"
                         />
                       </div>
-                    </div>
+                    </Zoomable>
                   ))}
                 </div>
               ) : (
@@ -663,6 +666,6 @@ export default async function CaseStudyPage({
           <Footer />
         </Appear>
       </main>
-    </>
+    </MediaViewerProvider>
   );
 }

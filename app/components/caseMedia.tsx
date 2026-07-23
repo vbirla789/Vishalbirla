@@ -1,5 +1,8 @@
+"use client";
+
 import { colors } from "../theme";
 import type { MediaKind } from "../lib/projects";
+import { Zoomable } from "./MediaViewer";
 
 /* ----------------------------------------------------------------------------
  * Dummy visual placeholders for case-study sections. No real assets — abstract
@@ -140,15 +143,35 @@ function Photos() {
 }
 
 /** A real screenshot rendered full-width (assets already ship with their own frame/bg). */
-function ImageFrame({ src, alt }: { src: string; alt: string }) {
-  return (
+function ImageFrame({
+  src,
+  alt,
+  zoomable = true,
+  large = false,
+}: {
+  src: string;
+  alt: string;
+  zoomable?: boolean;
+  large?: boolean;
+}) {
+  const img = (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt}
-      className="w-full rounded-2xl ring-1 ring-black/5"
+      className={
+        large
+          ? "mx-auto max-h-[62vh] w-auto rounded-2xl ring-1 ring-black/5"
+          : "w-full rounded-2xl ring-1 ring-black/5"
+      }
       loading="lazy"
     />
+  );
+  if (!zoomable) return img;
+  return (
+    <Zoomable label={alt} className="rounded-2xl">
+      {img}
+    </Zoomable>
   );
 }
 
@@ -163,6 +186,8 @@ export function CaseMedia({
   video,
   placeholder,
   alt = "Project screenshot",
+  zoomable = true,
+  large = false,
 }: {
   image?: string;
   images?: string[];
@@ -170,34 +195,45 @@ export function CaseMedia({
   video?: string;
   placeholder?: string;
   alt?: string;
+  zoomable?: boolean;
+  large?: boolean;
 }) {
   if (video) {
-    return (
-      <div className="flex items-center justify-center rounded-2xl bg-zinc-100 px-6 py-12">
-        <div className="overflow-hidden rounded-[26px]">
-          <video
-            className="block h-[440px] w-auto object-contain"
-            src={video}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-          />
-        </div>
+    const stageClass = large
+      ? "flex w-[min(1040px,88vw)] items-center justify-center rounded-2xl bg-zinc-100 px-6 py-14"
+      : "flex items-center justify-center rounded-2xl bg-zinc-100 px-6 py-12";
+    const stage = (
+      <div className="overflow-hidden rounded-[26px]">
+        <video
+          className={large ? "block h-[62vh] w-auto object-contain" : "block h-[440px] w-auto object-contain"}
+          src={video}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+        />
       </div>
+    );
+    if (!zoomable) {
+      return <div className={stageClass}>{stage}</div>;
+    }
+    return (
+      <Zoomable label={alt} className={stageClass}>
+        {stage}
+      </Zoomable>
     );
   }
   if (images && images.length > 0) {
     return (
       <div className="flex flex-col gap-4">
         {images.map((src, i) => (
-          <ImageFrame key={src} src={src} alt={`${alt} ${i + 1}`} />
+          <ImageFrame key={src} src={src} alt={`${alt} ${i + 1}`} zoomable={zoomable} large={large} />
         ))}
       </div>
     );
   }
-  if (image) return <ImageFrame src={image} alt={alt} />;
+  if (image) return <ImageFrame src={image} alt={alt} zoomable={zoomable} large={large} />;
   if (media) return <Media kind={media} />;
   if (placeholder) {
     return (

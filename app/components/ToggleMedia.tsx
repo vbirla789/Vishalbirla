@@ -1,8 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { CaseMedia } from "./caseMedia";
+import { useMediaViewer } from "./MediaViewer";
 import type { StoryMedia } from "../lib/projects";
 import { colors } from "../theme";
 
@@ -11,24 +12,48 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export type ToggleOption = { label: string; media: StoryMedia };
 
 /**
- * A media slot with a segmented toggle above it (Before/After, Auto/Manual, …).
- * Sliding pill + crossfade between states.
+ * A media slot with a segmented toggle above it (Before/After, AI/Manual, …).
+ * Sliding pill + crossfade between states. Clicking the media enlarges the whole
+ * block — toggle included — in the lightbox, so states can still be switched.
+ *
+ * `enlargeable` is turned off for the copy rendered inside the overlay (so it
+ * doesn't open another overlay); the toggle there still works.
  */
 export default function ToggleMedia({
   options,
   alt,
+  enlargeable = true,
+  defaultIndex = 0,
 }: {
   options: ToggleOption[];
   alt: string;
+  enlargeable?: boolean;
+  defaultIndex?: number;
 }) {
-  const [idx, setIdx] = useState(0);
+  const [idx, setIdx] = useState(defaultIndex);
   const pillId = useId();
+  const { open } = useMediaViewer();
+  const rootRef = useRef<HTMLDivElement>(null);
   const active = options[idx]?.media;
 
   if (!active) return null;
 
+  const openOverlay = () => {
+    open({
+      fit: false,
+      node: (
+        <ToggleMedia
+          options={options}
+          alt={alt}
+          enlargeable={false}
+          defaultIndex={idx}
+        />
+      ),
+    });
+  };
+
   return (
-    <div>
+    <div ref={rootRef} className={enlargeable ? undefined : "flex flex-col items-center"}>
       <div className="mb-5 inline-flex rounded-full bg-zinc-100 p-1">
         {options.map((o, i) => (
           <button
@@ -61,8 +86,25 @@ export default function ToggleMedia({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.28, ease: EASE }}
+          {...(enlargeable
+            ? {
+                role: "button",
+                tabIndex: 0,
+                "aria-label": `Enlarge ${alt}`,
+                onClick: openOverlay,
+                onKeyDown: (e: React.KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openOverlay();
+                  }
+                },
+                className: "cursor-pointer outline-none",
+              }
+            : {})}
         >
           <CaseMedia
+            zoomable={false}
+            large={!enlargeable}
             image={active.image}
             images={active.images}
             video={active.video}

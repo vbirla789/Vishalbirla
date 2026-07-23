@@ -14,6 +14,7 @@ type Project = {
   title: string;
   preview?: React.ReactNode; // abstract preview when no real image
   image?: string; // real screenshot for the card
+  video?: string; // looping mockup video (takes precedence over image)
 };
 
 const projects: Project[] = [
@@ -24,6 +25,7 @@ const projects: Project[] = [
     logo: "/logos/noon.jpeg",
     title: "Designing an AI-assisted review flow to add a review in seconds",
     image: "/work/noon/preview.png",
+    video: "/work/noon/ai-1.mp4",
   },
   {
     slug: "ambitio",
@@ -142,7 +144,22 @@ export default function WorkSection() {
             <Link key={p.company} href={`/work/${p.slug}`} className="group block">
               {/* single image container */}
               <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 sm:h-[360px] lg:h-[480px]">
-                {p.image ? (
+                {p.video ? (
+                  <div className="flex h-full items-center justify-center p-6 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
+                    <div className="h-full overflow-hidden rounded-[26px]">
+                      <video
+                        src={p.video}
+                        poster={p.image}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
+                        className="block h-full w-auto object-contain"
+                      />
+                    </div>
+                  </div>
+                ) : p.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={p.image}
@@ -243,7 +260,7 @@ export default function WorkSection() {
           {funVideos.map((v) => (
             <div
               key={v.src}
-              className="flex flex-col gap-6 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
+              className="flex flex-col gap-8 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
             >
               {/* video — full, correct iPhone aspect (no crop), rounded corners */}
               <div className="flex justify-center">
