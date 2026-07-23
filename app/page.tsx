@@ -41,12 +41,10 @@ export default function Home() {
           {/* description */}
           <Appear delay={0.14}>
             <div className="mt-4 space-y-4">
-              <p className="w-full max-w-[624px]" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
-                I&apos;m a product designer based in India, currently working at
+              <p className="w-full max-w-[576px]" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
+                I&apos;m a product designer based in India, currently designing at
                 <span className="font-semibold text-[#1D2539]"> noon</span>.
-                I love using
-                <span className="font-semibold text-[#1D2539]"> AI</span> to shape
-                designs and bring them to life as living, interactive experiences.
+                I love using AI to shape designs and bring them to life as living, interactive experiences.
               </p>
             </div>
             <ContactCtas />
