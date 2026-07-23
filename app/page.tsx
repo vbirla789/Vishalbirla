@@ -34,7 +34,7 @@ export default function Home() {
                 cursor: "default",
               }}
             >
-              Hey, I'm Vishal
+              Vishal Birla
             </h1>
           </Appear>
 
