@@ -146,7 +146,7 @@ export default function WorkSection() {
               <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 sm:h-[360px] lg:h-[480px]">
                 {p.video ? (
                   <div className="flex h-full items-center justify-center p-6 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
-                    <div className="h-full overflow-hidden rounded-[7px] sm:rounded-[10px] lg:rounded-[14px]">
+                    <div className="h-full overflow-hidden rounded-[7px] sm:rounded-[10px] lg:rounded-[24px]">
                       <video
                         src={p.video}
                         poster={p.image}

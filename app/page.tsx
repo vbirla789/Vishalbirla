@@ -1,4 +1,3 @@
-import ScrambleText from "./components/ScrambleText";
 import SideNav from "./components/SideNav";
 import TimelineWidget from "./components/TimelineWidget";
 import WorkSection from "./components/WorkSection";
@@ -25,16 +24,16 @@ export default function Home() {
             <p className="mb-4 font-mono uppercase" style={t(type.aboutLabel)}>
               About
             </p>
-            <ScrambleText
-              as="h1"
-              text="Vishal Birla"
+            <h1
               style={{
                 ...t(type.headline),
                 fontSize: "clamp(1.5rem, 5vw, 1.75rem)",
                 lineHeight: 1.2,
                 cursor: "default",
               }}
-            />
+            >
+              Vishal Birla
+            </h1>
           </Appear>
 
           {/* description */}
