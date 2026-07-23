@@ -41,7 +41,7 @@ export default function Home() {
           {/* description */}
           <Appear delay={0.14}>
             <div className="mt-4 space-y-4">
-              <p className="w-[624px]" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
+              <p className="w-full max-w-[624px]" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
                 I&apos;m a product designer based in India, currently working at
                 <span className="font-semibold text-[#1D2539]"> noon</span>.
                 I love using
