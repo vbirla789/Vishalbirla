@@ -1,3 +1,4 @@
+import ContactCtas from "./components/ContactCtas";
 import SideNav from "./components/SideNav";
 import TimelineWidget from "./components/TimelineWidget";
 import WorkSection from "./components/WorkSection";
@@ -25,6 +26,7 @@ export default function Home() {
               About
             </p>
             <h1
+              className="text-[#1D2539]"
               style={{
                 ...t(type.headline),
                 fontSize: "clamp(1.5rem, 5vw, 1.75rem)",
@@ -41,15 +43,16 @@ export default function Home() {
             <div className="mt-4 space-y-4">
               <p style={{ ...t(type.aboutBody), fontWeight: 400 }}>
                 I&apos;m a product designer based out of India, currently working
-                at <span className="font-semibold">noon</span>.
+                at <span className="font-semibold text-[#1D2539]">noon</span>.
               </p>
               <p style={{ ...t(type.aboutBody), fontWeight: 400 }}>
                 I love shaping how things look, then bringing them to life with the
-                help of <span className="font-semibold">AI</span>, always
+                help of <span className="font-semibold text-[#1D2539]">AI</span>, always
                 experimenting to turn the designs I create into living, interactive
                 experiences.
               </p>
             </div>
+            <ContactCtas />
           </Appear>
 
           {/* crafted experiences at — client / company logos */}
