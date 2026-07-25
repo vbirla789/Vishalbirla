@@ -50,11 +50,12 @@ export default function ContactCtas() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleExploreClick = () => {
-    const funSection = document.getElementById("fun");
-    if (funSection) {
-      funSection.scrollIntoView({ behavior: "smooth" });
-    }
+  const handleResumeClick = () => {
+    window.open(
+      "https://drive.google.com/file/d/1BYmEkLNnls8_dyRPnGYt1W6e2-sC950F/view?usp=sharing",
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   // Expanded dimensions tuned for balanced horizontal and vertical spacing
@@ -254,14 +255,14 @@ export default function ContactCtas() {
         </div>
       </div>
 
-      {/* Explore Button */}
+      {/* View Resume Button */}
       <button
         type="button"
-        onClick={handleExploreClick}
+        onClick={handleResumeClick}
         onMouseEnter={playHover}
         className="inline-flex h-[38px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[#efefef] px-4 py-0 text-[14px] font-medium leading-none tracking-[-0.01em] text-[#171717] transition-colors hover:bg-[#EAEAEA] outline-none focus-visible:ring-2 focus-visible:ring-[#171717]/40 focus-visible:ring-offset-2"
       >
-        Explore
+        View Resume
       </button>
     </div>
   );

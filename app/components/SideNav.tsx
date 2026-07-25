@@ -5,15 +5,11 @@ import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 
 // `href` items open in a new tab instead of scroll-spying to a section.
-const RESUME_URL =
-  "https://drive.google.com/file/d/1BYmEkLNnls8_dyRPnGYt1W6e2-sC950F/view?usp=sharing";
-
 const items: { id: string; label: string; href?: string }[] = [
   { id: "about", label: "About" },
   { id: "work", label: "Work" },
   { id: "experience", label: "Experience" },
   { id: "fun", label: "Concepts" },
-  { id: "resume", label: "Resume", href: RESUME_URL },
 ];
 
 export default function SideNav() {

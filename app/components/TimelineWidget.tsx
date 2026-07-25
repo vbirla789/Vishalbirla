@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { colors, t, type } from "../theme";
 import { playHover, playScroll } from "../lib/sound";
@@ -190,9 +191,16 @@ export default function TimelineWidget() {
                 className="block cursor-pointer rounded-[4px] border px-[3px] pb-[7px] pt-[3px] outline-none transition-shadow hover:shadow-sm"
                 style={{ backgroundColor: colors.panel, borderColor: colors.line }}
               >
-                <div className="h-[56px] w-[52px] overflow-hidden rounded-[2px]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt="" className="h-full w-full object-cover" />
+                <div className="relative h-[56px] w-[52px] overflow-hidden rounded-[2px]">
+                  <Image
+                    src={src}
+                    alt=""
+                    fill
+                    sizes="72px"
+                    quality={90}
+                    priority
+                    className="object-cover"
+                  />
                 </div>
               </button>
             </motion.div>
