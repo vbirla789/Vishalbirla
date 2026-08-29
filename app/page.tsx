@@ -1,6 +1,6 @@
 import ContactCtas from "./components/ContactCtas";
-import SideNav from "./components/SideNav";
-import TimelineWidget from "./components/TimelineWidget";
+import HeaderNav from "./components/HeaderNav";
+// import TimelineWidget from "./components/TimelineWidget"; // hidden — see below
 import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
@@ -10,24 +10,29 @@ import { t, type } from "./theme";
 export default function Home() {
   return (
     <>
-      <SideNav />
-      <main className="mx-auto w-full max-w-[800px] px-6 pb-24 pt-20 sm:pb-32 sm:pt-32">
-        {/* dynamic timeline widget — settles in after the name */}
+      <HeaderNav />
+      <main className="mx-auto w-full max-w-[800px] px-6 pb-24 sm:pb-32">
+        {/* Timeline widget (Bengaluru clock + photo strip) — hidden for now.
+            Nothing links to #intro, so there are no dead anchors. To restore,
+            uncomment this block and its import at the top of the file. */}
+        {/*
         <Appear delay={0.35}>
           <div id="intro" className="scroll-mt-28">
             <TimelineWidget />
           </div>
         </Appear>
+        */}
 
         {/* about / intro */}
-        <section id="about" className="mt-12 max-w-[640px] scroll-mt-28 sm:mt-16">
+        {/* 64px below the header — the only thing setting that gap now */}
+        <section id="about" className="mt-16 max-w-[640px] scroll-mt-28">
           {/* name appears first */}
           <Appear>
             <p className="mb-4 font-mono uppercase" style={t(type.aboutLabel)}>
               About
             </p>
             <h1
-              className="text-[#1D2539]"
+              className="text-[color:var(--c-primary)]"
               style={{
                 ...t(type.headline),
                 fontSize: "clamp(1.75rem, 5vw, 2rem)",
@@ -44,7 +49,7 @@ export default function Home() {
             <div className="mt-4 space-y-4">
               <p className="w-full max-w-[576px]" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
                 I&apos;m a product designer based in India, currently designing at
-                <span className="font-semibold text-[#1D2539]"> noon</span>.
+                <span className="font-semibold text-[color:var(--c-primary)]"> noon</span>.
                 I love using AI to shape designs and bring them to life as living, interactive experiences.
               </p>
             </div>

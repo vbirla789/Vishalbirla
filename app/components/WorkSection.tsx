@@ -66,7 +66,7 @@ export function LogoMark({ src, alt }: { src: string; alt: string }) {
       alt={`${alt} logo`}
       width={36}
       height={36}
-      className="h-9 w-9 shrink-0 rounded-[8px] object-cover ring-1 ring-black/5"
+      className="h-9 w-9 shrink-0 rounded-[8px] object-cover ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
     />
   );
 }
@@ -114,7 +114,7 @@ export default function WorkSection() {
           {projects.map((p) => (
             <Link key={p.company} href={`/work/${p.slug}`} className="group block">
               {/* single image container */}
-              <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 sm:h-[360px] lg:h-[480px]">
+              <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 dark:bg-[color:var(--c-panel)] sm:h-[360px] lg:h-[480px]">
                 {p.video ? (
                   <div className="flex h-full items-center justify-center p-6 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
                     <div className="h-full overflow-hidden rounded-[7px] sm:rounded-[10px] lg:rounded-[24px]">
@@ -149,7 +149,7 @@ export default function WorkSection() {
                 {/* title */}
                 <h3
                   className="max-w-[560px] font-sans"
-                  style={{ ...t(type.caseH2), fontSize: 18, lineHeight: "26px", color: "#1D2539" }}
+                  style={{ ...t(type.caseH2), fontSize: 18, lineHeight: "26px", color: colors.primary }}
                 >
                   {p.title}
                 </h3>
@@ -172,11 +172,11 @@ export default function WorkSection() {
 
       {/* EXPERIENCE */}
       <Section id="experience" label="Experience">
-        <div className="flex flex-col border-t border-black/5">
+        <div className="flex flex-col border-t border-black/5 dark:border-[color:var(--c-line)]">
           {experience.map((e) => (
             <div
               key={e.company + e.role}
-              className="border-b border-black/5 py-4"
+              className="border-b border-black/5 dark:border-[color:var(--c-line)] py-4"
             >
               {/* mobile: LinkedIn-style — logo · (role / company) · date-right */}
               <div className="flex gap-3.5 sm:hidden">
@@ -231,7 +231,7 @@ export default function WorkSection() {
           {funVideos.map((v) => (
             <div
               key={v.src}
-              className="flex flex-col gap-8 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
+              className="flex flex-col gap-8 rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-4 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
             >
               {/* video — full, correct iPhone aspect (no crop), rounded corners */}
               <div className="flex justify-center">

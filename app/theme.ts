@@ -12,24 +12,41 @@
  * ==========================================================================*/
 
 /* ---- COLORS ---------------------------------------------------------------*/
+/* Every value is a CSS variable, defined for light in `:root` and overridden
+ * under `.dark` in globals.css. Because these are var() references rather than
+ * literals, the ~100 inline `style={{ color: colors.x }}` usages across the app
+ * follow the theme automatically — no per-component dark variants needed.
+ *
+ * TO RETUNE EITHER THEME, edit the two blocks in app/globals.css. */
 export const colors = {
-  background: "#ffffff",
+  background: "var(--c-background)",
 
   /* TEXT — the three brand text colors */
-  primary: "#1D2539", // headings + prominent text
-  secondary: "#475067", // body + supporting text
-  tertiary: "#989FB3", // labels/captions: ABOUT, axis times, location, GMT
+  primary: "var(--c-primary)", // headings + prominent text
+  secondary: "var(--c-secondary)", // body + supporting text
+  tertiary: "var(--c-tertiary)", // labels/captions: ABOUT, axis times, location, GMT
 
   /* UI */
-  line: "oklch(0.923 0.003 48.717)", // hairline borders
-  panel: "#fafaf9", // card panel + polaroid background
-  accent: "#f54a00", // timeline pin / marker
+  line: "var(--c-line)", // hairline borders
+  panel: "var(--c-panel)", // card panel + polaroid background
+  accent: "var(--c-accent)", // timeline pin / marker / Ask AI sparkle
+  surface: "var(--c-surface)", // raised surface: active nav pill, composer
 
   /* TABS */
-  tabActive: "#1D2539", // active tab text (= primary)
-  tabActiveBg: "#f5f4f2", // active tab pill background
-  tabInactive: "#a6a09b", // inactive tab text
-  tabInactiveHover: "#57534e", // inactive tab text on hover
+  tabActive: "var(--c-tab-active)", // active tab text (= primary)
+  tabActiveBg: "var(--c-tab-active-bg)", // tab track background
+  tabInactive: "var(--c-tab-inactive)", // inactive tab text
+  tabInactiveHover: "var(--c-tab-inactive-hover)", // inactive tab text on hover
+
+  /* BUTTONS — Contact (solid) and View Resume (muted).
+     The *Ring tokens are transparent in light and a hairline in dark, where
+     fills alone don't separate the two actions. */
+  btnSolidBg: "var(--c-btn-solid-bg)",
+  btnSolidText: "var(--c-btn-solid-text)",
+  btnSolidRing: "var(--c-btn-solid-ring)",
+  btnMutedBg: "var(--c-btn-muted-bg)",
+  btnMutedBgHover: "var(--c-btn-muted-bg-hover)",
+  btnMutedRing: "var(--c-btn-muted-ring)",
 };
 
 /* ---- TYPOGRAPHY -----------------------------------------------------------*/

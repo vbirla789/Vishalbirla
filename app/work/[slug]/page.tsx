@@ -111,10 +111,10 @@ function MediaBlock({ media, alt }: { media: StoryMedia; alt: string }) {
 
 function DataTable({ table }: { table: { columns: string[]; rows: string[][] } }) {
   return (
-    <div className="mt-6 w-full overflow-x-auto rounded-xl ring-1 ring-black/5">
+    <div className="mt-6 w-full overflow-x-auto rounded-xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]">
       <table className="w-full text-left">
         <thead>
-          <tr className="border-b border-black/5">
+          <tr className="border-b border-black/5 dark:border-[color:var(--c-line)]">
             {table.columns.map((c) => (
               <th
                 key={c}
@@ -126,7 +126,7 @@ function DataTable({ table }: { table: { columns: string[]; rows: string[][] } }
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-black/5">
+        <tbody className="divide-y divide-black/5 dark:divide-[color:var(--c-line)]">
           {table.rows.map((row, ri) => (
             <tr key={ri}>
               {row.map((cell, ci) => (
@@ -237,7 +237,7 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                     </ul>
                   ) : null}
                   {it.versions && it.versions.length > 0 ? (
-                    <div className="mt-8 rounded-2xl bg-zinc-50 p-6 ring-1 ring-black/5">
+                    <div className="mt-8 rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-6 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]">
                       <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
                         {it.versions.map((v) => (
                           <Zoomable key={v.label} label={v.label} className="flex flex-col gap-3">
@@ -256,7 +256,7 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                             <img
                               src={v.image}
                               alt={v.label}
-                              className="mx-auto w-full max-w-[150px] rounded-xl ring-1 ring-black/5"
+                              className="mx-auto w-full max-w-[150px] rounded-xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
                               loading="lazy"
                             />
                           </Zoomable>
@@ -287,7 +287,7 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                   <Zoomable
                     key={v}
                     label={`Approach ${label}`}
-                    className="flex flex-col items-center gap-8 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
+                    className="flex flex-col items-center gap-8 rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-4 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
                   >
                     <div className="overflow-hidden rounded-[22px]">
                       <video
@@ -302,7 +302,7 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
                     </div>
                     <span
                       className="text-[13px] font-medium"
-                      style={{ color: chosen ? "#000000" : colors.tertiary }}
+                      style={{ color: chosen ? colors.primary : colors.tertiary }}
                     >
                       {chosen ? `Approach ${label} · chosen` : `Approach ${label}`}
                     </span>
@@ -408,7 +408,7 @@ export default async function CaseStudyPage({
                   <Eyebrow>Collaborators</Eyebrow>
                   <div className="flex flex-col gap-2">
                     {project.collaborators.map((c) => (
-                      <span key={c} style={{ ...t(type.expCompany), fontSize: 15, color: "#1D2539" }}>
+                      <span key={c} style={{ ...t(type.expCompany), fontSize: 15, color: colors.primary }}>
                         {c}
                       </span>
                     ))}
@@ -443,7 +443,7 @@ export default async function CaseStudyPage({
                   <li key={pt.title} className="flex gap-4">
                     <span
                       className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold"
-                      style={{ background: "#f4f4f5", color: colors.primary }}
+                      style={{ background: colors.tabActiveBg, color: colors.primary }}
                     >
                       {i + 1}
                     </span>
@@ -492,9 +492,9 @@ export default async function CaseStudyPage({
 
               <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 {project.outcomes.metrics.map((m) => (
-                  <div key={m.label} className="rounded-2xl bg-zinc-50 p-6">
+                  <div key={m.label} className="rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-6">
                     <div style={{ ...t(type.caseMetric), fontSize: "clamp(1.5rem, 6vw, 2rem)" }}>{m.value}</div>
-                    <p className="mt-2" style={{ ...t(type.expMeta), color: "#666D85" }}>
+                    <p className="mt-2" style={{ ...t(type.expMeta), color: colors.secondary }}>
                       {m.label}
                     </p>
                   </div>
@@ -531,10 +531,10 @@ export default async function CaseStudyPage({
                   {s.body}
                 </p>
                 {s.table ? (
-                  <div className="mt-6 w-full overflow-x-auto rounded-xl ring-1 ring-black/5">
+                  <div className="mt-6 w-full overflow-x-auto rounded-xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]">
                     <table className="w-full text-left">
                       <thead>
-                        <tr className="border-b border-black/5">
+                        <tr className="border-b border-black/5 dark:border-[color:var(--c-line)]">
                           {s.table.columns.map((c) => (
                             <th
                               key={c}
@@ -546,7 +546,7 @@ export default async function CaseStudyPage({
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-black/5">
+                      <tbody className="divide-y divide-black/5 dark:divide-[color:var(--c-line)]">
                         {s.table.rows.map((row, ri) => (
                           <tr key={ri}>
                             {row.map((cell, ci) => (
@@ -605,7 +605,7 @@ export default async function CaseStudyPage({
                     <Zoomable
                       key={v}
                       label="AI prototype"
-                      className="flex justify-center rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5"
+                      className="flex justify-center rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-4 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
                     >
                       <div className="overflow-hidden rounded-[22px]">
                         <video
@@ -623,7 +623,7 @@ export default async function CaseStudyPage({
                 </div>
               ) : (
                 <div
-                  className="mt-8 flex h-[320px] items-center justify-center rounded-2xl bg-zinc-100 text-center"
+                  className="mt-8 flex h-[320px] items-center justify-center rounded-2xl bg-zinc-100 dark:bg-[color:var(--c-panel)] text-center"
                   style={{ ...t(type.expMeta), color: colors.tertiary }}
                 >
                   AI-prototype videos to be added here

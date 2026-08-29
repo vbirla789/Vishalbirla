@@ -32,6 +32,17 @@ export const metadata: Metadata = {
     "Product designer based out of India, currently at noon. I shape how things look, then bring them to life with AI, and I'm a Framer expert too.",
 };
 
+/* Runs before first paint so a dark-mode visitor never sees a white flash.
+   Reads the saved choice, falling back to the OS preference. Kept as a raw
+   string because it must execute ahead of hydration. */
+const THEME_INIT = `
+(function(){try{
+  var s=localStorage.getItem("theme");
+  var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if(d)document.documentElement.classList.add("dark");
+}catch(e){}})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,8 +51,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${geistPixel.variable} antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+      </head>
       <body
         className="min-h-screen"
         style={{ backgroundColor: colors.background, color: colors.primary }}

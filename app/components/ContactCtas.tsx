@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { playError, playHover, playSuccess } from "../lib/sound";
+import { colors } from "../theme";
 
 const EMAIL = "vishalbirla789@gmail.com";
 const RESUME_URL =
@@ -76,14 +77,14 @@ export default function ContactCtas() {
       <div ref={containerRef} className="relative" style={{ width: 116, height: 38 }}>
         <div
           id="hero-contact"
-          className="absolute left-0 top-0 z-40 overflow-hidden bg-[#171717] text-[#FAFAFA] [will-change:width,height,border-radius,box-shadow] transition-[width,height,border-radius,box-shadow] duration-[340ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="absolute left-0 top-0 z-40 overflow-hidden bg-[color:var(--c-btn-solid-bg)] text-[color:var(--c-btn-solid-text)] [will-change:width,height,border-radius,box-shadow] transition-[width,height,border-radius,box-shadow] duration-[340ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
             width: isOpen ? expandedWidth : 116,
             height: isOpen ? expandedHeight : 38,
             borderRadius: isOpen ? 20 : 19,
             boxShadow: isOpen
               ? "0 20px 35px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)"
-              : "none",
+              : `inset 0 0 0 1px ${colors.btnSolidRing}`,
           }}
         >
           {/* Collapsed Pill Button */}
@@ -267,7 +268,9 @@ export default function ContactCtas() {
         type="button"
         onClick={handleResumeClick}
         onMouseEnter={playHover}
-        className="inline-flex h-[38px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[#efefef] px-4 py-0 text-[14px] font-medium leading-none tracking-[-0.01em] text-[#171717] transition-colors hover:bg-[#EAEAEA] outline-none focus-visible:ring-2 focus-visible:ring-[#171717]/40 focus-visible:ring-offset-2"
+        className="inline-flex h-[38px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[color:var(--c-btn-muted-bg)] px-4 py-0 text-[14px] font-medium leading-none tracking-[-0.01em] text-[color:var(--c-primary)] transition-colors hover:bg-[color:var(--c-btn-muted-bg-hover)] outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 focus-visible:ring-offset-2"
+        // inset ring rather than a border, so the 38px height doesn't shift
+        style={{ boxShadow: `inset 0 0 0 1px ${colors.btnMutedRing}` }}
       >
         View Resume
       </button>

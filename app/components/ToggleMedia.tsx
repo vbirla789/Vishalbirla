@@ -1,11 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useId, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CaseMedia } from "./caseMedia";
 import { useMediaViewer } from "./MediaViewer";
+import SlidingTabs from "./SlidingTabs";
 import type { StoryMedia } from "../lib/projects";
 import { colors } from "../theme";
+import { playHover } from "../lib/sound";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -31,7 +33,6 @@ export default function ToggleMedia({
   defaultIndex?: number;
 }) {
   const [idx, setIdx] = useState(defaultIndex);
-  const pillId = useId();
   const { open } = useMediaViewer();
   const rootRef = useRef<HTMLDivElement>(null);
   const active = options[idx]?.media;
@@ -54,29 +55,15 @@ export default function ToggleMedia({
 
   return (
     <div ref={rootRef} className={enlargeable ? undefined : "flex flex-col items-center"}>
-      <div className="mb-5 inline-flex rounded-full bg-zinc-100 p-1">
-        {options.map((o, i) => (
-          <button
-            key={o.label}
-            type="button"
-            onClick={() => setIdx(i)}
-            aria-pressed={idx === i}
-            className="relative rounded-full px-4 py-1.5 text-[13px] font-medium capitalize outline-none"
-            style={{
-              color: idx === i ? colors.primary : colors.tertiary,
-              transition: "color 0.25s ease",
-            }}
-          >
-            {idx === i ? (
-              <motion.span
-                layoutId={pillId}
-                className="absolute inset-0 rounded-full bg-white shadow-sm"
-                transition={{ type: "spring", stiffness: 420, damping: 34 }}
-              />
-            ) : null}
-            <span className="relative z-10">{o.label}</span>
-          </button>
-        ))}
+      <div className="mb-5">
+        <SlidingTabs
+          size="lg"
+          ariaLabel={`${alt} view`}
+          tabs={options.map((o, i) => ({ id: String(i), label: o.label }))}
+          activeId={String(idx)}
+          onSelect={(id) => setIdx(Number(id))}
+          onTabHover={playHover}
+        />
       </div>
 
       <AnimatePresence mode="wait">

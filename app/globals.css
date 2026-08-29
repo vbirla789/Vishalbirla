@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Drive Tailwind's `dark:` variant from the .dark class on <html> instead of
+   the OS preference, so the header toggle actually controls it. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Colors + typography now live in app/theme.ts (the single file to tune).
    This file only handles fonts and the timeline grid texture. */
 
@@ -11,8 +15,72 @@
   --font-pixel: var(--font-geist-pixel);
 }
 
+/* ---- THEME PALETTES -------------------------------------------------------
+   app/theme.ts points every colour token at these variables, so editing here
+   retunes the whole site. Dark values keep the navy cast of the light
+   palette's #1D2539 rather than going neutral grey. */
+:root {
+  --c-background: #ffffff;
+  --c-primary: #1d2539;
+  --c-secondary: #475067;
+  --c-tertiary: #989fb3;
+  --c-line: oklch(0.923 0.003 48.717);
+  --c-panel: #fafaf9;
+  --c-accent: #f54a00;
+  --c-surface: #ffffff;
+
+  --c-tab-active: #1d2539;
+  --c-tab-active-bg: #f5f4f2;
+  --c-tab-inactive: #a6a09b;
+  --c-tab-inactive-hover: #57534e;
+
+  /* Primary = solid fill. Secondary = flat tint. No rings needed on white. */
+  --c-btn-solid-bg: #171717;
+  --c-btn-solid-text: #fafafa;
+  --c-btn-solid-ring: transparent;
+  --c-btn-muted-bg: #efefef;
+  --c-btn-muted-bg-hover: #eaeaea;
+  --c-btn-muted-ring: transparent;
+
+  color-scheme: light;
+}
+
+/* Neutral near-black, in the vein of the crd-ui docs: a very dark page, a
+   distinctly lighter panel, near-white headings, mid-grey body copy. No blue
+   cast — the hue comes only from the accent. */
+.dark {
+  --c-background: #0a0a0a;
+  --c-primary: #fafafa;
+  --c-secondary: #a1a1a1;
+  --c-tertiary: #6e6e6e;
+  --c-line: rgba(255, 255, 255, 0.08);
+  --c-panel: #141414;
+  --c-accent: #ff5c33; /* lifted + redder than #f54a00, which goes muddy on black */
+  --c-surface: #1c1c1c;
+
+  --c-tab-active: #fafafa;
+  --c-tab-active-bg: #171717;
+  --c-tab-inactive: #7a7a7a;
+  --c-tab-inactive-hover: #d4d4d4;
+
+  /* Primary stays a dark elevated surface rather than inverting to white: the
+     Contact pill expands into a card whose internals are all white/xx alpha,
+     which would be invisible on a light fill. Hierarchy instead comes from
+     filled-with-ring (primary) vs outlined (secondary) — at #262626 vs
+     #1c1c1c the two were nearly indistinguishable. */
+  --c-btn-solid-bg: #2f2f2f;
+  --c-btn-solid-text: #fafafa;
+  --c-btn-solid-ring: rgba(255, 255, 255, 0.14);
+  --c-btn-muted-bg: transparent;
+  --c-btn-muted-bg-hover: #1c1c1c;
+  --c-btn-muted-ring: rgba(255, 255, 255, 0.12);
+
+  color-scheme: dark;
+}
+
 html {
   scroll-behavior: smooth;
+  background: var(--c-background);
 }
 
 /* every interactive element shows a pointer cursor on hover */
@@ -48,6 +116,101 @@ body {
   h5,
   h6 {
     font-family: var(--font-geist-pixel), ui-monospace, monospace;
+  }
+}
+
+/* ---- SLIDING TABS ---------------------------------------------------------
+   Transitions.dev "Tabs sliding". The pill's width/transform are written
+   inline by SlidingTabs.tsx from the active tab's offsetLeft/offsetWidth, so
+   the transition tweens between measured positions. Colours are mapped onto
+   the theme tokens rather than the reference's fixed greys, so one definition
+   covers light and dark. */
+:root {
+  --tabs-dur: 250ms;
+  --tabs-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-tabs {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 48px;
+  background: var(--c-tab-active-bg);
+}
+
+.t-tab {
+  position: relative;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  height: 30px;
+  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--c-tab-inactive);
+  cursor: pointer;
+  border-radius: 48px;
+  z-index: 1;
+  outline: none;
+  transition: color var(--tabs-dur) var(--tabs-ease);
+}
+
+.t-tab:not([aria-selected="true"]):hover {
+  color: var(--c-tab-inactive-hover);
+}
+
+.t-tab[aria-selected="true"] {
+  color: var(--c-tab-active);
+  font-weight: 500;
+}
+
+/* Roomier variant for the Before/After media toggles. */
+.t-tabs--lg .t-tab {
+  height: 32px;
+  padding: 4px 16px;
+  text-transform: capitalize;
+}
+.t-tabs--lg .t-tabs-pill {
+  height: 32px;
+}
+
+/* width + transform are written inline by JS */
+.t-tabs-pill {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  height: 30px;
+  width: 0;
+  background: var(--c-surface);
+  border-radius: 48px;
+  transform: translateX(0);
+  transition:
+    transform var(--tabs-dur) var(--tabs-ease),
+    width var(--tabs-dur) var(--tabs-ease);
+  will-change: transform, width;
+  z-index: 0;
+  pointer-events: none;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.dark .t-tabs-pill {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-tabs-pill,
+  .t-tab {
+    transition: none !important;
   }
 }
 
