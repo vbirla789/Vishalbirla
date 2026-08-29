@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { playError, playHover, playSuccess } from "../lib/sound";
 
 const EMAIL = "vishalbirla789@gmail.com";
+const RESUME_URL =
+  "https://drive.google.com/file/d/1TBDsHm06lsAbuK6XGfDxVIKnsOzDW8m3/view?usp=sharing";
 
 export default function ContactCtas() {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,11 +62,7 @@ export default function ContactCtas() {
   };
 
   const handleResumeClick = () => {
-    window.open(
-      "https://drive.google.com/file/d/1BYmEkLNnls8_dyRPnGYt1W6e2-sC950F/view?usp=sharing",
-      "_blank",
-      "noopener,noreferrer"
-    );
+    window.open(RESUME_URL, "_blank", "noopener,noreferrer");
   };
 
   // Expanded dimensions tuned for balanced horizontal and vertical spacing
