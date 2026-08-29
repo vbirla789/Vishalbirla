@@ -29,7 +29,7 @@ export default function Home() {
               className="text-[#1D2539]"
               style={{
                 ...t(type.headline),
-                fontSize: "clamp(1.5rem, 5vw, 1.75rem)",
+                fontSize: "clamp(1.75rem, 5vw, 2rem)",
                 lineHeight: 1.2,
                 cursor: "default",
               }}

@@ -58,11 +58,11 @@ function Caption({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Single headline style used for every heading on the case study (24px medium).
+// Single headline style used for every heading on the case study (28px medium).
 // Only two content type styles exist: this headline + the body/description.
 const H2_STYLE = {
   ...t(type.caseH2),
-  fontSize: 24,
+  fontSize: 28,
   fontWeight: 500,
   lineHeight: 1.3,
   color: colors.primary,
@@ -365,7 +365,7 @@ export default async function CaseStudyPage({
             </div>
             <h1
               className="w-full"
-              style={{ ...t(type.headline), fontSize: "clamp(1.375rem, 5.5vw, 1.75rem)", lineHeight: 1.25 }}
+              style={{ ...t(type.headline), fontSize: "clamp(1.625rem, 5.5vw, 2rem)", lineHeight: 1.25 }}
             >
               {project.title}
             </h1>

@@ -64,7 +64,7 @@ export default function ContactCtas() {
   const innerContentWidth = expandedWidth - 32; // 16px padding on left & right
 
   return (
-    <div className="mt-8 flex items-center gap-3">
+    <div className="mt-6 flex items-center gap-3">
       {/* Layout anchor: reserves exact 116px x 38px inline space */}
       <div ref={containerRef} className="relative" style={{ width: 116, height: 38 }}>
         <div
