@@ -45,7 +45,7 @@ export const type: Record<string, TypeToken> = {
   // Hero headline — "Vishal Birla is a Product Designer & Framer Expert."
   headline: { size: 32, weight: 500, lineHeight: 40, tracking: -0.03, color: colors.primary },
 
-  // "ABOUT" label (rendered in mono)
+  // "ABOUT" label
   aboutLabel: { size: 12, weight: 500, lineHeight: 18, tracking: 0, color: colors.tertiary },
 
   // About paragraphs

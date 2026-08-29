@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { colors } from "./theme";
 import { Retune } from "retune";
@@ -9,9 +10,14 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// Geist Pixel — display font, not on Google Fonts. Files come from
+// github.com/vercel/geist-pixel-font (OFL 1.1); "Square" variant.
+const geistPixel = localFont({
+  src: "../public/fonts/GeistPixel-Square.woff2",
+  variable: "--font-geist-pixel",
+  display: "swap",
+  weight: "400",
+  style: "normal",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={`${geistSans.variable} ${geistPixel.variable} antialiased`}
     >
       <body
         className="min-h-screen"

@@ -102,7 +102,7 @@ function LogoMark({ src, alt }: { src: string; alt: string }) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-5 font-mono uppercase" style={t(type.aboutLabel)}>
+    <p className="mb-5 uppercase" style={t(type.aboutLabel)}>
       {children}
     </p>
   );
@@ -177,7 +177,7 @@ export default function WorkSection() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 {/* title */}
                 <h3
-                  className="max-w-[560px]"
+                  className="max-w-[560px] font-sans"
                   style={{ ...t(type.caseH2), fontSize: 18, lineHeight: "26px", color: "#1D2539" }}
                 >
                   {p.title}

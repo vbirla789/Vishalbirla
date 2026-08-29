@@ -33,7 +33,7 @@ export async function generateMetadata({
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-4 font-mono uppercase" style={t(type.aboutLabel)}>
+    <p className="mb-4 uppercase" style={t(type.aboutLabel)}>
       {children}
     </p>
   );
@@ -118,7 +118,7 @@ function DataTable({ table }: { table: { columns: string[]; rows: string[][] } }
             {table.columns.map((c) => (
               <th
                 key={c}
-                className="px-4 py-3 font-mono text-[11px] font-medium uppercase tracking-wide"
+                className="px-4 py-3 text-[11px] font-medium uppercase tracking-wide"
                 style={{ color: colors.tertiary }}
               >
                 {c}
@@ -538,7 +538,7 @@ export default async function CaseStudyPage({
                           {s.table.columns.map((c) => (
                             <th
                               key={c}
-                              className="px-4 py-3 font-mono text-[11px] font-medium uppercase tracking-wide"
+                              className="px-4 py-3 text-[11px] font-medium uppercase tracking-wide"
                               style={{ color: colors.tertiary }}
                             >
                               {c}

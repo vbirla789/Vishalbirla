@@ -22,7 +22,7 @@ export default function Home() {
         <section id="about" className="mt-12 max-w-[640px] scroll-mt-28 sm:mt-16">
           {/* name appears first */}
           <Appear>
-            <p className="mb-4 font-mono uppercase" style={t(type.aboutLabel)}>
+            <p className="mb-4 uppercase" style={t(type.aboutLabel)}>
               About
             </p>
             <h1
@@ -54,7 +54,7 @@ export default function Home() {
           <Appear delay={0.26}>
             <div className="mt-9">
               <p
-                className="mb-4 font-mono uppercase"
+                className="mb-4 uppercase"
                 style={t(type.aboutLabel)}
               >
                 Crafted experiences at

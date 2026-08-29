@@ -3,9 +3,10 @@
 /* Colors + typography now live in app/theme.ts (the single file to tune).
    This file only handles fonts and the timeline grid texture. */
 
+/* Two fonts, site-wide: Geist for everything readable, Geist Pixel for headings. */
 @theme inline {
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-pixel: var(--font-geist-pixel);
 }
 
 html {
@@ -30,6 +31,22 @@ body {
     "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Headings render in Geist Pixel. Must live in `@layer base` so that utility
+   classes can still override it — an unlayered rule here would beat
+   `@layer utilities` no matter the specificity. Opt an individual heading back
+   out with Tailwind's `font-sans` (see the Work-list card titles, which are
+   long sentences at 18px and stay in Geist for legibility). */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-geist-pixel), ui-monospace, monospace;
+  }
 }
 
 /* faint grid used behind the timeline cards */
