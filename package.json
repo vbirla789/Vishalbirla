@@ -9,12 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "cuelume": "^0.2.2",
     "framer-motion": "^12.42.2",
     "next": "16.2.10",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "retune": "^0.7.6",
-    "tone": "^15.1.22"
+    "retune": "^0.7.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

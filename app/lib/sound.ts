@@ -1,105 +1,94 @@
 "use client";
 
 /* ----------------------------------------------------------------------------
- * Tactile UI sounds via Tone.js.
- * Every voice runs through a master limiter and uses a real attack/decay
- * envelope, so there's no pop on the first click and levels stay consistent.
- * Tone is imported dynamically (client-only) to stay clear of SSR, and the
- * audio graph is built up-front (preloadAudio) while the AudioContext is only
- * resumed on the first user gesture (primeAudio).
+ * Tactile UI sounds, powered by cuelume.
+ *
+ * cuelume synthesizes each cue live via the Web Audio API — no audio files,
+ * no dependencies. It owns the AudioContext (lazily created, auto-resumed
+ * after the first gesture) and is a no-op during SSR, so this module stays a
+ * thin mapping layer over it.
+ *
+ * TO RETUNE THE SOUND DESIGN, edit the CUES table below — nothing else.
+ * The seventeen available cue names are:
+ *   chime · sparkle · droplet · bloom · whisper · tick · press · release
+ *   toggle · success · error · page · loading · ready · pulse · scan · arrival
  * --------------------------------------------------------------------------*/
 
-type ToneMod = typeof import("tone");
+import { play, setEnabled, setVolume, type SoundName } from "cuelume";
 
-let Tone: ToneMod | null = null;
-let built = false;
-let resumed = false;
+type Cue = { sound: SoundName; volume: number };
 
-let voices: {
-  hover: import("tone").MembraneSynth;
-  select: import("tone").MembraneSynth;
-  scroll: import("tone").MembraneSynth;
-} | null = null;
+/** The whole sound design, in one table. Tweak names/volumes here. */
+const CUES = {
+  // Fires on every pointerenter across the nav, links and buttons — so this
+  // wants the crispest, shortest cue in the palette.
+  hover: { sound: "tick", volume: 0.32 },
 
-/** Build the audio graph. Safe before any gesture — the context stays suspended. */
-async function load() {
-  if (built || typeof window === "undefined") return;
-  if (!Tone) Tone = await import("tone");
+  // A fuller knock for deliberate activation.
+  select: { sound: "press", volume: 0.55 },
 
-  // Master limiter keeps every hit at a consistent, controlled level.
-  const limiter = new Tone.Limiter(-6).toDestination();
+  // Fires repeatedly as the page crosses scroll detents (see useScrollTicks),
+  // so it stays soft and airy — a crisp tick here would grate.
+  scroll: { sound: "whisper", volume: 0.22 },
 
-  // High-pass for the section pock — strips the low-end boom, leaves a tight tick.
-  const scrollHP = new Tone.Filter({
-    type: "highpass",
-    frequency: 500,
-    rolloff: -24,
-  }).connect(limiter);
+  // Confirmation after an action actually completes, e.g. copying the email.
+  success: { sound: "success", volume: 0.5 },
 
-  voices = {
-    // light, high, quick tick
-    hover: new Tone.MembraneSynth({
-      volume: -19,
-      octaves: 2,
-      pitchDecay: 0.006,
-      envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.02 },
-    }).connect(limiter),
-    // fuller, lower knock
-    select: new Tone.MembraneSynth({
-      volume: -11,
-      octaves: 4,
-      pitchDecay: 0.03,
-      envelope: { attack: 0.002, decay: 0.16, sustain: 0, release: 0.06 },
-    }).connect(limiter),
-    // satisfying tight "tock" as each section is entered — high-passed, no boom
-    scroll: new Tone.MembraneSynth({
-      volume: -10,
-      octaves: 1,
-      pitchDecay: 0.01,
-      envelope: { attack: 0.001, decay: 0.08, sustain: 0, release: 0.03 },
-    }).connect(scrollHP),
-  };
+  // A recoverable action failed — e.g. the clipboard rejected the write.
+  error: { sound: "error", volume: 0.45 },
+} as const satisfies Record<string, Cue>;
 
-  built = true;
+function cue({ sound, volume }: Cue) {
+  play(sound, { volume });
 }
 
-/** Build the audio graph early (call on mount). No sound, no gesture needed. */
-export function preloadAudio() {
-  void load();
-}
+/* ---- lifecycle -------------------------------------------------------------
+ * cuelume creates and resumes its own AudioContext on first play(), so there
+ * is nothing to build or unlock ahead of time. These two are kept as no-ops
+ * because SideNav and CaseStudyNav call them on mount / first gesture.
+ * --------------------------------------------------------------------------*/
 
-/** Resume the audio context — call on the first user gesture. */
-export function primeAudio() {
-  void load().then(async () => {
-    if (!Tone) return;
-    await Tone.start();
-    resumed = true;
-  });
-}
+/** No-op — retained for API compatibility with the previous Tone.js graph. */
+export function preloadAudio() {}
 
-function play(kind: "hover" | "select" | "scroll", note: string, dur: number) {
-  if (!built || !resumed || !voices) {
-    primeAudio(); // warm up; the next interaction will sound
-    return;
-  }
-  try {
-    voices[kind].triggerAttackRelease(note, dur);
-  } catch {
-    /* ignore rapid-retrigger scheduling collisions (e.g. fast scroll) */
-  }
-}
+/** No-op — cuelume resumes its own context on the first real cue. */
+export function primeAudio() {}
 
-/** Hover: a light, high, quick woody tick. */
+/* ---- cues ---------------------------------------------------------------- */
+
+/** Hover: a crisp, instant tick. */
 export function playHover() {
-  play("hover", "C5", 0.03);
+  cue(CUES.hover);
 }
 
-/** Click: a fuller, lower, satisfying woody knock. */
+/** Click: a fuller, muted knock. */
 export function playSelect() {
-  play("select", "C3", 0.14);
+  cue(CUES.select);
 }
 
-/** Section change: a tight, satisfying tock as each section scrolls into view. */
+/** Scroll detent / section change: a soft hush with a falling tone. */
 export function playScroll() {
-  play("scroll", "C4", 0.08);
+  cue(CUES.scroll);
+}
+
+/** Action succeeded: a warm three-note confirmation. */
+export function playSuccess() {
+  cue(CUES.success);
+}
+
+/** Action failed recoverably: a soft knock and descending refusal. */
+export function playError() {
+  cue(CUES.error);
+}
+
+/* ---- preferences --------------------------------------------------------- */
+
+/** Mute or unmute all future cues. cuelume does not persist this. */
+export function setSoundEnabled(enabled: boolean) {
+  setEnabled(enabled);
+}
+
+/** Global volume multiplier for all future cues, clamped 0–1 by cuelume. */
+export function setSoundVolume(volume: number) {
+  setVolume(volume);
 }

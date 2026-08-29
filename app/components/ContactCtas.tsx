@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { playHover } from "../lib/sound";
+import { playError, playHover, playSuccess } from "../lib/sound";
+
+const EMAIL = "vishalbirla789@gmail.com";
 
 export default function ContactCtas() {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,11 +45,18 @@ export default function ContactCtas() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  const handleCopyEmail = (e: React.MouseEvent) => {
+  const handleCopyEmail = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText("vishalbirla789@gmail.com");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      // Rejects if the document isn't focused or clipboard permission is
+      // denied, so only confirm once the write has actually landed.
+      await navigator.clipboard.writeText(EMAIL);
+      playSuccess(); // audible confirmation to match the checkmark swap
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      playError(); // don't claim success we didn't get
+    }
   };
 
   const handleResumeClick = () => {
@@ -165,7 +174,7 @@ export default function ContactCtas() {
                     <div className="flex min-w-0 flex-col">
                       <span className="text-[11px] font-medium tracking-tight text-white/45">Email</span>
                       <span className="truncate text-[13.5px] font-medium tracking-tight text-white">
-                        vishalbirla789@gmail.com
+                        {EMAIL}
                       </span>
                     </div>
                   </div>
