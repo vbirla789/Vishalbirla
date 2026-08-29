@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { colors, t, type } from "../theme";
+import { experience } from "../lib/experience";
 
 /* ---------- Work case studies ---------- */
 
@@ -46,38 +47,8 @@ const projects: Project[] = [
 ];
 
 /* ---------- Experience ---------- */
-
-const experience: {
-  role: string;
-  company: string;
-  period: string;
-  logo: string;
-}[] = [
-  {
-    role: "Product Designer Intern",
-    company: "noon",
-    period: "May 2026 - present",
-    logo: "/logos/noon.jpeg",
-  },
-  {
-    role: "Product Designer Intern",
-    company: "Ambitio",
-    period: "July 2025 - April 2026",
-    logo: "/logos/ambitio.avif",
-  },
-  {
-    role: "Product Designer (Contract)",
-    company: "Fibr.ai",
-    period: "April 2025 - July 2025",
-    logo: "/logos/fibr.avif",
-  },
-  {
-    role: "Product Designer Intern",
-    company: "DZINR",
-    period: "Jan 2025 - April 2025",
-    logo: "/logos/dzinr.avif",
-  },
-];
+// Data lives in app/lib/experience.ts so the homepage (a Server Component)
+// can import it too — see the note in that file.
 
 const funVideos = [
   { src: "/fun/experiment-1.mp4", title: "Expense Tracker", year: "2026" },
@@ -87,7 +58,7 @@ const funVideos = [
 
 /* ---------- building blocks ---------- */
 
-function LogoMark({ src, alt }: { src: string; alt: string }) {
+export function LogoMark({ src, alt }: { src: string; alt: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img

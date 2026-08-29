@@ -1,7 +1,8 @@
 import ContactCtas from "./components/ContactCtas";
 import SideNav from "./components/SideNav";
 import TimelineWidget from "./components/TimelineWidget";
-import WorkSection from "./components/WorkSection";
+import WorkSection, { LogoMark } from "./components/WorkSection";
+import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
 import Appear from "./components/Appear";
 import { t, type } from "./theme";
@@ -59,20 +60,12 @@ export default function Home() {
               >
                 Crafted experiences at
               </p>
-              {/* per-logo heights tuned so the marks read at the same optical size
-                  (each source image has different internal padding) */}
+              {/* app-icon marks, reusing the same list the Experience section
+                  renders so the two can never drift apart */}
               <div className="flex flex-wrap items-center gap-4">
-                {/* eslint-disable @next/next/no-img-element */}
-                <img src="/crafted/noon.svg" alt="noon" className="h-[14px] w-auto" />
-                <img src="/crafted/ambitio.png" alt="Ambitio" className="h-[18px] w-auto" />
-                <img
-                  src="/crafted/fibr.png"
-                  alt="Fibr.ai"
-                  loading="eager"
-                  className="h-[20px] w-auto"
-                />
-                <img src="/crafted/dzinr.png" alt="DZINR" className="h-[24px] w-auto" />
-                {/* eslint-enable @next/next/no-img-element */}
+                {experience.map((e) => (
+                  <LogoMark key={e.company} src={e.logo} alt={e.company} />
+                ))}
               </div>
             </div>
           </Appear>
