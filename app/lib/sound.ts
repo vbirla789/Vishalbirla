@@ -27,9 +27,9 @@ const CUES = {
   // A fuller knock for deliberate activation.
   select: { sound: "press", volume: 0.55 },
 
-  // Fires repeatedly as the page crosses scroll detents (see useScrollTicks),
-  // so it stays soft and airy — a crisp tick here would grate.
-  scroll: { sound: "whisper", volume: 0.22 },
+  // Section changes and scroll detents (see useScrollTicks) deliberately use
+  // the same cue as hover, so navigating by scroll and by pointer feel alike.
+  scroll: { sound: "tick", volume: 0.32 },
 
   // Confirmation after an action actually completes, e.g. copying the email.
   success: { sound: "success", volume: 0.5 },
@@ -66,7 +66,7 @@ export function playSelect() {
   cue(CUES.select);
 }
 
-/** Scroll detent / section change: a soft hush with a falling tone. */
+/** Scroll detent / section change: the same crisp tick as hover. */
 export function playScroll() {
   cue(CUES.scroll);
 }
