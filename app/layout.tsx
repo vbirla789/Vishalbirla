@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { colors } from "./theme";
@@ -7,6 +7,12 @@ import { Retune } from "retune";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+// Used only for the small uppercase section labels (ABOUT, WORK, CONTEXT, …).
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -34,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistPixel.variable} antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${geistPixel.variable} antialiased`}
     >
       <body
         className="min-h-screen"

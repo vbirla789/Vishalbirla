@@ -33,7 +33,7 @@ export async function generateMetadata({
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-4 uppercase" style={t(type.aboutLabel)}>
+    <p className="mb-4 font-mono uppercase" style={t(type.aboutLabel)}>
       {children}
     </p>
   );

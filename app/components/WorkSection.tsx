@@ -102,7 +102,7 @@ function LogoMark({ src, alt }: { src: string; alt: string }) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-5 uppercase" style={t(type.aboutLabel)}>
+    <p className="mb-5 font-mono uppercase" style={t(type.aboutLabel)}>
       {children}
     </p>
   );
