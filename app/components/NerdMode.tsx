@@ -67,7 +67,17 @@ export default function NerdMode() {
   const [on, setOn] = useState(false);
   const [info, setInfo] = useState<Info | null>(null);
   const [meta, setMeta] = useState({ vw: 0, vh: 0, scroll: 0 });
+  const [mounted, setMounted] = useState(false);
   const rafRef = useRef(0);
+
+  /* The portal always has content (the toggle), so returning null on the
+     server while the client's first render produced a portal put different
+     node types at the same tree position and hydration failed. Rendering
+     nothing until after mount makes the first client pass match the server. */
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const toggle = useCallback(() => {
     setOn((v) => {
@@ -144,7 +154,7 @@ export default function NerdMode() {
 
   useEffect(() => () => document.documentElement.classList.remove("nerd"), []);
 
-  if (typeof document === "undefined") return null;
+  if (!mounted || typeof document === "undefined") return null;
 
   // card flips to the left edge when the element sits near the right gutter
   const cardLeft = info

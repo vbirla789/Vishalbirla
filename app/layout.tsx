@@ -56,6 +56,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${geistPixel.variable} antialiased`}
     >
       <head>
+        {/* Must be a raw inline script: it has to run before first paint to
+            avoid a light flash, which rules out async. next/script's
+            beforeInteractive was tried and is worse here — it renders a sync
+            script that React 19 rejects the same way, and placing it outside
+            <head> produces invalid HTML. React's "script tag while rendering"
+            complaint is a development-only warning; it is not present in the
+            production React build, and the script does execute from the SSR
+            HTML exactly as intended. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
       </head>
       <body
