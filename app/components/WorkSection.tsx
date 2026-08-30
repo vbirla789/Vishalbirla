@@ -61,12 +61,12 @@ const funVideos = [
 /**
  * Company logo with a name tooltip on hover.
  *
- * Pure CSS (group-hover) rather than state, so this stays usable from the
- * homepage, which is a Server Component.
+ * Uses the shared .t-tt tooltip (globals.css) — pure CSS, so this stays usable
+ * from the homepage, which is a Server Component.
  */
 export function LogoMark({ src, alt }: { src: string; alt: string }) {
   return (
-    <span className="group/logo relative inline-flex shrink-0">
+    <span className="t-tt-wrap shrink-0">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
@@ -75,11 +75,7 @@ export function LogoMark({ src, alt }: { src: string; alt: string }) {
         height={36}
         className="h-9 w-9 shrink-0 rounded-[8px] object-cover ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
       />
-      <span
-        role="tooltip"
-        className="pointer-events-none absolute -top-1 left-1/2 z-30 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-lg px-2 py-1 text-[12px] font-medium opacity-0 shadow-lg transition-opacity duration-150 group-hover/logo:opacity-100"
-        style={{ backgroundColor: colors.primary, color: colors.background }}
-      >
+      <span role="tooltip" className="t-tt">
         {alt}
       </span>
     </span>

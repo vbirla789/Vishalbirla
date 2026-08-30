@@ -95,7 +95,6 @@ export default function AskAiPanel({
   const [value, setValue] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [thinking, setThinking] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -196,18 +195,14 @@ export default function AskAiPanel({
                 </span>
               </div>
 
-              {/* info + hover tooltip */}
-              <div
-                className="relative"
-                onMouseEnter={() => setInfoOpen(true)}
-                onMouseLeave={() => setInfoOpen(false)}
-              >
+              {/* info + hover tooltip — shared .t-tt, dropping below and
+                  right-aligned so a 250px tooltip can't overflow the panel */}
+              <span className="t-tt-wrap">
                 <button
                   type="button"
                   aria-label="About these answers"
-                  onFocus={() => setInfoOpen(true)}
-                  onBlur={() => setInfoOpen(false)}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg text-[11px] transition-colors hover:bg-[color:var(--c-tab-active-bg)]"
+                  aria-describedby="ask-disclaimer"
+                  className="t-tt-trigger flex h-7 w-7 items-center justify-center rounded-lg text-[11px] transition-colors hover:bg-[color:var(--c-tab-active-bg)]"
                   style={{ color: colors.tertiary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
@@ -215,27 +210,10 @@ export default function AskAiPanel({
                     <path d="M12 7.5v.01" />
                   </svg>
                 </button>
-
-                <AnimatePresence>
-                  {infoOpen ? (
-                    <motion.div
-                      role="tooltip"
-                      className="absolute right-0 top-9 z-10 w-[268px] rounded-2xl px-4 py-3 text-[13px] leading-snug"
-                      style={{
-                        backgroundColor: colors.primary,
-                        color: colors.background,
-                        boxShadow: "0 18px 40px -12px rgba(0,0,0,0.55)",
-                      }}
-                      initial={{ opacity: 0, y: -4, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -4, scale: 0.97 }}
-                      transition={{ duration: 0.16, ease: "easeOut" }}
-                    >
-                      {DISCLAIMER}
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </div>
+                <span id="ask-disclaimer" role="tooltip" className="t-tt t-tt--below t-tt--wrap t-tt--end">
+                  {DISCLAIMER}
+                </span>
+              </span>
             </div>
 
             {/* ---- conversation ---- */}

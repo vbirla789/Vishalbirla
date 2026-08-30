@@ -134,6 +134,103 @@ body {
   }
 }
 
+/* ---- TOOLTIP --------------------------------------------------------------
+   Transitions.dev "Tooltip open/close". Pure CSS: the *wrap* is the hover
+   target, not the trigger, so the pointer can drift onto the tooltip without
+   flicker, and transition-delay lives only in the hover rule so leaving snaps
+   back to 0 and the close plays immediately.
+
+   Colours map onto the theme tokens rather than the reference's fixed greys,
+   so one definition covers light and dark. */
+:root {
+  --tt-in-dur: 150ms;
+  --tt-out-dur: 50ms;
+  --tt-scale: 0.98;
+  --tt-delay: 80ms;
+  --tt-in-ease: ease-out;
+  --tt-out-ease: ease-out;
+}
+
+/* Wrapped in @layer components so Tailwind utilities can still override
+   these. Unlayered, `.t-tt-wrap { position: relative }` beat the `fixed`
+   utility on the nerd-mode toggle and dropped it 3500px down the page. */
+@layer components {
+  .t-tt-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .t-tt {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    z-index: 60;
+    transform: translate(-50%, 0) scale(var(--tt-scale));
+    transform-origin: 50% 100%;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--c-primary);
+    color: var(--c-background);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    white-space: nowrap;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.06),
+      0 2px 6px 0 rgba(0, 0, 0, 0.05),
+      0 4px 42px 0 rgba(0, 0, 0, 0.06);
+    opacity: 0;
+    pointer-events: none;
+    /* Default rule controls the LEAVE state — delay stays unset. */
+    transition:
+      opacity var(--tt-out-dur) var(--tt-out-ease),
+      transform var(--tt-out-dur) var(--tt-out-ease);
+  }
+
+  .t-tt-wrap:hover .t-tt,
+  .t-tt-trigger:focus-visible + .t-tt {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+    transition-duration: var(--tt-in-dur);
+    transition-timing-function: var(--tt-in-ease);
+    transition-delay: var(--tt-delay);
+  }
+
+  /* Drops below the trigger — for anything near the top of the viewport, where
+     an upward tooltip would clip. */
+  .t-tt--below {
+    bottom: auto;
+    top: calc(100% + 8px);
+    transform-origin: 50% 0;
+  }
+
+  /* Multi-line variant for sentences rather than labels. */
+  .t-tt--wrap {
+    white-space: normal;
+    width: 250px;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  /* Right-aligned so a wide tooltip near the panel edge doesn't overflow. */
+  .t-tt--end {
+    left: auto;
+    right: 0;
+    transform: translate(0, 0) scale(var(--tt-scale));
+    transform-origin: 100% 0;
+  }
+  .t-tt-wrap:hover .t-tt--end,
+  .t-tt-trigger:focus-visible + .t-tt--end {
+    transform: translate(0, 0) scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .t-tt {
+      transition: none !important;
+    }
+  }
+}
+
 /* ---- NERD MODE ------------------------------------------------------------
    Toggled by NerdMode.tsx adding .nerd to <html>. Draws a blueprint grid and
    outlines the page's structural blocks. Everything here is decoration only —
