@@ -5,6 +5,7 @@ import "./globals.css";
 import { colors } from "./theme";
 import { Retune } from "retune";
 import NerdMode from "./components/NerdMode";
+import CursorFollower from "./components/CursorFollower";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -76,6 +77,8 @@ export default function RootLayout({
         <div id="page-shell">{children}</div>
         {/* Inspect overlay — bottom-right toggle, or press "n". */}
         <NerdMode />
+        {/* Custom cursor + trailing label. Desktop pointers only. */}
+        <CursorFollower />
         {/* Visual tuning overlay — dev only. Press Option+D (Alt+D) to toggle. */}
         <Retune />
       </body>

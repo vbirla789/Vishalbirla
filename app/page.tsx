@@ -5,6 +5,7 @@ import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
 import Appear from "./components/Appear";
+import Typewriter from "./components/fancy/typewriter";
 import { t, type } from "./theme";
 
 export default function Home() {
@@ -31,8 +32,10 @@ export default function Home() {
             <p className="mb-4 font-mono uppercase" style={t(type.aboutLabel)}>
               About
             </p>
+            {/* min-height reserves the tallest line so the paragraph below
+                doesn't jump as the text types and deletes */}
             <h1
-              className="text-[color:var(--c-primary)]"
+              className="min-h-[1.2em] text-[color:var(--c-primary)]"
               style={{
                 ...t(type.headline),
                 fontSize: "clamp(1.75rem, 5vw, 2rem)",
@@ -40,7 +43,15 @@ export default function Home() {
                 cursor: "default",
               }}
             >
-              Vishal Birla
+              <Typewriter
+                as="span"
+                text={["Vishal Birla", "Product Designer", "Framer Expert"]}
+                speed={70}
+                deleteSpeed={40}
+                waitTime={2200}
+                cursorChar="_"
+                cursorClassName="ml-1 text-[color:var(--c-accent)]"
+              />
             </h1>
           </Appear>
 
