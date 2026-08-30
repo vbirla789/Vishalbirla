@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { colors } from "./theme";
 import { Retune } from "retune";
+import NerdMode from "./components/NerdMode";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +66,8 @@ export default function RootLayout({
             The panel itself is portalled to <body>, so it stays outside and
             doesn't shrink with the page. See .ask-open in globals.css. */}
         <div id="page-shell">{children}</div>
+        {/* Inspect overlay — bottom-right toggle, or press "n". */}
+        <NerdMode />
         {/* Visual tuning overlay — dev only. Press Option+D (Alt+D) to toggle. */}
         <Retune />
       </body>

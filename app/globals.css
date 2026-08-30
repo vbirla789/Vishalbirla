@@ -134,6 +134,59 @@ body {
   }
 }
 
+/* ---- NERD MODE ------------------------------------------------------------
+   Toggled by NerdMode.tsx adding .nerd to <html>. Draws a blueprint grid and
+   outlines the page's structural blocks. Everything here is decoration only —
+   the pointer-following inspector lives in the component. */
+.nerd body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--c-accent) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--c-accent) 9%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* structural blocks get a dashed frame so the page's skeleton is legible */
+.nerd main > section,
+.nerd main > div > section,
+.nerd header,
+.nerd footer,
+.nerd main > div > div > section {
+  outline: 1px dashed color-mix(in srgb, var(--c-accent) 45%, transparent);
+  outline-offset: 6px;
+}
+
+/* label each section with its id, top-left of its frame */
+.nerd section[id] {
+  position: relative;
+}
+.nerd section[id]::before {
+  content: attr(id);
+  position: absolute;
+  top: -22px;
+  left: 0;
+  z-index: 91;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  background: color-mix(in srgb, var(--c-accent) 16%, var(--c-background));
+  color: var(--c-accent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nerd body::before {
+    background-image: none;
+  }
+}
+
 /* ---- ASK AI: page scales back --------------------------------------------
    With the panel open the page shrinks and rounds off, so it reads as sitting
    behind the panel. The scale is small on purpose — the sticky header is
