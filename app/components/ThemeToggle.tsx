@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { colors } from "../theme";
 import { playHover } from "../lib/sound";
 
 /** Applied before paint by the inline script in layout.tsx — see THEME_INIT. */
 export const THEME_KEY = "theme";
+
+/** Not in TS's DOM lib yet — Chrome/Edge/Safari 18 ship it, Firefox doesn't. */
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (cb: () => void) => { ready: Promise<void> };
+};
+
+const REVEAL_MS = 500;
 
 function SunIcon() {
   return (
@@ -28,6 +36,8 @@ export default function ThemeToggle() {
   // `null` until mounted so the icon never renders the wrong state during
   // hydration — the class on <html> is the source of truth.
   const [isDark, setIsDark] = useState<boolean | null>(null);
+  /** Origin of the reveal circle. */
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // Reading the class that the pre-hydration script in layout.tsx already
@@ -38,20 +48,64 @@ export default function ThemeToggle() {
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
-  const toggle = () => {
+  const toggle = async () => {
     playHover();
     const next = !document.documentElement.classList.contains("dark");
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem(THEME_KEY, next ? "dark" : "light");
-    } catch {
-      /* private mode — the choice just won't persist */
+
+    const apply = () => {
+      document.documentElement.classList.toggle("dark", next);
+      try {
+        localStorage.setItem(THEME_KEY, next ? "dark" : "light");
+      } catch {
+        /* private mode — the choice just won't persist */
+      }
+      setIsDark(next);
+    };
+
+    const doc = document as ViewTransitionDocument;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Fall back to a plain swap where the API is missing (Firefox) or motion
+    // is unwelcome. The theme still changes — only the reveal is skipped.
+    if (!btnRef.current || !doc.startViewTransition || reduced) {
+      apply();
+      return;
     }
-    setIsDark(next);
+
+    /* flushSync is load-bearing: startViewTransition snapshots the DOM when
+       the callback returns, so React's normally-async state update has to be
+       committed synchronously or the snapshot catches the old theme. */
+    await doc.startViewTransition(() => {
+      flushSync(apply);
+    }).ready;
+
+    // Circle grows from the toggle's centre to whichever corner is furthest,
+    // so the reveal always covers the viewport.
+    const { top, left, width, height } = btnRef.current.getBoundingClientRect();
+    const x = left + width / 2;
+    const y = top + height / 2;
+    const right = window.innerWidth - left;
+    const bottom = window.innerHeight - top;
+    const maxRadius = Math.hypot(Math.max(left, right), Math.max(top, bottom));
+
+    document.documentElement.animate(
+      {
+        clipPath: [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${maxRadius}px at ${x}px ${y}px)`,
+        ],
+      },
+      {
+        duration: REVEAL_MS,
+        easing: "ease-in-out",
+        pseudoElement: "::view-transition-new(root)",
+      },
+    );
   };
 
   return (
     <button
+      ref={btnRef}
       type="button"
       onClick={toggle}
       onMouseEnter={playHover}
