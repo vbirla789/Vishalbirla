@@ -6,7 +6,7 @@ import { colors } from "../theme";
 
 const EMAIL = "vishalbirla789@gmail.com";
 const RESUME_URL =
-  "https://drive.google.com/file/d/1TBDsHm06lsAbuK6XGfDxVIKnsOzDW8m3/view?usp=sharing";
+  "https://drive.google.com/file/d/14npc1TUOoWT9h3OduLrjy6BGQCVMLo5E/view?usp=sharing";
 
 export default function ContactCtas() {
   const [isOpen, setIsOpen] = useState(false);
