@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { colors } from "../theme";
 import { playHover, playSelect } from "../lib/sound";
 import { experience } from "../lib/experience";
+import RichText from "./RichText";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -164,7 +165,7 @@ export default function ExperienceTimeline() {
                                 className="max-w-[560px]"
                                 style={{ fontSize: 14, lineHeight: 1.55, color: colors.secondary }}
                               >
-                                {b}
+                                <RichText text={b} />
                               </span>
                             </li>
                           ))}

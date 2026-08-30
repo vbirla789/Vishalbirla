@@ -7,6 +7,7 @@ import CaseStudyNav from "../../components/CaseStudyNav";
 import Footer from "../../components/Footer";
 import { CaseMedia } from "../../components/caseMedia";
 import { MediaViewerProvider, Zoomable } from "../../components/MediaViewer";
+import RichText from "../../components/RichText";
 import { getProject, projects } from "../../lib/projects";
 import type { StoryMedia, StorySection } from "../../lib/projects";
 import { colors, t, type } from "../../theme";
@@ -73,24 +74,6 @@ const ITEM_BODY_STYLE = {
   color: BODY_COLOR,
   fontWeight: 400,
 } as React.CSSProperties;
-
-/** Renders text with **double-asterisk** spans as bold, emphasized in the primary tone. */
-function RichText({ text }: { text: string }) {
-  const parts = text.split(/\*\*(.+?)\*\*/g);
-  return (
-    <>
-      {parts.map((p, i) =>
-        i % 2 === 1 ? (
-          <strong key={i} style={{ fontWeight: 600, color: colors.primary }}>
-            {p}
-          </strong>
-        ) : (
-          <span key={i}>{p}</span>
-        ),
-      )}
-    </>
-  );
-}
 
 /** One media slot (image / images / video / placeholder) plus an optional caption. */
 function MediaBlock({ media, alt }: { media: StoryMedia; alt: string }) {
