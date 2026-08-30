@@ -98,8 +98,8 @@ export default function ExperienceTimeline() {
                   {e.current ? (
                     <span
                       aria-label="Current role"
-                      className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full"
-                      style={{ background: "#22c55e", boxShadow: `0 0 0 2px ${colors.background}` }}
+                      className="absolute -right-px -top-px h-[7px] w-[7px] rounded-full"
+                      style={{ background: "#22c55e", boxShadow: `0 0 0 1.5px ${colors.background}` }}
                     />
                   ) : null}
                 </span>
@@ -123,7 +123,6 @@ export default function ExperienceTimeline() {
                     className="hidden whitespace-nowrap font-mono sm:inline"
                     style={{ fontSize: 13, color: colors.tertiary }}
                   >
-                    {e.mode ? `${e.mode} · ` : ""}
                     {e.period}
                   </span>
                   {expandable ? (
@@ -170,7 +169,6 @@ export default function ExperienceTimeline() {
 
                       {/* mobile: period lives here, since the row hides it */}
                       <p className="mt-3 font-mono sm:hidden" style={{ fontSize: 12, color: colors.tertiary }}>
-                        {e.mode ? `${e.mode} · ` : ""}
                         {e.period}
                       </p>
                     </div>

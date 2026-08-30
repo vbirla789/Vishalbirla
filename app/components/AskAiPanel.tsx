@@ -101,7 +101,10 @@ export default function AskAiPanel({
             aria-modal="true"
             aria-label="Ask Jarvis about Vishal"
             className="fixed right-0 top-0 z-[61] flex h-full w-full max-w-[430px] flex-col"
-            style={{ backgroundColor: colors.panel, borderRadius: "24px 0 0 24px" }}
+            /* No radius here on purpose: the rounded corner belongs to
+               #page-shell, so the page reads as a card lifted in front of a
+               flush panel. Rounding both made two competing curves meet. */
+            style={{ backgroundColor: colors.panel }}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}

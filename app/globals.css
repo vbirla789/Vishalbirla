@@ -266,17 +266,20 @@ body {
 @media (max-width: 640px) {
   .t-tabs {
     gap: 1px;
-    padding: 2px;
+    padding: 4px;
   }
+  /* 14px text with 8px horizontal padding is the widest that still clears the
+     theme toggle inside the header's own padding at 375px. 10px pushed the row
+     11px past the container and it started eating the gutter. */
   .t-tab {
-    height: 28px;
-    padding: 4px 8px;
-    font-size: 12px;
-    gap: 4px;
+    height: 34px;
+    padding: 6px 8px;
+    font-size: 14px;
+    gap: 5px;
   }
   .t-tabs-pill {
-    top: 2px;
-    height: 28px;
+    top: 4px;
+    height: 34px;
   }
 }
 
