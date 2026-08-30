@@ -51,7 +51,7 @@ export default function ExperienceTimeline() {
       {experience.map((e, i) => {
         const id = e.company;
         const isOpen = openId === id;
-        const expandable = Boolean(e.summary || e.bullets?.length);
+        const expandable = Boolean(e.bullets?.length);
         const isLast = i === experience.length - 1;
 
         return (
@@ -150,12 +150,8 @@ export default function ExperienceTimeline() {
                     className="overflow-hidden"
                   >
                     <div className="pb-4 pl-[60px] pr-3 pt-0.5">
-                      {e.summary ? (
-                        <p style={{ fontSize: 14.5, color: colors.secondary }}>{e.summary}</p>
-                      ) : null}
-
                       {e.bullets?.length ? (
-                        <ul className="mt-2.5 flex flex-col gap-2">
+                        <ul className="flex flex-col gap-2">
                           {e.bullets.map((b) => (
                             <li key={b} className="flex gap-2.5">
                               <span className="mt-[5px]" style={{ color: colors.accent }}>

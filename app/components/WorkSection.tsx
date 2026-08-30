@@ -114,7 +114,7 @@ export default function WorkSection() {
           {projects.map((p) => (
             <Link key={p.company} href={`/work/${p.slug}`} className="group block">
               {/* single image container */}
-              <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 dark:bg-[color:var(--c-panel)] sm:h-[360px] lg:h-[480px]">
+              <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 sm:h-[360px] lg:h-[480px]">
                 {p.video ? (
                   <div className="flex h-full items-center justify-center p-6 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
                     <div className="h-full overflow-hidden rounded-[7px] sm:rounded-[10px] lg:rounded-[24px]">
@@ -181,7 +181,9 @@ export default function WorkSection() {
           {funVideos.map((v) => (
             <div
               key={v.src}
-              className="flex flex-col gap-8 rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-4 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
+              // stays theme-aware: the title and year live *inside* this card,
+              // so a permanently-light fill would put white text on white
+              className="flex flex-col gap-8 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
             >
               {/* video — full, correct iPhone aspect (no crop), rounded corners */}
               <div className="flex justify-center">

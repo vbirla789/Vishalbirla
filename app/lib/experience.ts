@@ -7,8 +7,8 @@
  * Exporting this array from a "use client" file would hand the server an
  * opaque client-reference proxy instead of the array.
  *
- * `summary` + `bullets` are what the accordion reveals; they mirror the resume
- * so the two never tell different stories.
+ * `bullets` are what the accordion reveals; they mirror the resume so the two
+ * never tell different stories.
  * --------------------------------------------------------------------------*/
 
 export type ExperienceEntry = {
@@ -20,8 +20,6 @@ export type ExperienceEntry = {
   logo: string;
   /** true = ongoing, draws the live dot on the logo */
   current?: boolean;
-  /** One-line framing, shown first when expanded. */
-  summary?: string;
   bullets?: string[];
 };
 
@@ -33,7 +31,6 @@ export const experience: ExperienceEntry[] = [
     mode: "Onsite",
     logo: "/logos/noon.jpeg",
     current: true,
-    summary: "Making reviews effortless to write.",
     bullets: [
       "Redesigned the **AI-assisted review flow** — a blank text box became a few taps.",
       "Built **Field Design System** components: cards, toasts, tooltips, section headers.",
@@ -46,7 +43,6 @@ export const experience: ExperienceEntry[] = [
     period: "July 2025 - April 2026",
     mode: "Onsite",
     logo: "/logos/ambitio.avif",
-    summary: "One place to see a whole application.",
     bullets: [
       "Designed the **NOVA dashboard** for study-abroad applicants.",
       "Ran **user research** and turned it into flows and wireframes.",
@@ -60,7 +56,6 @@ export const experience: ExperienceEntry[] = [
     period: "April 2025 - July 2025",
     mode: "Onsite",
     logo: "/logos/fibr.avif",
-    summary: "The surfaces a SaaS product gets judged on.",
     bullets: [
       "Designed key **dashboard interfaces** for their SaaS platform.",
       "Built **auth and onboarding** to smooth the first run.",
@@ -73,7 +68,6 @@ export const experience: ExperienceEntry[] = [
     period: "Jan 2025 - Mar 2025",
     mode: "Remote",
     logo: "/logos/dzinr.avif",
-    summary: "A brand site as considered as the work on it.",
     bullets: [
       "Rebuilt the site in **Figma and Framer**, fully responsive.",
       "Held a **consistent brand identity** with the marketing team.",
