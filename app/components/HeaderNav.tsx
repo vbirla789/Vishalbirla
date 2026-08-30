@@ -251,7 +251,10 @@ export default function HeaderNav() {
               onMouseEnter={playHover}
               aria-haspopup="dialog"
               aria-expanded={askOpen}
-              className="hidden items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[13px] font-medium leading-none outline-none transition-colors duration-200 hover:bg-black/[0.04] sm:flex dark:hover:bg-white/[0.07]"
+              /* h-9 matches ThemeToggle's sm size exactly (36px). Without it
+                 the button was content-height, 27px, so the hover background
+                 painted 9px shorter than its neighbour. */
+              className="hidden h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium leading-none outline-none transition-colors duration-200 hover:bg-black/[0.04] sm:flex dark:hover:bg-white/[0.07]"
               style={{ color: colors.tabActive }}
             >
               <span style={{ color: colors.accent }}>
