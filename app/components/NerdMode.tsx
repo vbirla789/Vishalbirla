@@ -193,14 +193,20 @@ export default function NerdMode() {
           onMouseEnter={playHover}
           aria-pressed={on}
           aria-label={on ? "Turn off AI glasses" : "Turn on AI glasses (n)"}
-          className="t-tt-trigger flex h-11 items-center gap-2 overflow-hidden rounded-full transition-colors"
+          className="t-tt-trigger flex h-11 items-center justify-center overflow-hidden rounded-full transition-colors"
           style={{
             backgroundColor: on ? "var(--c-accent)" : "var(--c-surface)",
             color: on ? "#fff" : "var(--c-secondary)",
             boxShadow: `inset 0 0 0 1px var(--c-line), 0 8px 24px -10px rgba(0,0,0,.5)`,
-            paddingLeft: 13,
-            paddingRight: showLabel ? 16 : 13,
-            transition: "padding 420ms cubic-bezier(.22,1,.36,1), background-color 200ms",
+            /* Collapsed must total the 44px height to read as a circle:
+               12 + icon 20 + gap 0 + 12. The gap has to animate too — it
+               applies even when the label is zero-width, which is what made
+               the collapsed pill 54px and visibly oblong. */
+            paddingLeft: showLabel ? 13 : 12,
+            paddingRight: showLabel ? 16 : 12,
+            gap: showLabel ? 8 : 0,
+            transition:
+              "padding 420ms cubic-bezier(.22,1,.36,1), gap 420ms cubic-bezier(.22,1,.36,1), background-color 200ms",
           }}
         >
           {/* glasses */}
