@@ -69,6 +69,39 @@ export default function HeaderNav() {
     return () => window.removeEventListener("pointerdown", prime);
   }, []);
 
+  /* Honour the hash on mount. The back button on a case study links to
+     "/#work", but if the homepage URL already carries that hash the browser
+     treats it as a same-hash no-op and never scrolls — so "back" appeared to
+     do nothing. Doing it here also makes deep links (/#experience) work, and
+     tolerates a doubled hash like "#work#work". */
+  useEffect(() => {
+    const raw = window.location.hash.replace(/^#+/, "");
+    const id = raw.split("#").filter(Boolean).pop();
+    if (!id || !items.some((it) => it.id === id)) return;
+
+    // Hold off scroll-spy while we jump: the observer's first callback fires at
+    // scroll 0, where #about owns the band, and would otherwise clobber the
+    // active tab we're about to set.
+    lockRef.current = true;
+    if (lockTimer.current) clearTimeout(lockTimer.current);
+    lockTimer.current = setTimeout(() => {
+      lockRef.current = false;
+    }, 900);
+
+    // A timer, not requestAnimationFrame: rAF doesn't fire in a background or
+    // throttled tab, which would silently skip the jump. The short delay lets
+    // layout and the webfonts settle so the target offset is correct.
+    const timer = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "auto", block: "start" });
+      lastActiveRef.current = id;
+      setActive(id);
+    }, 60);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // scroll-spy: whichever section crosses the viewport middle becomes active,
   // and play one tick each time a new section is entered (both ways)
   useEffect(() => {

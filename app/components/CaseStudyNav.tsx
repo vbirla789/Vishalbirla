@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 
 type NavItem = { id: string; label: string };
@@ -71,10 +70,12 @@ export default function CaseStudyNav({ items = DEFAULT_ITEMS }: { items?: NavIte
     }, 800);
   };
 
-  const cssVars = {
-    "--c-primary": colors.primary,
-    "--c-tertiary": colors.tertiary,
-  } as React.CSSProperties;
+  /* No local --c-* aliases here: theme.ts now resolves colors.primary to
+     "var(--c-primary)", so re-declaring it locally produced
+     `--c-primary: var(--c-primary)` — self-referential, invalid at
+     computed-value time, which made the ruler dashes render with no colour.
+     The tokens are already global under these names, so the utilities below
+     pick them up directly. */
 
   const minorTick = (key: string) => (
     <li key={key} aria-hidden className="pointer-events-none">
@@ -85,7 +86,6 @@ export default function CaseStudyNav({ items = DEFAULT_ITEMS }: { items?: NavIte
   return (
     <nav
       className="fixed left-8 top-1/2 z-50 hidden -translate-y-1/2 min-[1200px]:block"
-      style={cssVars}
       aria-label="Case study navigation"
     >
       <ul className="flex flex-col gap-2.5">

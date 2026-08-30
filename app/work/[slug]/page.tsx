@@ -192,9 +192,12 @@ function StoryBlock({ section, company }: { section: StorySection; company: stri
             <div className="mt-2 flex flex-col gap-7">
               {section.briefs.map((b) => (
                 <div key={b.label}>
-                  <p className="mb-2" style={H2_STYLE}>
+                  {/* An h3, not a styled <p>: these are section sub-headings
+                      ("Problem", "Solution"), so they belong in the heading
+                      outline and pick up Geist Pixel from the base rule. */}
+                  <h3 className="mb-2" style={H2_STYLE}>
                     {b.label}
-                  </p>
+                  </h3>
                   <p className="max-w-[560px]" style={ITEM_BODY_STYLE}>
                     <RichText text={b.body} />
                   </p>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 
 // `href` items open in a new tab instead of scroll-spying to a section.
@@ -65,10 +64,9 @@ export default function SideNav() {
     }, 800);
   };
 
-  const cssVars = {
-    "--c-primary": colors.primary,
-    "--c-tertiary": colors.tertiary,
-  } as React.CSSProperties;
+  /* Deliberately no local --c-* aliases: colors.primary is itself
+     "var(--c-primary)", so aliasing would be self-referential and the ruler
+     dashes would lose their colour. The tokens are global already. */
 
   const minorTick = (key: string) => (
     <li key={key} aria-hidden className="pointer-events-none">
@@ -79,7 +77,6 @@ export default function SideNav() {
   return (
     <nav
       className="fixed left-7 top-1/2 z-50 hidden -translate-y-1/2 min-[1440px]:block"
-      style={cssVars}
       aria-label="Section navigation"
     >
       <ul className="flex flex-col gap-2.5">
