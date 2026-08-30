@@ -109,19 +109,6 @@ html {
   mix-blend-mode: normal;
 }
 
-/* Custom cursor is drawn by CursorFollower, so hide the native one. Scoped to
-   .has-custom-cursor, which that component only sets on fine-pointer devices —
-   touch and coarse pointers keep the system cursor. Text fields are excluded:
-   losing the I-beam while typing is worse than a mixed metaphor. */
-.has-custom-cursor,
-.has-custom-cursor * {
-  cursor: none;
-}
-.has-custom-cursor input,
-.has-custom-cursor textarea,
-.has-custom-cursor [contenteditable="true"] {
-  cursor: auto;
-}
 
 /* every interactive element shows a pointer cursor on hover */
 button:not(:disabled),

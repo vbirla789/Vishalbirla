@@ -43,15 +43,28 @@ export default function Home() {
                 cursor: "default",
               }}
             >
-              <Typewriter
-                as="span"
-                text={["Vishal Birla", "Product Designer", "Framer Expert"]}
-                speed={70}
-                deleteSpeed={40}
-                waitTime={2200}
-                cursorChar="_"
-                cursorClassName="ml-1 text-[color:var(--c-accent)]"
-              />
+              {/* The typed text starts empty, so on its own this h1 is blank in
+                  the server HTML — bad for search engines and screen readers.
+                  The real heading is here and hidden visually; the animation is
+                  decorative and marked aria-hidden. */}
+              <span className="sr-only">Vishal Birla — Product Designer</span>
+              <span aria-hidden="true">
+                <Typewriter
+                  as="span"
+                  text={[
+                    "this is Vishal",
+                    "a design engineer",
+                    "learning to be present",
+                    "fluent in Framer too",
+                    "I ship what I design",
+                  ]}
+                  speed={70}
+                  deleteSpeed={40}
+                  waitTime={2200}
+                  cursorChar="_"
+                  cursorClassName="ml-1 text-[color:var(--c-accent)]"
+                />
+              </span>
             </h1>
           </Appear>
 
