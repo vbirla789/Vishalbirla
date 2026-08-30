@@ -57,7 +57,9 @@ export default function ThemeToggle() {
       onMouseEnter={playHover}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       aria-pressed={isDark ?? false}
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] outline-none transition-colors duration-200"
+      /* Sized to match the nav bar exactly: 40px on phones (32px tab + 4px bar
+         padding each side), 36px from sm up (30px tab + 3px each side). */
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] outline-none transition-colors duration-200 sm:h-9 sm:w-9 sm:rounded-[10px]"
       style={{ backgroundColor: colors.tabActiveBg, color: colors.secondary }}
     >
       {/* Render nothing until mounted, so SSR and client agree. */}

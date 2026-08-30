@@ -85,16 +85,19 @@ export default function CaseStudyNav({ items = DEFAULT_ITEMS }: { items?: NavIte
 
   return (
     <nav
-      /* Pinned to the top-left gutter rather than floating at the viewport's
-         vertical centre, so it reads as anchored navigation and sits in a
-         predictable place on every screen.
+      /* Vertically centred in the left gutter and fixed, so every section stays
+         on screen the whole way down the page.
 
          The breakpoint is geometry, not taste: the content column is 720px, so
          the gutter is (100vw - 720) / 2. The longest item ("AI EXPERIMENTS")
          runs ~170px, which with the 24px offset needs ~194px of gutter — i.e.
          a viewport above ~1110px. Below that it would overlap the prose, so it
-         hides instead. 1160px leaves a comfortable margin. */
-      className="fixed left-6 top-28 z-50 hidden max-h-[calc(100vh-9rem)] overflow-y-auto min-[1160px]:block"
+         hides instead. 1160px leaves a comfortable margin.
+
+         max-height + auto overflow is the guard for short viewports: the nav is
+         ~300px tall, so on anything under that it scrolls internally instead of
+         spilling off the top and bottom. */
+      className="fixed left-6 top-1/2 z-50 hidden max-h-[calc(100vh-6rem)] -translate-y-1/2 overflow-y-auto min-[1160px]:block"
       aria-label="Case study navigation"
     >
       <ul className="flex flex-col gap-2.5">

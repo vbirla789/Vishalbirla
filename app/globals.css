@@ -138,12 +138,16 @@ body {
    With the panel open the page shrinks and rounds off, so it reads as sitting
    behind the panel. The scale is small on purpose — the sticky header is
    inside the shell, and a heavier scale makes its blur edge obvious. */
+/* NOTE: deliberately no `will-change: transform` here. It creates a containing
+   block for position:fixed descendants exactly like a real transform does, so
+   the case-study nav stopped resolving against the viewport and `top: 50%`
+   became 50% of the whole document — pushing it far below the fold. The
+   transition is one property on one element; it does not need the hint. */
 #page-shell {
   transform-origin: center center;
   transition:
     transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
     border-radius 480ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform, border-radius;
 }
 
 /* The page slides LEFT and settles slightly back, so the panel reads as
@@ -268,18 +272,18 @@ body {
     gap: 1px;
     padding: 4px;
   }
-  /* 14px text with 8px horizontal padding is the widest that still clears the
-     theme toggle inside the header's own padding at 375px. 10px pushed the row
-     11px past the container and it started eating the gutter. */
+  /* 13px text keeps four labels plus the toggle inside the header's padding at
+     375px. Tab 32px + 4px bar padding either side = a 40px bar, which the
+     theme toggle matches exactly. */
   .t-tab {
-    height: 34px;
+    height: 32px;
     padding: 6px 8px;
-    font-size: 14px;
+    font-size: 13px;
     gap: 5px;
   }
   .t-tabs-pill {
     top: 4px;
-    height: 34px;
+    height: 32px;
   }
 }
 
