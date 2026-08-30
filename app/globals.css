@@ -110,35 +110,6 @@ html {
 }
 
 
-/* ---- CORNER SMOOTHING -----------------------------------------------------
-   Figma-style continuous corners (the iOS "squircle") for every rounded box.
-   CSS names the curve by exponent rather than a percentage: `round` is
-   superellipse(2) and `squircle` is superellipse(4), so 60% smoothing lands
-   at 2 + 0.6 x (4 - 2) = 3.2. There is no official Figma-to-CSS mapping, so
-   treat this as a close approximation rather than an exact match.
-
-   Applying it to * is safe: with no border-radius there is no corner to
-   reshape. Browsers without corner-shape (Firefox, older Safari) simply keep
-   ordinary rounded corners — the layout is identical either way. */
-*,
-*::before,
-*::after {
-  corner-shape: superellipse(3.2);
-}
-
-/* Pills and circles opt back out. Where the radius is half the height or more
-   the corner is a semicircle, and a superellipse flattens it — the nav bar,
-   the Ask Jarvis button and the AI-glasses toggle all turned into rounded
-   rectangles. Smoothing only reads as "smoothing" on an actual corner. */
-.rounded-full,
-.t-tabs,
-.t-tab,
-.t-tabs-pill,
-.t-tt,
-#hero-contact {
-  corner-shape: round;
-}
-
 /* every interactive element shows a pointer cursor on hover */
 button:not(:disabled),
 [role="button"],
