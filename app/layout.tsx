@@ -61,7 +61,10 @@ export default function RootLayout({
         className="min-h-screen"
         style={{ backgroundColor: colors.background, color: colors.primary }}
       >
-        {children}
+        {/* Everything the Ask AI panel scales back sits inside #page-shell.
+            The panel itself is portalled to <body>, so it stays outside and
+            doesn't shrink with the page. See .ask-open in globals.css. */}
+        <div id="page-shell">{children}</div>
         {/* Visual tuning overlay — dev only. Press Option+D (Alt+D) to toggle. */}
         <Retune />
       </body>

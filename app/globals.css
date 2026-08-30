@@ -34,13 +34,23 @@
   --c-tab-inactive: #a6a09b;
   --c-tab-inactive-hover: #57534e;
 
-  /* Primary = solid fill. Secondary = flat tint. No rings needed on white. */
+  /* Primary = solid fill, secondary = border only (transitions.dev pattern).
+     The solid-fg-* tokens colour the Contact card that expands out of the
+     primary button; they invert with the theme because the pill is dark on
+     light and white on dark. */
   --c-btn-solid-bg: #171717;
   --c-btn-solid-text: #fafafa;
   --c-btn-solid-ring: transparent;
-  --c-btn-muted-bg: #efefef;
-  --c-btn-muted-bg-hover: #eaeaea;
-  --c-btn-muted-ring: transparent;
+  --c-solid-fg: #fafafa;
+  --c-solid-fg-muted: rgba(255, 255, 255, 0.5);
+  --c-solid-fg-faint: rgba(255, 255, 255, 0.42);
+  --c-solid-chip: rgba(255, 255, 255, 0.07);
+  --c-solid-chip-hover: rgba(255, 255, 255, 0.13);
+  --c-solid-row-hover: rgba(255, 255, 255, 0.08);
+
+  --c-btn-muted-bg: transparent;
+  --c-btn-muted-bg-hover: rgba(0, 0, 0, 0.04);
+  --c-btn-muted-ring: rgba(0, 0, 0, 0.14);
 
   color-scheme: light;
 }
@@ -63,17 +73,22 @@
   --c-tab-inactive: #7a7a7a;
   --c-tab-inactive-hover: #d4d4d4;
 
-  /* Primary stays a dark elevated surface rather than inverting to white: the
-     Contact pill expands into a card whose internals are all white/xx alpha,
-     which would be invisible on a light fill. Hierarchy instead comes from
-     filled-with-ring (primary) vs outlined (secondary) — at #262626 vs
-     #1c1c1c the two were nearly indistinguishable. */
-  --c-btn-solid-bg: #2f2f2f;
-  --c-btn-solid-text: #fafafa;
-  --c-btn-solid-ring: rgba(255, 255, 255, 0.14);
+  /* Primary is white with dark text, secondary is border-only — the
+     transitions.dev pairing. The expanded Contact card therefore needs dark
+     ink on a light fill, which the solid-fg-* tokens flip to. */
+  --c-btn-solid-bg: #ffffff;
+  --c-btn-solid-text: #0a0a0a;
+  --c-btn-solid-ring: transparent;
+  --c-solid-fg: #0a0a0a;
+  --c-solid-fg-muted: rgba(0, 0, 0, 0.55);
+  --c-solid-fg-faint: rgba(0, 0, 0, 0.45);
+  --c-solid-chip: rgba(0, 0, 0, 0.06);
+  --c-solid-chip-hover: rgba(0, 0, 0, 0.11);
+  --c-solid-row-hover: rgba(0, 0, 0, 0.05);
+
   --c-btn-muted-bg: transparent;
-  --c-btn-muted-bg-hover: #1c1c1c;
-  --c-btn-muted-ring: rgba(255, 255, 255, 0.12);
+  --c-btn-muted-bg-hover: rgba(255, 255, 255, 0.06);
+  --c-btn-muted-ring: rgba(255, 255, 255, 0.16);
 
   color-scheme: dark;
 }
@@ -116,6 +131,37 @@ body {
   h5,
   h6 {
     font-family: var(--font-geist-pixel), ui-monospace, monospace;
+  }
+}
+
+/* ---- ASK AI: page scales back --------------------------------------------
+   With the panel open the page shrinks and rounds off, so it reads as sitting
+   behind the panel. The scale is small on purpose — the sticky header is
+   inside the shell, and a heavier scale makes its blur edge obvious. */
+#page-shell {
+  transform-origin: center left;
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, border-radius;
+}
+
+.ask-open #page-shell {
+  transform: scale(0.955);
+  border-radius: 24px;
+  overflow: hidden;
+  filter: brightness(0.72);
+}
+
+/* the shell scrolls the document, so lock scrolling behind the panel */
+.ask-open body {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #page-shell {
+    transition: none;
   }
 }
 

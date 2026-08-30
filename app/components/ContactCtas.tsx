@@ -83,7 +83,9 @@ export default function ContactCtas() {
             height: isOpen ? expandedHeight : 38,
             borderRadius: isOpen ? 20 : 19,
             boxShadow: isOpen
-              ? "0 20px 35px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)"
+              ? // hairline must follow the fill: a white ring is invisible on
+                // the white (dark-theme) pill
+                `0 20px 35px -10px rgba(0,0,0,0.4), inset 0 0 0 1px var(--c-solid-chip)`
               : `inset 0 0 0 1px ${colors.btnSolidRing}`,
           }}
         >
@@ -97,7 +99,7 @@ export default function ContactCtas() {
               isOpen ? "pointer-events-none opacity-0 blur-[2px]" : "opacity-100 blur-0 delay-75"
             }`}
           >
-            <span className="-ml-0.5 flex text-zinc-300">
+            <span className="-ml-0.5 flex text-[color:var(--c-solid-fg-muted)]">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
                   d="M22 2L11 13"
@@ -130,7 +132,7 @@ export default function ContactCtas() {
             <div className="flex h-full flex-col justify-between" style={{ width: innerContentWidth }}>
               {/* Header */}
               <div className="flex items-center justify-between px-1 pt-0.5 pb-1">
-                <p className="text-[12px] font-medium tracking-wide text-white/50 uppercase">
+                <p className="text-[12px] font-medium tracking-wide text-[color:var(--c-solid-fg-muted)] uppercase">
                   Get in touch
                 </p>
                 <button
@@ -139,7 +141,7 @@ export default function ContactCtas() {
                   onMouseEnter={playHover}
                   aria-label="Close"
                   tabIndex={isOpen ? 0 : -1}
-                  className="flex h-6 w-6 items-center justify-center rounded-md text-white/40 transition-colors hover:bg-white/10 hover:text-white"
+                  className="flex h-6 w-6 items-center justify-center rounded-md text-[color:var(--c-solid-fg-faint)] transition-colors hover:bg-[color:var(--c-solid-chip-hover)] hover:text-[color:var(--c-solid-fg)]"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path
@@ -161,23 +163,23 @@ export default function ContactCtas() {
                   onClick={handleCopyEmail}
                   onMouseEnter={playHover}
                   tabIndex={isOpen ? 0 : -1}
-                  className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-white/[0.08]"
+                  className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-[color:var(--c-solid-row-hover)]"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors group-hover/row:bg-white/10 group-hover/text-white">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[color:var(--c-solid-chip)] text-[color:var(--c-solid-fg-muted)] transition-colors group-hover/row:bg-[color:var(--c-solid-chip-hover)]">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" strokeWidth="1.75" />
                         <path d="M22 7L13.03 12.7C12.4 13.1 11.6 13.1 10.97 12.7L2 7" stroke="currentColor" strokeWidth="1.75" />
                       </svg>
                     </div>
                     <div className="flex min-w-0 flex-col">
-                      <span className="text-[11px] font-medium tracking-tight text-white/45">Email</span>
-                      <span className="truncate text-[13.5px] font-medium tracking-tight text-white">
+                      <span className="text-[11px] font-medium tracking-tight text-[color:var(--c-solid-fg-faint)]">Email</span>
+                      <span className="truncate text-[13.5px] font-medium tracking-tight text-[color:var(--c-solid-fg)]">
                         {EMAIL}
                       </span>
                     </div>
                   </div>
-                  <div className="relative flex h-6 w-6 shrink-0 items-center justify-center text-white/50 group-hover/row:text-white">
+                  <div className="relative flex h-6 w-6 shrink-0 items-center justify-center text-[color:var(--c-solid-fg-muted)] group-hover/row:text-[color:var(--c-solid-fg)]">
                     <span
                       className={`absolute transition-all duration-200 ${
                         copied ? "scale-75 opacity-0" : "scale-100 opacity-100"
@@ -207,22 +209,22 @@ export default function ContactCtas() {
                   rel="noreferrer"
                   onMouseEnter={playHover}
                   tabIndex={isOpen ? 0 : -1}
-                  className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-white/[0.08]"
+                  className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-[color:var(--c-solid-row-hover)]"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors group-hover/row:bg-white/10 group-hover/text-white">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[color:var(--c-solid-chip)] text-[color:var(--c-solid-fg-muted)] transition-colors group-hover/row:bg-[color:var(--c-solid-chip-hover)]">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.75a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 0 0 0-2.9z" />
                       </svg>
                     </div>
                     <div className="flex min-w-0 flex-col">
-                      <span className="text-[11px] font-medium tracking-tight text-white/45">LinkedIn</span>
-                      <span className="truncate text-[13.5px] font-medium tracking-tight text-white">
+                      <span className="text-[11px] font-medium tracking-tight text-[color:var(--c-solid-fg-faint)]">LinkedIn</span>
+                      <span className="truncate text-[13.5px] font-medium tracking-tight text-[color:var(--c-solid-fg)]">
                         @vishal-birla
                       </span>
                     </div>
                   </div>
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-white/50 transition-transform group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 group-hover/row:text-white">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-[color:var(--c-solid-fg-muted)] transition-transform group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 group-hover/row:text-[color:var(--c-solid-fg)]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -236,22 +238,22 @@ export default function ContactCtas() {
                   rel="noreferrer"
                   onMouseEnter={playHover}
                   tabIndex={isOpen ? 0 : -1}
-                  className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-white/[0.08]"
+                  className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-[color:var(--c-solid-row-hover)]"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors group-hover/row:bg-white/10 group-hover/text-white">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[color:var(--c-solid-chip)] text-[color:var(--c-solid-fg-muted)] transition-colors group-hover/row:bg-[color:var(--c-solid-chip-hover)]">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                       </svg>
                     </div>
                     <div className="flex min-w-0 flex-col">
-                      <span className="text-[11px] font-medium tracking-tight text-white/45">X (Twitter)</span>
-                      <span className="truncate text-[13.5px] font-medium tracking-tight text-white">
+                      <span className="text-[11px] font-medium tracking-tight text-[color:var(--c-solid-fg-faint)]">X (Twitter)</span>
+                      <span className="truncate text-[13.5px] font-medium tracking-tight text-[color:var(--c-solid-fg)]">
                         @VishalB10042696
                       </span>
                     </div>
                   </div>
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-white/50 transition-transform group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 group-hover/row:text-white">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-[color:var(--c-solid-fg-muted)] transition-transform group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 group-hover/row:text-[color:var(--c-solid-fg)]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
