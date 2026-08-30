@@ -52,10 +52,9 @@ export default function Home() {
                 <Typewriter
                   as="span"
                   text={[
-                    "this is Vishal",
-                    "a design engineer",
-                    "learning to be present",
-                    "fluent in Framer too",
+                    "This is Vishal",
+                    "A design engineer",
+                    "Fluent in Framer too",
                     "I ship what I design",
                   ]}
                   speed={70}

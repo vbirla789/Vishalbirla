@@ -260,7 +260,7 @@ export default function HeaderNav() {
               <span style={{ color: colors.accent }}>
                 <SparkleIcon />
               </span>
-              Ask AI
+              Ask Jarvis
             </button>
           </div>
         </div>
