@@ -6,9 +6,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { colors } from "../theme";
 import { playHover, playSuccess } from "../lib/sound";
 import { SparkleIcon } from "./HeaderNav";
-import { answerAbout } from "../lib/askContext";
+import Link from "next/link";
+import { answerAbout, type AnswerLink } from "../lib/askContext";
 
-type Turn = { role: "user" | "assistant"; text: string };
+type Turn = { role: "user" | "assistant"; text: string; links?: AnswerLink[] };
 
 /* Starter prompts, drawn from what the knowledge base actually covers. */
 const SUGGESTIONS = [
@@ -17,6 +18,69 @@ const SUGGESTIONS = [
   "Can you tell me more about yourself?",
   "What's your design + code background?",
 ];
+
+/**
+ * A link offered under an answer.
+ *
+ * "#section" links can't be plain anchors: the panel sits over the homepage,
+ * so we close it first and then scroll, otherwise the jump happens behind the
+ * open panel. Everything else is a real link — next/link for internal routes
+ * so navigation stays client-side, a plain anchor for mailto/external.
+ */
+function AnswerChip({ link, onNavigate }: { link: AnswerLink; onNavigate: () => void }) {
+  const className =
+    "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors";
+  const style = {
+    backgroundColor: colors.tabActiveBg,
+    color: colors.primary,
+    boxShadow: `inset 0 0 0 1px ${colors.line}`,
+  } as React.CSSProperties;
+
+  const arrow = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7 17L17 7M17 7H8M17 7v9" />
+    </svg>
+  );
+
+  if (link.href.startsWith("#")) {
+    return (
+      <button
+        type="button"
+        className={className}
+        style={style}
+        onMouseEnter={playHover}
+        onClick={() => {
+          onNavigate();
+          const id = link.href.slice(1);
+          // after the panel's exit transition, so the scroll is visible
+          setTimeout(
+            () => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }),
+            280,
+          );
+        }}
+      >
+        {link.label}
+        {arrow}
+      </button>
+    );
+  }
+
+  if (link.href.startsWith("/")) {
+    return (
+      <Link href={link.href} className={className} style={style} onMouseEnter={playHover} onClick={onNavigate}>
+        {link.label}
+        {arrow}
+      </Link>
+    );
+  }
+
+  return (
+    <a href={link.href} className={className} style={style} onMouseEnter={playHover} onClick={onNavigate}>
+      {link.label}
+      {arrow}
+    </a>
+  );
+}
 
 const DISCLAIMER =
   "Answers come from a hand-written summary of my work, not a live model — so it can be incomplete or out of date. Check the project pages for the full story.";
@@ -70,7 +134,8 @@ export default function AskAiPanel({
     setThinking(true);
     // brief pause so the reply doesn't appear before the question has landed
     setTimeout(() => {
-      setTurns((t) => [...t, { role: "assistant", text: answerAbout(q) }]);
+      const a = answerAbout(q);
+      setTurns((t) => [...t, { role: "assistant", text: a.text, links: a.links }]);
       setThinking(false);
       playSuccess();
     }, 420);
@@ -229,13 +294,21 @@ export default function AskAiPanel({
                         </p>
                       </div>
                     ) : (
-                      <p
-                        key={i}
-                        className="whitespace-pre-line text-[14px] leading-relaxed"
-                        style={{ color: colors.secondary }}
-                      >
-                        {t.text}
-                      </p>
+                      <div key={i}>
+                        <p
+                          className="whitespace-pre-line text-[14px] leading-relaxed"
+                          style={{ color: colors.secondary }}
+                        >
+                          {t.text}
+                        </p>
+                        {t.links?.length ? (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {t.links.map((l) => (
+                              <AnswerChip key={l.href + l.label} link={l} onNavigate={onClose} />
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
                     ),
                   )}
                   {thinking ? (

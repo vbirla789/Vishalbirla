@@ -58,14 +58,16 @@ export default function ExperienceTimeline() {
           <div key={id} className="relative">
             {/* connector: runs from this logo down to the next one. Sits behind
                 the row so the hover highlight doesn't cover it. */}
-            {/* Geometry, measured rather than guessed: the button is px-3/py-3
-                and the logo is 44px, so the logo centre is at x=34 and its
-                bottom at y=56. -bottom-3 bridges the next row's top padding so
-                the line meets the next logo instead of stopping 12px short. */}
+            {/* Geometry, measured rather than guessed. The button is px-3/py-3
+                with a 44px logo, so the logo centre is x=34. The text block is
+                ~49px — taller than the logo — so with items-center the logo
+                sits ~2.5px lower than the padding alone would put it: bottom
+                at y≈58, and the next logo starts ~15px into the following row.
+                -bottom-[15px] bridges that; -bottom-3 left a 2px hairline gap. */}
             {!isLast ? (
               <span
                 aria-hidden="true"
-                className="absolute -bottom-3 left-[34px] top-[58px] w-px"
+                className="absolute -bottom-[15px] left-[34px] top-[58px] w-px"
                 style={{ background: colors.line }}
               />
             ) : null}
@@ -81,7 +83,7 @@ export default function ExperienceTimeline() {
                 onMouseEnter={playHover}
                 aria-expanded={expandable ? isOpen : undefined}
                 aria-controls={expandable ? `exp-${id}` : undefined}
-                className={`flex w-full items-start gap-4 px-3 py-3 text-left outline-none ${
+                className={`flex w-full items-center gap-4 px-3 py-3 text-left outline-none ${
                   expandable ? "cursor-pointer" : "cursor-default"
                 }`}
               >
@@ -105,7 +107,7 @@ export default function ExperienceTimeline() {
                 </span>
 
                 {/* company + role */}
-                <span className="min-w-0 flex-1 pt-0.5">
+                <span className="min-w-0 flex-1">
                   <span
                     className="block truncate"
                     style={{ fontSize: 17, fontWeight: 500, color: colors.primary }}
@@ -118,7 +120,7 @@ export default function ExperienceTimeline() {
                 </span>
 
                 {/* period + chevron */}
-                <span className="flex shrink-0 items-center gap-2 pt-1">
+                <span className="flex shrink-0 items-center gap-2">
                   <span
                     className="hidden whitespace-nowrap font-mono sm:inline"
                     style={{ fontSize: 13, color: colors.tertiary }}
