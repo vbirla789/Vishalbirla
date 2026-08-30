@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { colors } from "./theme";
 import { Retune } from "retune";
-import NerdMode from "./components/NerdMode";
+import NerdModeProvider from "./components/NerdMode";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -70,12 +70,15 @@ export default function RootLayout({
         className="min-h-screen"
         style={{ backgroundColor: colors.background, color: colors.primary }}
       >
-        {/* Everything the Ask AI panel scales back sits inside #page-shell.
-            The panel itself is portalled to <body>, so it stays outside and
-            doesn't shrink with the page. See .ask-open in globals.css. */}
-        <div id="page-shell">{children}</div>
-        {/* Inspect overlay — bottom-right toggle, or press "n". */}
-        <NerdMode />
+        {/* NerdModeProvider wraps the page rather than sitting beside it, so
+            the toggle in the header can reach the state through context. The
+            overlay itself is still portalled to <body>. Press "n" anywhere. */}
+        <NerdModeProvider>
+          {/* Everything the Ask AI panel scales back sits inside #page-shell.
+              The panel itself is portalled to <body>, so it stays outside and
+              doesn't shrink with the page. See .ask-open in globals.css. */}
+          <div id="page-shell">{children}</div>
+        </NerdModeProvider>
         {/* Visual tuning overlay — dev only. Press Option+D (Alt+D) to toggle. */}
         <Retune />
       </body>

@@ -5,6 +5,7 @@ import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 import AskAiPanel from "./AskAiPanel";
 import ThemeToggle from "./ThemeToggle";
+import { NerdModeToggle } from "./NerdMode";
 import SlidingTabs from "./SlidingTabs";
 
 /** Shared wrapper so every nav glyph is identical in size and stroke. */
@@ -239,32 +240,36 @@ export default function HeaderNav() {
 
           <div className="flex shrink-0 items-center gap-1.5">
             <ThemeToggle />
-
-            {/* Ask AI — hidden on phones: the panel is a 430px side sheet and
-                the header can't fit nav + toggle + this under ~640px. */}
-            <button
-              type="button"
-              onClick={() => {
-                playHover();
-                setAskOpen(true);
-              }}
-              onMouseEnter={playHover}
-              aria-haspopup="dialog"
-              aria-expanded={askOpen}
-              /* h-9 matches ThemeToggle's sm size exactly (36px). Without it
-                 the button was content-height, 27px, so the hover background
-                 painted 9px shorter than its neighbour. */
-              className="hidden h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium leading-none outline-none transition-colors duration-200 hover:bg-black/[0.04] sm:flex dark:hover:bg-white/[0.07]"
-              style={{ color: colors.tabActive }}
-            >
-              <span style={{ color: colors.accent }}>
-                <SparkleIcon />
-              </span>
-              Ask Jarvis
-            </button>
+            {/* AI glasses now lives here, where Ask Jarvis used to. State comes
+                from NerdModeProvider in the layout via context. */}
+            <NerdModeToggle />
           </div>
         </div>
       </header>
+
+      {/* Ask Jarvis floats bottom-right, taking the spot AI glasses had.
+          Hidden on phones: the panel it opens is a 430px side sheet. */}
+      <button
+        type="button"
+        onClick={() => {
+          playHover();
+          setAskOpen(true);
+        }}
+        onMouseEnter={playHover}
+        aria-haspopup="dialog"
+        aria-expanded={askOpen}
+        className="fixed bottom-6 right-6 z-[9999] hidden h-11 items-center gap-2 rounded-full pl-4 pr-5 text-[13px] font-medium leading-none outline-none transition-colors duration-200 sm:flex"
+        style={{
+          backgroundColor: colors.surface,
+          color: colors.tabActive,
+          boxShadow: `inset 0 0 0 1px ${colors.line}, 0 8px 24px -10px rgba(0,0,0,.5)`,
+        }}
+      >
+        <span style={{ color: colors.accent }}>
+          <SparkleIcon />
+        </span>
+        Ask Jarvis
+      </button>
 
       <AskAiPanel open={askOpen} onClose={() => setAskOpen(false)} />
     </>
