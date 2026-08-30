@@ -174,7 +174,11 @@ export default function NerdMode() {
   const cardTop = info ? Math.min(info.rect.top + info.rect.height + 10, window.innerHeight - 130) : 0;
 
   return createPortal(
-    <div data-nerd-ui="">
+    /* Hidden on phones: the inspector is a pointer tool — it needs hover to
+       target elements, and the measurement chips and card have nowhere to go
+       on a 375px screen. display:none on this wrapper takes the toggle, the
+       overlay and the status bar with it. */
+    <div data-nerd-ui="" className="hidden sm:block">
       {/* Toggle. Starts as a labelled pill so the feature is discoverable,
           then collapses to the icon after LABEL_MS. The tooltip only mounts
           once the label is gone — while it's showing they'd say the same

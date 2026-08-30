@@ -284,6 +284,25 @@ body {
   }
 }
 
+/* Nerd mode is desktop-only. The toggle is hidden below sm, but the .nerd
+   class can survive a desktop-to-phone resize — without this the grid and
+   outlines would linger with no way to turn them off. */
+@media (max-width: 639px) {
+  .nerd body::before {
+    content: none;
+  }
+  .nerd main > section,
+  .nerd main > div > section,
+  .nerd header,
+  .nerd footer,
+  .nerd main > div > div > section {
+    outline: none;
+  }
+  .nerd section[id]::before {
+    content: none;
+  }
+}
+
 /* ---- ASK AI: page scales back --------------------------------------------
    With the panel open the page shrinks and rounds off, so it reads as sitting
    behind the panel. The scale is small on purpose — the sticky header is
