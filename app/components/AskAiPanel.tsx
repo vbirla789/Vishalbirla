@@ -99,7 +99,7 @@ export default function AskAiPanel({
           <motion.aside
             role="dialog"
             aria-modal="true"
-            aria-label="Ask AI about Vishal"
+            aria-label="Ask Jarvis about Vishal"
             className="fixed right-0 top-0 z-[61] flex h-full w-full max-w-[430px] flex-col"
             style={{ backgroundColor: colors.panel, borderRadius: "24px 0 0 24px" }}
             initial={{ x: "100%" }}
@@ -124,7 +124,7 @@ export default function AskAiPanel({
                   </svg>
                 </button>
                 <span className="text-[14px] font-medium" style={{ color: colors.primary }}>
-                  Ask Vishal
+                  Ask Jarvis
                 </span>
               </div>
 
@@ -268,7 +268,7 @@ export default function AskAiPanel({
                       ask(value);
                     }
                   }}
-                  placeholder="Ask about Vishal..."
+                  placeholder="Ask Jarvis about Vishal..."
                   className="max-h-28 w-full resize-none bg-transparent text-[14px] leading-relaxed outline-none placeholder:text-[color:var(--c-tab-inactive)]"
                   style={{ color: colors.primary }}
                 />

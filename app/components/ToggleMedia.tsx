@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { CaseMedia } from "./caseMedia";
 import { useMediaViewer } from "./MediaViewer";
 import SlidingTabs from "./SlidingTabs";
+import { TextMorph } from "torph/react";
 import type { StoryMedia } from "../lib/projects";
 import { colors } from "../theme";
 import { playHover } from "../lib/sound";
@@ -36,6 +37,7 @@ export default function ToggleMedia({
   const { open } = useMediaViewer();
   const rootRef = useRef<HTMLDivElement>(null);
   const active = options[idx]?.media;
+  const hasCaptions = options.some((o) => o.media.caption);
 
   if (!active) return null;
 
@@ -99,16 +101,25 @@ export default function ToggleMedia({
             placeholder={active.placeholder}
             alt={`${alt} — ${options[idx].label}`}
           />
-          {active.caption ? (
-            <p
-              className="mt-3 text-center text-[13px]"
-              style={{ color: colors.tertiary }}
-            >
-              {active.caption}
-            </p>
-          ) : null}
         </motion.div>
       </AnimatePresence>
+
+      {/* Caption sits OUTSIDE AnimatePresence on purpose. Inside, the keyed
+          motion.div unmounts on every switch, so the text node was destroyed
+          and recreated — nothing to morph between. Out here it persists, so
+          torph can tween the old caption into the new one. Rendered whenever
+          any option has a caption, so the node never unmounts mid-sequence. */}
+      {hasCaptions ? (
+        <TextMorph
+          as="p"
+          className="mt-3 text-center text-[13px]"
+          style={{ color: colors.tertiary }}
+          duration={380}
+          respectReducedMotion
+        >
+          {active.caption ?? ""}
+        </TextMorph>
+      ) : null}
     </div>
   );
 }

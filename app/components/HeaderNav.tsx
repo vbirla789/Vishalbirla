@@ -221,7 +221,7 @@ export default function HeaderNav() {
         className="sticky top-0 z-50 w-full backdrop-blur-md"
         style={{ backgroundColor: "color-mix(in srgb, var(--c-background) 82%, transparent)" }}
       >
-        <div className="mx-auto flex w-full max-w-[800px] items-center justify-between gap-3 px-6 pb-3.5 pt-6">
+        <div className="mx-auto flex w-full max-w-[800px] items-center justify-between gap-2 px-4 pb-3.5 pt-6 sm:gap-3 sm:px-6">
           {/* segmented section nav — sliding pill */}
           <SlidingTabs
             ariaLabel="Section navigation"
@@ -240,7 +240,8 @@ export default function HeaderNav() {
           <div className="flex shrink-0 items-center gap-1.5">
             <ThemeToggle />
 
-            {/* Ask AI */}
+            {/* Ask AI — hidden on phones: the panel is a 430px side sheet and
+                the header can't fit nav + toggle + this under ~640px. */}
             <button
               type="button"
               onClick={() => {
@@ -250,7 +251,7 @@ export default function HeaderNav() {
               onMouseEnter={playHover}
               aria-haspopup="dialog"
               aria-expanded={askOpen}
-              className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[13px] font-medium leading-none outline-none transition-colors duration-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.07]"
+              className="hidden items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[13px] font-medium leading-none outline-none transition-colors duration-200 hover:bg-black/[0.04] sm:flex dark:hover:bg-white/[0.07]"
               style={{ color: colors.tabActive }}
             >
               <span style={{ color: colors.accent }}>

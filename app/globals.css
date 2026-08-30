@@ -261,6 +261,25 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
+/* Phones: the four labels plus the theme toggle overflowed a 375px viewport
+   (the header wanted 432px), so the tabs tighten up rather than scroll. */
+@media (max-width: 640px) {
+  .t-tabs {
+    gap: 1px;
+    padding: 2px;
+  }
+  .t-tab {
+    height: 28px;
+    padding: 4px 8px;
+    font-size: 12px;
+    gap: 4px;
+  }
+  .t-tabs-pill {
+    top: 2px;
+    height: 28px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .t-tabs-pill,
   .t-tab {
