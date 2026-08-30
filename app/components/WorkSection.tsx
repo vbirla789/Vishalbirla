@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { colors, t, type } from "../theme";
-import { experience } from "../lib/experience";
+import ExperienceTimeline from "./ExperienceTimeline";
 
 /* ---------- Work case studies ---------- */
 
@@ -170,59 +170,9 @@ export default function WorkSection() {
         </div>
       </Section>
 
-      {/* EXPERIENCE */}
+      {/* EXPERIENCE — timeline accordion */}
       <Section id="experience" label="Experience">
-        <div className="flex flex-col border-t border-black/5 dark:border-[color:var(--c-line)]">
-          {experience.map((e) => (
-            <div
-              key={e.company + e.role}
-              className="border-b border-black/5 dark:border-[color:var(--c-line)] py-4"
-            >
-              {/* mobile: LinkedIn-style — logo · (role / company) · date-right */}
-              <div className="flex gap-3.5 sm:hidden">
-                <LogoMark src={e.logo} alt={e.company} />
-                <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div style={{ fontSize: 15, fontWeight: 500, color: colors.primary }}>
-                      {e.role}
-                    </div>
-                    <div className="mt-0.5" style={{ fontSize: 14, color: colors.secondary }}>
-                      {e.company}
-                    </div>
-                  </div>
-                  <span
-                    className="whitespace-nowrap text-right"
-                    style={{ fontSize: 13, color: colors.tertiary }}
-                  >
-                    {e.period}
-                  </span>
-                </div>
-              </div>
-
-              {/* desktop: company · role · date */}
-              <div className="hidden sm:grid sm:grid-cols-[240px_1fr_auto] sm:items-center sm:gap-4">
-                <div className="flex items-center gap-3.5">
-                  <LogoMark src={e.logo} alt={e.company} />
-                  <span style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}>
-                    {e.company}
-                  </span>
-                </div>
-                <span
-                  className="justify-self-start"
-                  style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}
-                >
-                  {e.role}
-                </span>
-                <span
-                  className="justify-self-end whitespace-nowrap"
-                  style={{ fontSize: 15, color: colors.tertiary }}
-                >
-                  {e.period}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ExperienceTimeline />
       </Section>
 
       {/* CONCEPTS — three scaled-down cards that fit the column */}
