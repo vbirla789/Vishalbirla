@@ -149,51 +149,58 @@ export default function HeaderNav() {
     return () => clearTimeout(timer);
   }, []);
 
-  // scroll-spy: whichever section crosses the viewport middle becomes active,
-  // and play one tick each time a new section is entered (both ways)
+  /* Scroll-spy, computed directly from scroll position.
+   *
+   * This deliberately does NOT use IntersectionObserver. An observer only
+   * fires when a threshold is crossed, and #work is ~1400px tall: once it
+   * fully covered the detection band its ratio stayed pinned at 1, no
+   * threshold was crossed, and the nav froze on "Work" for the rest of the
+   * page — Experience and Concepts never activated.
+   *
+   * Reading positions on scroll is O(sections) and always correct: the active
+   * section is the last one whose top has passed a line just below the header.
+   */
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        if (lockRef.current) return; // a click is driving the scroll — don't override
-        const hit = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!hit) return;
-        const id = hit.target.id;
-        if (id !== lastActiveRef.current) {
-          if (lastActiveRef.current !== null) playScroll();
-          lastActiveRef.current = id;
-        }
-        setActive(id);
-      },
-      // Detection band sits in the upper third of the viewport, not the middle.
-      // With the timeline hidden, #about no longer reaches the vertical centre
-      // at scroll 0, so a centred band highlighted "Work" on first load.
-      { rootMargin: "-15% 0px -65% 0px", threshold: [0, 0.25, 0.5, 1] },
-    );
-    items.forEach((it) => {
-      const el = document.getElementById(it.id);
-      if (el) obs.observe(el);
-    });
-    return () => obs.disconnect();
-  }, []);
+    /* The activation line, measured from the viewport top. Viewport-relative
+     * rather than a fixed offset: #work is ~1750px tall while Experience and
+     * Concepts are short and sit at the end of the page. With a line just
+     * under the header, Concepts' top never reached it before the page ran out
+     * of scroll, so it could only ever activate via the bottom guard. At ~35%
+     * down, every section gets a real window. */
+    const line = () => Math.max(120, window.innerHeight * 0.35);
 
-  // The last section can never win the band: the page runs out of scroll before
-  // #fun dominates it, so "Concepts" would never light up on the way down.
-  // Force it once the page is scrolled to the bottom.
-  useEffect(() => {
-    const onScroll = () => {
-      if (lockRef.current) return;
+    const pick = () => {
+      const LINE = line();
+      if (lockRef.current) return; // a click is driving the scroll
+
+      let current = items[0].id;
+      for (const it of items) {
+        const el = document.getElementById(it.id);
+        if (el && el.getBoundingClientRect().top <= LINE) current = it.id;
+      }
+
+      // At the very bottom the last section may never cross the line, so claim
+      // it explicitly rather than leaving the previous one lit.
       const doc = document.documentElement;
-      const atBottom = window.innerHeight + window.scrollY >= doc.scrollHeight - 4;
-      if (atBottom) {
-        const last = items[items.length - 1].id;
-        lastActiveRef.current = last;
-        setActive(last);
+      if (window.innerHeight + window.scrollY >= doc.scrollHeight - 4) {
+        current = items[items.length - 1].id;
+      }
+
+      if (current !== lastActiveRef.current) {
+        if (lastActiveRef.current !== null) playScroll(); // tick per section
+        lastActiveRef.current = current;
+        setActive(current);
       }
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    window.addEventListener("scroll", pick, { passive: true });
+    window.addEventListener("resize", pick);
+    pick();
+
+    return () => {
+      window.removeEventListener("scroll", pick);
+      window.removeEventListener("resize", pick);
+    };
   }, []);
 
   const go = (id: string) => {
@@ -221,7 +228,9 @@ export default function HeaderNav() {
             tabs={items.map((it) => ({
               id: it.id,
               label: it.label,
-              icon: it.icon,
+              // Active tab only — the pill re-measures after React commits, so
+              // the width change is part of the same 250ms tween.
+              icon: active === it.id ? it.icon : null,
             }))}
             activeId={active}
             onSelect={go}

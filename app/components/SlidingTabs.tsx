@@ -65,8 +65,12 @@ export default function SlidingTabs({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Active tab changed: animate to the new position.
-  useEffect(() => {
+  /* Active tab changed: animate to the new position.
+   *
+   * useLayoutEffect, not useEffect: the active tab gains an icon and therefore
+   * gets wider in the same commit. Measuring after paint would read the old
+   * width for one frame and the pill would visibly jump before settling. */
+  useLayoutEffect(() => {
     syncPill(true);
   }, [syncPill]);
 

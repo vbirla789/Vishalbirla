@@ -30,6 +30,11 @@ export default function ThemeToggle() {
   const [isDark, setIsDark] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // Reading the class that the pre-hydration script in layout.tsx already
+    // applied — i.e. syncing React from an external system, which is what
+    // effects are for. It can't be lazy state: the server has no <html> class
+    // to read, so initialising from the DOM would cause a hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
