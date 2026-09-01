@@ -51,9 +51,8 @@ export default function Home() {
               <span aria-hidden="true">
                 <Typewriter
                   as="span"
-                  /* Ordered so the first pass reads as an introduction — name,
-                     then craft — before it loosens up into the outside-work
-                     lines.
+                  /* Short noun-phrase labels, opening with the name so the
+                     first pass reads as an introduction.
                      Every line is kept under ~21 characters on purpose: at the
                      28px mobile size the h1 only has 327px, and a line that
                      wraps adds a second row that shifts the whole page down by
@@ -61,10 +60,10 @@ export default function Home() {
                      a longer one. */
                   text={[
                     "This is Vishal",
-                    "A design engineer",
-                    "Try to live in present",
-                    "Coffee addict",
-                    "Overthinking a radius",
+                    "Design engineer",
+                    "Coffee enthusiast",
+                    "Framer expert",
+                    "Late-night builder",
                   ]}
                   speed={70}
                   deleteSpeed={40}
