@@ -60,10 +60,10 @@ export default function Home() {
                      a longer one. */
                   text={[
                     "This is Vishal",
-                    "Design engineer",
+                    "Designer who builds",
                     "Coffee enthusiast",
                     "Framer expert",
-                    "Late-night builder",
+                    "2px negotiator",
                   ]}
                   speed={70}
                   deleteSpeed={40}
@@ -79,7 +79,7 @@ export default function Home() {
           <Appear delay={0.14}>
             <div className="mt-4 space-y-4">
               <p className="w-full max-w-[576px]" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
-                I&apos;m a product designer based in India, currently designing at
+                Product designer based in India, currently working at
                 <span className="font-semibold text-[color:var(--c-primary)]"> noon</span>.
                 I love using AI to shape designs and bring them to life as living, interactive experiences.
               </p>
