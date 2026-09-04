@@ -117,7 +117,6 @@ export default function SideNav() {
                   href={it.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onMouseEnter={playHover}
                   onClick={playHover}
                   className="group/item flex items-center gap-3.5 outline-none"
                 >
@@ -127,7 +126,6 @@ export default function SideNav() {
                 <button
                   type="button"
                   onClick={() => go(it.id)}
-                  onMouseEnter={playHover}
                   className="group/item flex items-center gap-3.5 outline-none"
                   aria-current={isActive ? "true" : undefined}
                 >

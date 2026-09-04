@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { colors } from "../theme";
-import { playHover, playSelect } from "../lib/sound";
+import { playSelect } from "../lib/sound";
 import { experience } from "../lib/experience";
 import RichText from "./RichText";
 
@@ -80,7 +80,6 @@ export default function ExperienceTimeline() {
                   playSelect();
                   setOpenId(isOpen ? null : id);
                 }}
-                onMouseEnter={playHover}
                 aria-expanded={expandable ? isOpen : undefined}
                 aria-controls={expandable ? `exp-${id}` : undefined}
                 className={`flex w-full items-center gap-4 px-3 py-3 text-left outline-none ${

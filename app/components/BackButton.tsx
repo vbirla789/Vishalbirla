@@ -9,7 +9,6 @@ export default function BackButton() {
     <Link
       href="/#work"
       aria-label="Back to work"
-      onMouseEnter={playHover}
       onClick={playHover}
       className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 transition-colors hover:bg-zinc-200 dark:bg-[color:var(--c-panel)] dark:hover:bg-[color:var(--c-btn-muted-bg-hover)]"
       style={{ color: colors.secondary }}

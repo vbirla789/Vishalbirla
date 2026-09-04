@@ -108,7 +108,6 @@ export default function ThemeToggle() {
       ref={btnRef}
       type="button"
       onClick={toggle}
-      onMouseEnter={playHover}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       aria-pressed={isDark ?? false}
       /* Sized to match the nav bar exactly: 40px on phones (32px tab + 4px bar

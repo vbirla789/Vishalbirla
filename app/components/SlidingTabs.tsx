@@ -19,7 +19,6 @@ export default function SlidingTabs({
   tabs,
   activeId,
   onSelect,
-  onTabHover,
   ariaLabel,
   size = "md",
   className = "",
@@ -27,7 +26,6 @@ export default function SlidingTabs({
   tabs: SlidingTab[];
   activeId: string;
   onSelect: (id: string) => void;
-  onTabHover?: () => void;
   ariaLabel: string;
   /** md = header nav (13px), lg = media toggle (13px, roomier padding) */
   size?: "md" | "lg";
@@ -104,7 +102,6 @@ export default function SlidingTabs({
           role="tab"
           aria-selected={activeId === t.id}
           onClick={() => onSelect(t.id)}
-          onMouseEnter={onTabHover}
           className="t-tab"
         >
           {t.icon ?? null}

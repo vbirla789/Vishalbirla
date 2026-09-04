@@ -8,7 +8,6 @@ import SlidingTabs from "./SlidingTabs";
 import { TextMorph } from "torph/react";
 import type { StoryMedia } from "../lib/projects";
 import { colors } from "../theme";
-import { playHover } from "../lib/sound";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -64,7 +63,6 @@ export default function ToggleMedia({
           tabs={options.map((o, i) => ({ id: String(i), label: o.label }))}
           activeId={String(idx)}
           onSelect={(id) => setIdx(Number(id))}
-          onTabHover={playHover}
         />
       </div>
 

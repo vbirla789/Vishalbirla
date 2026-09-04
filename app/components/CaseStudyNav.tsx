@@ -115,7 +115,6 @@ export default function CaseStudyNav({ items = DEFAULT_ITEMS }: { items?: NavIte
               <button
                 type="button"
                 onClick={() => go(it.id)}
-                onMouseEnter={playHover}
                 className="group/item flex items-center gap-3.5 outline-none"
                 aria-current={isActive ? "true" : undefined}
               >

@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { playHover, playSelect } from "../lib/sound";
+import { playSelect } from "../lib/sound";
 
 /* ----------------------------------------------------------------------------
  * Nerd mode — an inspect overlay for the site itself.
@@ -43,7 +43,6 @@ export function NerdModeToggle() {
         playSelect();
         toggle();
       }}
-      onMouseEnter={playHover}
       aria-pressed={on}
       aria-label={on ? "Turn off AI glasses" : "Turn on AI glasses (n)"}
       /* Hidden on phones, matching the overlay: the inspector needs a pointer

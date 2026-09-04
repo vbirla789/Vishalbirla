@@ -1,7 +1,6 @@
 "use client";
 
 import { colors } from "../theme";
-import { playHover } from "../lib/sound";
 
 export default function Footer() {
   return (
@@ -15,7 +14,6 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="X (Twitter)"
-          onMouseEnter={playHover}
           className="text-[color:var(--c-tertiary)] transition-colors hover:text-[color:var(--c-primary)]"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -27,7 +25,6 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="LinkedIn"
-          onMouseEnter={playHover}
           className="text-[color:var(--c-tertiary)] transition-colors hover:text-[color:var(--c-primary)]"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>

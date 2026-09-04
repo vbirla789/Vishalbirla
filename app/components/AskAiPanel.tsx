@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { colors } from "../theme";
-import { playHover, playSuccess } from "../lib/sound";
+import { playSuccess } from "../lib/sound";
 import { SparkleIcon } from "./HeaderNav";
 import Link from "next/link";
 import { answerAbout, type AnswerLink } from "../lib/askContext";
@@ -48,7 +48,6 @@ function AnswerChip({ link, onNavigate }: { link: AnswerLink; onNavigate: () => 
         type="button"
         className={className}
         style={style}
-        onMouseEnter={playHover}
         onClick={() => {
           onNavigate();
           const id = link.href.slice(1);
@@ -67,7 +66,7 @@ function AnswerChip({ link, onNavigate }: { link: AnswerLink; onNavigate: () => 
 
   if (link.href.startsWith("/")) {
     return (
-      <Link href={link.href} className={className} style={style} onMouseEnter={playHover} onClick={onNavigate}>
+      <Link href={link.href} className={className} style={style} onClick={onNavigate}>
         {link.label}
         {arrow}
       </Link>
@@ -75,7 +74,7 @@ function AnswerChip({ link, onNavigate }: { link: AnswerLink; onNavigate: () => 
   }
 
   return (
-    <a href={link.href} className={className} style={style} onMouseEnter={playHover} onClick={onNavigate}>
+    <a href={link.href} className={className} style={style} onClick={onNavigate}>
       {link.label}
       {arrow}
     </a>
@@ -180,7 +179,6 @@ export default function AskAiPanel({
                 <button
                   type="button"
                   onClick={onClose}
-                  onMouseEnter={playHover}
                   aria-label="Close panel"
                   className="flex h-7 w-7 items-center justify-center rounded-md transition-colors hover:bg-[color:var(--c-tab-active-bg)]"
                   style={{ color: colors.secondary }}
@@ -238,7 +236,6 @@ export default function AskAiPanel({
                         <button
                           type="button"
                           onClick={() => ask(q)}
-                          onMouseEnter={playHover}
                           className="group flex w-full items-start gap-2.5 text-left text-[14px] leading-snug outline-none"
                           style={{ color: colors.secondary }}
                         >
@@ -338,7 +335,6 @@ export default function AskAiPanel({
                   <button
                     type="submit"
                     disabled={!value.trim()}
-                    onMouseEnter={playHover}
                     aria-label="Send"
                     className="flex h-8 w-8 items-center justify-center rounded-lg transition-opacity disabled:opacity-35"
                     style={{ backgroundColor: colors.accent, color: "#fff" }}

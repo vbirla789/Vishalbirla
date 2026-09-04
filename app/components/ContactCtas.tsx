@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { playError, playHover, playSuccess } from "../lib/sound";
+import { playError, playSuccess } from "../lib/sound";
 import { colors } from "../theme";
 
 const EMAIL = "vishalbirla789@gmail.com";
@@ -93,7 +93,6 @@ export default function ContactCtas() {
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            onMouseEnter={playHover}
             tabIndex={isOpen ? -1 : 0}
             className={`absolute inset-0 flex items-center justify-center gap-2 text-[14px] font-medium tracking-[-0.01em] outline-none transition-[opacity,filter] duration-150 ease-out ${
               isOpen ? "pointer-events-none opacity-0 blur-[2px]" : "opacity-100 blur-0 delay-75"
@@ -138,7 +137,6 @@ export default function ContactCtas() {
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  onMouseEnter={playHover}
                   aria-label="Close"
                   tabIndex={isOpen ? 0 : -1}
                   className="flex h-6 w-6 items-center justify-center rounded-md text-[color:var(--c-solid-fg-faint)] transition-colors hover:bg-[color:var(--c-solid-chip-hover)] hover:text-[color:var(--c-solid-fg)]"
@@ -161,7 +159,6 @@ export default function ContactCtas() {
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  onMouseEnter={playHover}
                   tabIndex={isOpen ? 0 : -1}
                   className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-[color:var(--c-solid-row-hover)]"
                 >
@@ -207,7 +204,6 @@ export default function ContactCtas() {
                   href="https://www.linkedin.com/in/vishal-birla-587235187/"
                   target="_blank"
                   rel="noreferrer"
-                  onMouseEnter={playHover}
                   tabIndex={isOpen ? 0 : -1}
                   className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-[color:var(--c-solid-row-hover)]"
                 >
@@ -236,7 +232,6 @@ export default function ContactCtas() {
                   href="https://x.com/VishalB10042696"
                   target="_blank"
                   rel="noreferrer"
-                  onMouseEnter={playHover}
                   tabIndex={isOpen ? 0 : -1}
                   className="group/row flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-[color:var(--c-solid-row-hover)]"
                 >
@@ -269,7 +264,6 @@ export default function ContactCtas() {
       <button
         type="button"
         onClick={handleResumeClick}
-        onMouseEnter={playHover}
         className="inline-flex h-[38px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[color:var(--c-btn-muted-bg)] px-4 py-0 text-[14px] font-medium leading-none tracking-[-0.01em] text-[color:var(--c-primary)] transition-colors hover:bg-[color:var(--c-btn-muted-bg-hover)] outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 focus-visible:ring-offset-2"
         // inset ring rather than a border, so the 38px height doesn't shift
         style={{ boxShadow: `inset 0 0 0 1px ${colors.btnMutedRing}` }}

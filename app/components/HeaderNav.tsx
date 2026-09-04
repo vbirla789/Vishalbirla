@@ -235,7 +235,6 @@ export default function HeaderNav() {
             }))}
             activeId={active}
             onSelect={go}
-            onTabHover={playHover}
           />
 
           <div className="flex shrink-0 items-center gap-1.5">
@@ -255,7 +254,6 @@ export default function HeaderNav() {
           playHover();
           setAskOpen(true);
         }}
-        onMouseEnter={playHover}
         aria-haspopup="dialog"
         aria-expanded={askOpen}
         className="fixed bottom-6 right-6 z-[9999] hidden h-11 items-center gap-2 rounded-full pl-4 pr-5 text-[13px] font-medium leading-none outline-none transition-colors duration-200 sm:flex"
