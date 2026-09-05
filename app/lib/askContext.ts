@@ -34,9 +34,30 @@ export const PROFILE = {
       "UX design, UI design, interaction design, design systems, wireframing, prototyping, user flows, information architecture",
     research:
       "user research, journey mapping, usability testing, accessibility, product thinking",
-    frontend: "HTML, CSS, JavaScript, TypeScript, React, Next.js, SwiftUI",
-    tools: "Figma, Framer, ChatGPT, Claude, Midjourney, Canva",
+    frontend: "HTML, CSS, JavaScript, TypeScript, React, React Native, Next.js, Redux, Tailwind, Vite, Shadcn UI, SwiftUI",
+    backend: "Node, Express, MongoDB/Mongoose, Firebase, Convex, Clerk, Auth0, OAuth",
+    web3: "Solidity, Hardhat, Ethers, Ganache",
+    tools: "Figma, Framer (including CMS), Vercel, Render, Postman",
+    ai: "ChatGPT, Claude, Midjourney, Relume, UxPilot, Whimsical, Gamma, Fibr.ai",
   },
+
+  /** The one-line pitch. Everything else is evidence for this. */
+  differentiator:
+    "product design plus development — able to frame the problem, design the UX/UI, prototype it quickly, and hold a real conversation with engineers about constraints",
+
+  strengths:
+    "product design, UX/UI, design systems, Framer, landing pages, rapid prototyping, AI-assisted design workflows, design engineering",
+
+  /* Beyond the four case-study roles above — asked about often enough to be
+     worth naming, but not detailed enough to deserve their own answers. */
+  alsoWorkedWith: [
+    "Supergrow", "SauceAudio", "Proquity", "BigWigMedia.ai", "Smollan",
+    "AccioJob", "Unoptimised Studio", "Vizuals Design Studio", "Webveda",
+    "Yuake", "OR (Originally Raw)", "Schoolio",
+  ],
+
+  lookingFor:
+    "product design roles, startups, AI products, design engineering, Framer and landing-page work",
 };
 
 /**
@@ -121,6 +142,21 @@ const ENTRIES: Entry[] = [
       links: [SECTION.experience],
     },
   },
+  /* Must sit above the generic "experience" entry. These are proper nouns
+     worth 1 point each, and "has he worked with schoolio" also scores 1 on
+     that entry's "worked" — on a tie the earlier entry wins, so the specific
+     one has to come first. */
+  {
+    keywords: [
+      "other companies", "other clients", "who else", "supergrow", "sauceaudio",
+      "proquity", "bigwig", "smollan", "acciojob", "unoptimised", "vizuals",
+      "webveda", "yuake", "schoolio", "originally raw", "brands",
+    ],
+    answer: {
+      text: `Beyond the four roles with case studies, I've worked across ${PROFILE.alsoWorkedWith.join(", ")}.\n\nMostly product design, landing pages and Framer builds — a lot of it 0→1 and fast.`,
+      links: [SECTION.experience, SECTION.work],
+    },
+  },
   {
     keywords: ["code", "develop", "frontend", "engineer", "react", "next", "swiftui", "technical"],
     answer: {
@@ -131,12 +167,15 @@ const ENTRIES: Entry[] = [
   {
     keywords: ["ai", "how do you use ai", "workflow", "claude", "chatgpt"],
     answer: {
-      text: "AI is part of how I work, not a bolt-on. I use it to explore directions fast, to draft and pressure-test copy, and to build working prototypes rather than static mockups — so a design can be judged by using it. The noon review flow is AI in the product itself; this site and its prototypes are AI in the process.",
+      text: `AI is part of how I work, not a bolt-on. I use it to explore directions fast, to draft and pressure-test copy, and to build working prototypes rather than static mockups — so a design can be judged by using it. The tools: ${PROFILE.skills.ai}.\n\nThe belief underneath it: AI should accelerate the design work, not replace the product thinking. The noon review flow is AI inside the product; this site and its prototypes are AI in the process.`,
       links: [CASE.noon, SECTION.concepts],
     },
   },
   {
-    keywords: ["about you", "yourself", "who are you", "intro", "background", "tell me about"],
+    /* No "tell me about" here: it's a conversational prefix, not a topic, and
+       as a 3-point phrase it hijacked "tell me about <anything specific>".
+       "about you" still catches "tell me about yourself". */
+    keywords: ["about you", "yourself", "who are you", "intro", "background"],
     answer: {
       text: `I'm ${PROFILE.name}, a product designer based in ${PROFILE.location}, currently designing at ${PROFILE.current}. I came in through a development background, so I think about how things get built as much as how they look. I like using AI to shape designs and bring them to life as living, interactive experiences rather than flat screens.`,
       links: [SECTION.about, SECTION.work],
@@ -152,7 +191,7 @@ const ENTRIES: Entry[] = [
   {
     keywords: ["skills", "what can you do", "stack", "tools", "figma"],
     answer: {
-      text: `Design: ${PROFILE.skills.design}.\n\nResearch: ${PROFILE.skills.research}.\n\nFrontend: ${PROFILE.skills.frontend}.\n\nTools: ${PROFILE.skills.tools}.`,
+      text: `Design: ${PROFILE.skills.design}.\n\nResearch: ${PROFILE.skills.research}.\n\nFrontend: ${PROFILE.skills.frontend}.\n\nTools: ${PROFILE.skills.tools}.\n\nAI: ${PROFILE.skills.ai}.`,
       links: [SECTION.experience, SECTION.work],
     },
   },
@@ -180,12 +219,105 @@ const ENTRIES: Entry[] = [
       links: [CASE.fibr],
     },
   },
+
+  /* ---- the "should we hire him" cluster -----------------------------------
+   * Deliberately phrase-heavy. The generic contact entry already owns the
+   * bare word "hire" ("how do I hire you"), so this one keys off "hiring"
+   * and the why-questions instead, and wins on phrase score when someone is
+   * actually asking for the pitch. */
+  {
+    keywords: [
+      "worth hiring", "why hire", "should i hire", "should we hire",
+      "why should", "good hire", "right fit", "good fit", "why you",
+      "convince me", "sell me", "hiring",
+    ],
+    answer: {
+      text: "Short version: I design it, then I build it. Most designers hand over a file — I hand over the file, a working prototype, and the ability to talk to engineers in their own language. Less gets lost between the design and the thing that ships.\n\nThe evidence: at noon I'm on AI-assisted reviews, image-first UGC navigation and the Field Design System. At Ambitio the NOVA dashboard rebuild lifted adoption ~14%. At Fibr.ai the site I designed and built in Framer grew traffic ~35%.",
+      links: [SECTION.work, CASE.noon, { label: "Email me", href: `mailto:${PROFILE.email}` }],
+    },
+  },
+  {
+    keywords: [
+      "differentiator", "different from", "stand out", "what makes you",
+      "unique", "strength", "strong suit", "best at", "superpower",
+    ],
+    answer: {
+      text: `My differentiator is ${PROFILE.differentiator}.\n\nStrongest areas: ${PROFILE.strengths}.`,
+      links: [SECTION.work, SECTION.experience],
+    },
+  },
+  {
+    keywords: [
+      "tech stack", "backend", "full stack", "fullstack", "node", "mongo",
+      "typescript", "react native", "tailwind", "firebase", "convex",
+      "database", "what do you build with",
+    ],
+    answer: {
+      text: `Frontend: ${PROFILE.skills.frontend}.\n\nBackend: ${PROFILE.skills.backend}.\n\nDeploy and tooling: ${PROFILE.skills.tools}.\n\nI'm a designer first — the stack exists so I can build what I design rather than describe it.`,
+      links: [SECTION.concepts, SECTION.work],
+    },
+  },
+  {
+    keywords: ["solidity", "web3", "blockchain", "smart contract", "ethers", "hardhat"],
+    answer: {
+      text: `Some, from my development background: ${PROFILE.skills.web3}. It's not where I focus now — my work is product design and design engineering — but the contract-level mental model is there if a project needs it.`,
+      links: [SECTION.concepts],
+    },
+  },
+  {
+    keywords: [
+      "looking for", "open to", "next role", "opportunities", "interested in",
+      "what do you want", "job search", "new role",
+    ],
+    answer: {
+      text: `Right now: ${PROFILE.lookingFor}.\n\nI like 0→1 problems, small teams that move quickly, and owning something end to end. Easiest way to start a conversation is email — ${PROFILE.email}.`,
+      links: [{ label: "Email me", href: `mailto:${PROFILE.email}` }, SECTION.work],
+    },
+  },
+  {
+    keywords: [
+      "how do you work", "working style", "your process", "collaborate",
+      "collaboration", "work with engineers", "ownership", "communication style",
+      "0 to 1", "zero to one", "startup", "early stage",
+    ],
+    answer: {
+      text: "I like simple, polished things and I'd rather ship one considered flow than five rough ones. In practice: understand the problem, sketch fast, prototype something real, then put it in front of people.\n\nI work closely with engineering — my development background means constraints come up early rather than at handoff — and I take ownership of a problem end to end. Startups and 0→1 work suit me best.",
+      links: [SECTION.work, SECTION.experience],
+    },
+  },
+  {
+    keywords: ["landing page", "marketing site", "build me a site", "website for"],
+    answer: {
+      text: "Landing pages are a real specialism, not a side line — I've built and shipped production marketing sites in Framer, with CMS, for Fibr.ai and DZINR. Fibr.ai's grew traffic around 35% off the back of better performance, SEO and content management.",
+      links: [CASE.fibr, { label: "Email me", href: `mailto:${PROFILE.email}` }],
+    },
+  },
 ];
 
 const FALLBACK: Answer = {
-  text: `I don't have a written answer for that one. Things I can cover: my work at noon, Ambitio, Fibr.ai and DZINR; the noon review flow in detail; my design and frontend skills; how I use AI; or how to get in touch.`,
+  text: `I don't have a written answer for that one. Try me on: why I'd be a good hire; what makes me different; my work at noon, Ambitio, Fibr.ai or DZINR; my design and engineering stack; how I use AI; what I'm looking for next; or how to reach me.`,
   links: [SECTION.work, SECTION.experience],
 };
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/**
+ * Does `q` contain `keyword` as a whole word (or whole phrase)?
+ *
+ * Single words are matched on word boundaries rather than as raw substrings.
+ * Plain `includes` produced real misroutes: the keyword "ai" matched inside
+ * "email" and "available", so "what's your email" answered the how-I-use-AI
+ * question. Hyphens and punctuation still count as boundaries, so "ai" keeps
+ * matching "AI-assisted".
+ *
+ * A trailing "s" is tolerated so "startup" matches "startups" — but this is
+ * matching, not stemming, so "hire" still will not match "hiring". Where an
+ * irregular form matters, list both in the keywords.
+ */
+function hits(q: string, keyword: string): boolean {
+  if (keyword.includes(" ")) return q.includes(keyword);
+  return new RegExp(`\\b${escapeRe(keyword)}s?\\b`).test(q);
+}
 
 /**
  * Match a question against the knowledge base.
@@ -201,7 +333,7 @@ export function answerAbout(question: string): Answer {
   for (const entry of ENTRIES) {
     let score = 0;
     for (const k of entry.keywords) {
-      if (q.includes(k)) score += k.includes(" ") ? 3 : 1; // phrases beat single words
+      if (hits(q, k)) score += k.includes(" ") ? 3 : 1; // phrases beat single words
     }
     if (score > 0 && (!best || score > best.score)) {
       best = { score, answer: entry.answer };
