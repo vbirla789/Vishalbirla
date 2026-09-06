@@ -125,7 +125,7 @@ export default function ConceptLightbox({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 12 }}
           transition={{ duration: 0.45, ease: EASE }}
-          className="overflow-hidden rounded-[22px] bg-zinc-50 ring-1 ring-black/5 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
+          className="relative overflow-hidden rounded-[22px] bg-zinc-50 dark:bg-[color:var(--c-panel)]"
           onClick={(e) => e.stopPropagation()}
         >
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
@@ -145,6 +145,15 @@ export default function ConceptLightbox({
               playsInline
             />
           </AnimatePresence>
+          {/* Hairline drawn OVER the media, not on the panel: the video hugs
+              the panel exactly, so a ring on the panel itself is painted over
+              along every edge and survives only at the clipped corners — which
+              reads as a broken border. Last child, so it stacks above the
+              exiting video during pagination too. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-inset ring-black/5 dark:ring-[color:var(--c-line)]"
+          />
         </motion.div>
       </div>
 
