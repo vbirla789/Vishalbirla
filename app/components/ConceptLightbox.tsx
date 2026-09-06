@@ -125,7 +125,12 @@ export default function ConceptLightbox({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 12 }}
           transition={{ duration: 0.45, ease: EASE }}
-          className="relative overflow-hidden rounded-[22px] bg-zinc-50 dark:bg-[color:var(--c-panel)]"
+          /* The video is a full-bleed iPhone screen recording, so the clip has
+             to read as a phone. A real iPhone's corner radius is ~6.4% of its
+             screen height; the video is sized in vh (50 / 74 below), so the
+             radius is expressed in vh at the same ratio and scales with it.
+             A fixed 22px looked visibly too tight at ~765px tall. */
+          className="relative overflow-hidden rounded-[3.2vh] bg-zinc-50 sm:rounded-[4.75vh] dark:bg-[color:var(--c-panel)]"
           onClick={(e) => e.stopPropagation()}
         >
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
@@ -150,9 +155,10 @@ export default function ConceptLightbox({
               along every edge and survives only at the clipped corners — which
               reads as a broken border. Last child, so it stacks above the
               exiting video during pagination too. */}
+          {/* radius must match the panel above, or the ring traces the wrong curve */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-inset ring-black/5 dark:ring-[color:var(--c-line)]"
+            className="pointer-events-none absolute inset-0 rounded-[3.2vh] ring-1 ring-inset ring-black/5 sm:rounded-[4.75vh] dark:ring-[color:var(--c-line)]"
           />
         </motion.div>
       </div>
