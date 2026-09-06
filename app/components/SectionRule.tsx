@@ -25,14 +25,17 @@ export default function SectionRule() {
        must equal the section spacing below (space-y-16 in WorkSection) or the
        band around each rule reads lopsided. Change both together. */
     <div aria-hidden className="relative h-16">
-      <div className="absolute left-1/2 top-0 h-px w-screen -translate-x-1/2 bg-[color:var(--c-line)]" />
+      {/* hidden sm:block — no structure grid on phones, where the lines read as
+          clutter rather than structure. The box keeps its height either way, so
+          the 64px rhythm survives; only the marks go. */}
+      <div className="absolute left-1/2 top-0 hidden h-px w-screen -translate-x-1/2 bg-[color:var(--c-line)] sm:block" />
       {/* Squares centred on the line. From min-[848px] they shift out to the
           column's BOX edges (-left-6 = the px-6 gutter) so they sit exactly on
           the vertical structure lines in page.tsx and mark the intersections;
-          below that the verticals are hidden and the squares mark the content
-          edges instead. Keep the two breakpoints in sync. */}
-      <div className="absolute left-0 top-0 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 bg-[color:var(--c-accent)] min-[848px]:-left-6" />
-      <div className="absolute right-0 top-0 h-[5px] w-[5px] -translate-y-1/2 translate-x-1/2 bg-[color:var(--c-accent)] min-[848px]:-right-6" />
+          between sm and that, the verticals are hidden and the squares mark the
+          content edges instead. Keep the breakpoints in sync. */}
+      <div className="absolute left-0 top-0 hidden h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 bg-[color:var(--c-accent)] sm:block min-[848px]:-left-6" />
+      <div className="absolute right-0 top-0 hidden h-[5px] w-[5px] -translate-y-1/2 translate-x-1/2 bg-[color:var(--c-accent)] sm:block min-[848px]:-right-6" />
     </div>
   );
 }

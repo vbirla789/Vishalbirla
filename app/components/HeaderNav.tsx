@@ -234,11 +234,12 @@ export default function HeaderNav() {
   return (
     <>
       <header
-        className="sticky top-0 z-50 w-full border-b backdrop-blur-md"
+        /* sm:border-b — the hairline the vertical structure lines hang from,
+           without which the section rules float unanchored. Gone on phones,
+           where the whole grid is hidden (see SectionRule). */
+        className="sticky top-0 z-50 w-full backdrop-blur-md sm:border-b"
         style={{
           backgroundColor: "color-mix(in srgb, var(--c-background) 82%, transparent)",
-          /* Full-width hairline the vertical structure lines hang from — the
-             section rules floated unanchored without it. */
           borderColor: "var(--c-line)",
         }}
       >

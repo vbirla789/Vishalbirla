@@ -331,11 +331,14 @@ export default async function CaseStudyPage({
     <MediaViewerProvider>
       <CaseStudyNav items={navItems} />
 
-      <main className="mx-auto w-full max-w-[720px] px-6 pb-24 pt-20 sm:pb-32 sm:pt-28">
+      {/* pt-12/sm:pt-16 — a case study has no header above it, so the old
+          pt-20/sm:pt-28 opened the page on dead space. The fixed back button
+          below is pinned to line up with this; move the two together. */}
+      <main className="mx-auto w-full max-w-[720px] px-6 pb-24 pt-12 sm:pb-32 sm:pt-16">
         {/* ---------------- Overview / header ---------------- */}
         <section id="overview" className="relative scroll-mt-28">
           {/* back button — fixed in the left gutter so it stays visible on scroll */}
-          <div className="fixed left-[calc(50%-400px)] top-28 z-40 hidden lg:block">
+          <div className="fixed left-[calc(50%-400px)] top-16 z-40 hidden lg:block">
             <BackButton />
           </div>
           {/* narrow screens (no gutter): back button above the title */}
