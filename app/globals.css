@@ -166,14 +166,26 @@ body {
   h5,
   h6 {
     font-family: var(--font-geist-pixel), ui-monospace, monospace;
-    /* Geist Pixel ships one face at weight 400 and no variable axis — the
-       upstream variants are shapes (Circle, Grid, Line, Square, Triangle),
-       not weights — so font-weight does nothing here; measured identical
-       metrics from 300 to 800. Painting a hairline stroke in the text's own
-       colour is what actually thickens it. Half the stroke lands inside the
-       glyph, so this reads as a small weight bump and leaves advance widths
-       untouched, which matters because the hero's line-fit was measured
-       against the 20-character ceiling. */
+  }
+
+  /* Weight bump for Geist Pixel only.
+     Geist Pixel ships one face at weight 400 and no variable axis — the
+     upstream variants are shapes (Circle, Grid, Line, Square, Triangle), not
+     weights — so font-weight does nothing here; measured identical metrics
+     from 300 to 800. Painting a hairline stroke in the text's own colour is
+     what actually thickens it, and half the stroke lands inside the glyph so
+     advance widths are untouched.
+
+     :not(.font-sans) matters: headings opt back into Geist with Tailwind's
+     font-sans (the Work card titles do), and those must keep their real
+     weight — the stroke would fake-bold Geist, which already has proper
+     weights. Any future opt-out gets this for free. */
+  h1:not(.font-sans),
+  h2:not(.font-sans),
+  h3:not(.font-sans),
+  h4:not(.font-sans),
+  h5:not(.font-sans),
+  h6:not(.font-sans) {
     -webkit-text-stroke: 0.45px currentColor;
   }
 }
