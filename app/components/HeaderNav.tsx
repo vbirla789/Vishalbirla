@@ -142,9 +142,24 @@ export default function HeaderNav() {
     const timer = setTimeout(() => {
       const el = document.getElementById(id);
       if (!el) return;
-      el.scrollIntoView({ behavior: "auto", block: "start" });
+      /* "instant", not "auto". "auto" does not mean un-animated — it means
+         defer to CSS, and html sets scroll-behavior: smooth. That turned this
+         jump into a smooth animation which is cancelled during page load, so
+         the back button from a case study landed on /#work and never moved.
+         "instant" overrides the stylesheet. The nav's own click handler still
+         uses "smooth" on purpose: by then the page has settled. */
+      el.scrollIntoView({ behavior: "instant", block: "start" });
       lastActiveRef.current = id;
       setActive(id);
+
+      /* Tidy the address bar. Arriving from a case study leaves "/#work#work"
+         there — Next's Link appends to a hash the router has already applied.
+         Parsing above copes with it, but the user can see it. replaceState
+         rather than pushState so Back still returns to the case study, and it
+         does not fire hashchange, so nothing re-runs. */
+      if (window.location.hash !== `#${id}`) {
+        window.history.replaceState(null, "", `${window.location.pathname}#${id}`);
+      }
     }, 60);
 
     return () => clearTimeout(timer);
