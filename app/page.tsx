@@ -122,7 +122,9 @@ export default function Home() {
         </section>
 
         {/* work / experience / fun / resume */}
-        <div className="mt-20">
+        {/* mt-16 to match the section spacing inside WorkSection — About sits
+            out here, so this gap is the one above the Work rule. */}
+        <div className="mt-16">
           <WorkSection />
         </div>
 

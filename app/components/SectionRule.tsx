@@ -15,11 +15,16 @@
  */
 export default function SectionRule() {
   return (
-    /* h-9, not mb-9: every visible child is absolute, so the box is otherwise
-       zero-height and a bottom margin self-collapses — which shoved the line
-       36px down onto the section label wherever the rule had no prior sibling.
-       Real height can't collapse; the line and squares draw along its top. */
-    <div aria-hidden className="relative h-9">
+    /* Height, not margin: every visible child is absolute, so the box is
+       otherwise zero-height and a bottom margin self-collapses — which shoved
+       the line down onto the section label wherever the rule had no prior
+       sibling. Real height can't collapse; the line and squares draw along its
+       top.
+
+       h-16 (64px) is the space between the line and the section label, and it
+       must equal the section spacing below (space-y-16 in WorkSection) or the
+       band around each rule reads lopsided. Change both together. */
+    <div aria-hidden className="relative h-16">
       <div className="absolute left-1/2 top-0 h-px w-screen -translate-x-1/2 bg-[color:var(--c-line)]" />
       {/* Squares centred on the line. From min-[848px] they shift out to the
           column's BOX edges (-left-6 = the px-6 gutter) so they sit exactly on

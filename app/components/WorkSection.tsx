@@ -141,8 +141,11 @@ export default function WorkSection() {
      went (for the slide direction inside the overlay). null = closed. */
   const [concept, setConcept] = useState<{ i: number; dir: number } | null>(null);
 
+  /* space-y-16 (64px) must match SectionRule's h-16: one is the gap below a
+     section's content, the other the gap above the next section's label, and
+     together they form the band around each rule. See SectionRule. */
   return (
-    <div className="space-y-20">
+    <div className="space-y-16">
       {/* WORK */}
       <Section id="work" label="Work">
         <div className="grid grid-cols-1 gap-16">
