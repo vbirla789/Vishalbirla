@@ -29,6 +29,12 @@
   --c-accent: #f54a00;
   --c-surface: #ffffff;
 
+  /* Dithered backdrop. Cool and desaturated on purpose rather than tinted with
+     --c-accent: the orange is the site's punctuation (cursor, sparkle, nerd
+     mode), and washing the whole page in it would spend that contrast. */
+  --dither-a: rgba(56, 92, 178, 0.5);
+  --dither-b: rgba(88, 118, 196, 0.36);
+
   --c-tab-active: #1d2539;
   --c-tab-active-bg: #f5f4f2;
   --c-tab-inactive: #a6a09b;
@@ -48,8 +54,12 @@
   --c-solid-chip-hover: rgba(255, 255, 255, 0.13);
   --c-solid-row-hover: rgba(255, 255, 255, 0.08);
 
-  --c-btn-muted-bg: transparent;
-  --c-btn-muted-bg-hover: rgba(0, 0, 0, 0.04);
+  /* Opaque, not transparent: these sit over the dithered backdrop, and a
+     see-through fill let the dot texture read as if it were painted on top of
+     the button. Hover is mixed into the background for the same reason — a
+     translucent overlay would put the texture back. */
+  --c-btn-muted-bg: var(--c-background);
+  --c-btn-muted-bg-hover: color-mix(in srgb, #000 4%, var(--c-background));
   --c-btn-muted-ring: rgba(0, 0, 0, 0.14);
 
   color-scheme: light;
@@ -67,6 +77,12 @@
   --c-panel: #141414;
   --c-accent: #ff5c33; /* lifted + redder than #f54a00, which goes muddy on black */
   --c-surface: #1c1c1c;
+
+  /* Much higher alpha than the light theme: on near-black there is nothing for
+     a faint tint to register against, and the mask is already throwing away
+     most of the coverage. */
+  --dither-a: rgba(78, 112, 210, 0.45);
+  --dither-b: rgba(52, 76, 168, 0.32);
 
   --c-tab-active: #fafafa;
   --c-tab-active-bg: #171717;
@@ -86,8 +102,8 @@
   --c-solid-chip-hover: rgba(0, 0, 0, 0.11);
   --c-solid-row-hover: rgba(0, 0, 0, 0.05);
 
-  --c-btn-muted-bg: transparent;
-  --c-btn-muted-bg-hover: rgba(255, 255, 255, 0.06);
+  --c-btn-muted-bg: var(--c-background);
+  --c-btn-muted-bg-hover: color-mix(in srgb, #fff 6%, var(--c-background));
   --c-btn-muted-ring: rgba(255, 255, 255, 0.16);
 
   color-scheme: dark;
@@ -325,10 +341,121 @@ body {
    became 50% of the whole document — pushing it far below the fold. The
    transition is one property on one element; it does not need the hint. */
 #page-shell {
+  /* Lifts the page above .dither. Without a stacking position the backdrop —
+     which cannot use z-index: -1, since that would put it behind <body>'s own
+     background colour and make it invisible — would paint over the content. */
+  position: relative;
+  z-index: 1;
   transform-origin: center center;
   transition:
     transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
     border-radius 480ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---- DITHERED BACKDROP ----------------------------------------------------
+   A slow-drifting colour field quantised through a dot grid, so the page has
+   some depth instead of sitting on flat paint.
+
+   The dots are a MASK, not an overlay: the colour underneath only shows
+   through the holes. That is what makes it read as ordered dithering rather
+   than a texture laid on top — every dot is the same size, and only its
+   brightness changes with the field behind it.
+
+   Deliberately faint, because body copy sits directly over it. The mask keeps
+   roughly an eighth of the area, so the alphas in the tokens above are much
+   stronger than the tint they actually produce.
+   ------------------------------------------------------------------------- */
+.dither {
+  position: fixed;
+  /* Anchored at 0 rather than overscanned: the dot grid tiles from this
+     element's own origin, and .dither--nav can only line up with it if both
+     start at the viewport's top-left. The blobs fade to transparent at their
+     edges, so there is no hard edge to hide anyway. */
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(circle at center, #000 0.85px, transparent 1.15px);
+  mask-image: radial-gradient(circle at center, #000 0.85px, transparent 1.15px);
+  -webkit-mask-size: 3px 3px;
+  mask-size: 3px 3px;
+}
+
+.dither::before,
+.dither::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* Two blobs on different periods, so the pair never repeats a pose and the
+   motion reads as drift rather than a loop. Transform only — it composites,
+   so this costs no layout or paint per frame. */
+.dither::before {
+  background: radial-gradient(42% 38% at 68% 72%, var(--dither-a), transparent 70%);
+  animation: dither-drift-a 38s ease-in-out infinite;
+}
+
+.dither::after {
+  background: radial-gradient(46% 40% at 28% 26%, var(--dither-b), transparent 72%);
+  animation: dither-drift-b 52s ease-in-out infinite;
+}
+
+@keyframes dither-drift-a {
+  0%,
+  100% {
+    transform: translate3d(-4%, -3%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(5%, 4%, 0) scale(1.18);
+  }
+}
+
+@keyframes dither-drift-b {
+  0%,
+  100% {
+    transform: translate3d(4%, 3%, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(-5%, -4%, 0) scale(1);
+  }
+}
+
+/* The header's own copy.
+ *
+ * The bar paints an 82%-opaque background with a backdrop blur over the page,
+ * which erases the backdrop behind it twice over — the opacity buries it, and
+ * a 12px blur turns a 3px dot grid into flat colour. So rather than trying to
+ * see through the header, it repaints the same texture on top of its own
+ * background.
+ *
+ * A fixed-position copy cannot work here: `overflow: hidden` does not clip
+ * fixed descendants, and giving the header a containing block to make it clip
+ * would re-anchor the copy to the header and throw the alignment out. So this
+ * is absolute, sized to the viewport, and clips itself.
+ */
+.dither--nav {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Viewport-sized rather than header-sized, so the blobs land in the same place
+   as the global layer instead of being squashed into a 74px-tall box. */
+.dither--nav::before,
+.dither--nav::after {
+  inset: auto;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Motion off, texture kept — the backdrop still does its job standing still. */
+@media (prefers-reduced-motion: reduce) {
+  .dither::before,
+  .dither::after {
+    animation: none;
+  }
 }
 
 /* The page slides LEFT and settles slightly back, so the panel reads as

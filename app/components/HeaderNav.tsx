@@ -222,7 +222,11 @@ export default function HeaderNav() {
         className="sticky top-0 z-50 w-full backdrop-blur-md"
         style={{ backgroundColor: "color-mix(in srgb, var(--c-background) 82%, transparent)" }}
       >
-        <div className="mx-auto flex w-full max-w-[800px] items-center justify-between gap-2 px-4 pb-3.5 pt-6 sm:gap-3 sm:px-6">
+        {/* Repaints the dithered backdrop over the header's own translucent
+            background — see .dither--nav in globals.css for why it can't just
+            show through. Sits behind the nav content. */}
+        <div className="dither dither--nav" aria-hidden="true" />
+        <div className="relative z-[1] mx-auto flex w-full max-w-[800px] items-center justify-between gap-2 px-4 pb-3.5 pt-6 sm:gap-3 sm:px-6">
           {/* segmented section nav — sliding pill */}
           <SlidingTabs
             ariaLabel="Section navigation"

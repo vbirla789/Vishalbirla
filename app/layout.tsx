@@ -70,6 +70,10 @@ export default function RootLayout({
         className="min-h-screen"
         style={{ backgroundColor: colors.background, color: colors.primary }}
       >
+        {/* Dithered backdrop. Deliberately outside #page-shell, so the Ask
+            panel's slide-and-scale moves the page across it instead of
+            dragging it along. Decorative — see .dither in globals.css. */}
+        <div className="dither" aria-hidden="true" />
         {/* NerdModeProvider wraps the page rather than sitting beside it, so
             the toggle in the header can reach the state through context. The
             overlay itself is still portalled to <body>. Press "n" anywhere. */}
