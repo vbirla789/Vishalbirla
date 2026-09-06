@@ -34,8 +34,8 @@
      and washing the whole page in it would spend that contrast.
      The dark theme goes blue instead; on near-black a grey field just reads as
      lifted black rather than as a colour. */
-  --dither-a: rgba(94, 95, 100, 0.45);
-  --dither-b: rgba(126, 127, 133, 0.32);
+  --dither-a: rgba(104, 105, 112, 0.26);
+  --dither-b: rgba(134, 135, 142, 0.18);
 
   --c-tab-active: #1d2539;
   --c-tab-active-bg: #f5f4f2;
