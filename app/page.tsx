@@ -6,7 +6,6 @@ import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
 import Appear from "./components/Appear";
 import SectionLabel from "./components/SectionLabel";
-import SectionRule from "./components/SectionRule";
 import Typewriter from "./components/fancy/typewriter";
 import { t, type } from "./theme";
 
@@ -44,15 +43,10 @@ export default function Home() {
         */}
 
         {/* about / intro */}
-        {/* The rule sits OUTSIDE the section: #about is a narrower 640px
-            column, and the rule's squares mark the edges of whatever contains
-            them — inside, they'd land at 640px while every other section's sit
-            at the 800px column, visibly misaligned. Out here it spans the same
-            column as the rest. The 64px below the header lives on main as
-            pt-16 — see the note there. */}
-        <Appear>
-          <SectionRule />
-        </Appear>
+        {/* No SectionRule here on purpose: the header's own bottom hairline
+            already sits directly above this section and carries the squares,
+            so adding one would draw a second line 64px under the first. Every
+            LATER section still gets its own rule. */}
         <section id="about" className="max-w-[640px] scroll-mt-28">
           {/* name appears first */}
           <Appear>

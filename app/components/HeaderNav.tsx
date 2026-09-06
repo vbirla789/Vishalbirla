@@ -246,6 +246,24 @@ export default function HeaderNav() {
             background — see .dither--nav in globals.css for why it can't just
             show through. Sits behind the nav content. */}
         <div className="dither dither--nav" aria-hidden="true" />
+
+        {/* Structure lines continued up through the navbar, so the grid runs
+            unbroken from the top of the page. Mirrors the pair in page.tsx:
+            same 800px column, same 24px gutter, same min-[848px] gate — keep
+            all three in sync. Drawn here rather than behind the header
+            because its 82%-opaque background would wash them out.
+            z-[1] matches the nav content so they clear the dither layer. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-1/2 z-[1] hidden w-full max-w-[800px] -translate-x-1/2 px-6 min-[848px]:block"
+        >
+          <div className="absolute inset-y-0 left-0 w-px bg-[color:var(--c-line)]" />
+          <div className="absolute inset-y-0 right-0 w-px bg-[color:var(--c-line)]" />
+          {/* squares on the header's bottom hairline. -bottom-px centres them
+              on the border, which sits just outside the padding box. */}
+          <div className="absolute -bottom-px left-0 h-[5px] w-[5px] -translate-x-1/2 translate-y-1/2 bg-[color:var(--c-accent)]" />
+          <div className="absolute -bottom-px right-0 h-[5px] w-[5px] translate-x-1/2 translate-y-1/2 bg-[color:var(--c-accent)]" />
+        </div>
         <div className="relative z-[1] mx-auto flex w-full max-w-[800px] items-center justify-between gap-2 px-4 pb-3.5 pt-6 sm:gap-3 sm:px-6">
           {/* segmented section nav — sliding pill */}
           <SlidingTabs
