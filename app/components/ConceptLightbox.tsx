@@ -26,6 +26,8 @@ export type Concept = {
   src: string;
   title: string;
   year: string;
+  /** Where the concept was made — "Personal", "noon", … */
+  project: string;
   blurb: string;
 };
 
@@ -223,6 +225,19 @@ export default function ConceptLightbox({
             <p style={{ fontSize: 14, lineHeight: "22px", color: colors.secondary }}>
               {c.blurb}
             </p>
+
+            {/* metadata — inside the keyed block so it swaps with the rest */}
+            <div className="mt-3 border-t pt-4" style={{ borderColor: colors.line }}>
+              <p
+                className="font-mono text-[11px] uppercase tracking-wide"
+                style={{ color: colors.tertiary }}
+              >
+                Project
+              </p>
+              <p className="mt-1" style={{ fontSize: 14, fontWeight: 500, color: colors.primary }}>
+                {c.project}
+              </p>
+            </div>
           </motion.div>
         </AnimatePresence>
       </motion.aside>

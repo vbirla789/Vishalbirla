@@ -8,6 +8,7 @@ import { playHover } from "../lib/sound";
 import ConceptLightbox from "./ConceptLightbox";
 import ExperienceTimeline from "./ExperienceTimeline";
 import SectionLabel from "./SectionLabel";
+import SectionRule from "./SectionRule";
 
 /* ---------- Work case studies ---------- */
 
@@ -60,6 +61,7 @@ const funVideos = [
     src: "/fun/experiment-1.mp4",
     title: "Expense Tracker",
     year: "2026",
+    project: "Personal",
     blurb:
       "A native SwiftUI iPhone app that logs every spend automatically through a Shortcut — dashboard, splits with contacts, swipe to edit. A Google Sheet is the whole backend.",
   },
@@ -67,6 +69,7 @@ const funVideos = [
     src: "/fun/experiment-2.mp4",
     title: "Onboarding Flow",
     year: "2026",
+    project: "noon",
     blurb:
       "A motion study for a first-run experience — each step earns the next screen, so setup reads as progress rather than a form.",
   },
@@ -74,6 +77,7 @@ const funVideos = [
     src: "/fun/experiment-3.mp4",
     title: "Post Review Submission",
     year: "2026",
+    project: "noon",
     blurb:
       "The moment right after you post a review — a thank-you state that rolls straight into rating your other recent orders, one tap each, while the goodwill is still warm.",
   },
@@ -123,6 +127,7 @@ function Section({
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
+      <SectionRule />
       <SectionLabel>{label}</SectionLabel>
       {children}
     </motion.section>

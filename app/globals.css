@@ -114,6 +114,11 @@
 html {
   scroll-behavior: smooth;
   background: var(--c-background);
+  /* SectionRule draws w-screen (100vw) hairlines out of the centred column.
+     With classic scrollbars, 100vw is slightly wider than the viewport; clip
+     (not hidden — hidden would make html a scroll container) swallows the
+     excess so those lines can never cause a horizontal scrollbar. */
+  overflow-x: clip;
 }
 
 /* ---- THEME VIEW TRANSITION ------------------------------------------------
