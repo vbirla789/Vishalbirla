@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { colors, t, type } from "../theme";
 import ExperienceTimeline from "./ExperienceTimeline";
+import SectionLabel from "./SectionLabel";
 
 /* ---------- Work case studies ---------- */
 
@@ -82,14 +83,6 @@ export function LogoMark({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="mb-5 font-mono uppercase" style={t(type.aboutLabel)}>
-      {children}
-    </p>
-  );
-}
-
 function Section({
   id,
   label,
@@ -165,15 +158,17 @@ export default function WorkSection() {
                   {p.title}
                 </h3>
 
-                {/* company logo · name · year */}
-                <div className="flex shrink-0 items-center gap-2">
-                  <span style={{ fontSize: 16, color: colors.tertiary }}>
-                    {p.company}
-                  </span>
-                  <span style={{ color: colors.tertiary }}>·</span>
-                  <span style={{ fontSize: 15, color: colors.tertiary }}>
-                    {p.year}
-                  </span>
+                {/* company logo · name · year
+                    Size and colour live on the row, not the spans: the company
+                    was 16px and the year 15px, which read as a wobble on one
+                    line. Setting it once means the three parts cannot drift. */}
+                <div
+                  className="flex shrink-0 items-center gap-2"
+                  style={{ fontSize: 16, color: colors.tertiary }}
+                >
+                  <span>{p.company}</span>
+                  <span>·</span>
+                  <span>{p.year}</span>
                 </div>
               </div>
             </Link>

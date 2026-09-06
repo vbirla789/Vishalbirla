@@ -5,6 +5,7 @@ import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
 import Appear from "./components/Appear";
+import SectionLabel from "./components/SectionLabel";
 import Typewriter from "./components/fancy/typewriter";
 import { t, type } from "./theme";
 
@@ -29,9 +30,7 @@ export default function Home() {
         <section id="about" className="mt-16 max-w-[640px] scroll-mt-28">
           {/* name appears first */}
           <Appear>
-            <p className="mb-4 font-mono uppercase" style={t(type.aboutLabel)}>
-              About
-            </p>
+            <SectionLabel>About</SectionLabel>
             {/* min-height reserves the tallest line so the paragraph below
                 doesn't jump as the text types and deletes */}
             <h1
@@ -90,12 +89,7 @@ export default function Home() {
           {/* crafted experiences at — client / company logos */}
           <Appear delay={0.26}>
             <div className="mt-9">
-              <p
-                className="mb-4 font-mono uppercase"
-                style={t(type.aboutLabel)}
-              >
-                Crafted experiences at
-              </p>
+              <SectionLabel>Crafted experiences at</SectionLabel>
               {/* app-icon marks, reusing the same list the Experience section
                   renders so the two can never drift apart */}
               <div className="flex flex-wrap items-center gap-4">
