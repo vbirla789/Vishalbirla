@@ -29,11 +29,13 @@
   --c-accent: #f54a00;
   --c-surface: #ffffff;
 
-  /* Dithered backdrop. Cool and desaturated on purpose rather than tinted with
-     --c-accent: the orange is the site's punctuation (cursor, sparkle, nerd
-     mode), and washing the whole page in it would spend that contrast. */
-  --dither-a: rgba(56, 92, 178, 0.5);
-  --dither-b: rgba(88, 118, 196, 0.36);
+  /* Dithered backdrop — near-neutral grey on white. Not tinted with --c-accent
+     either: the orange is the site's punctuation (cursor, sparkle, nerd mode),
+     and washing the whole page in it would spend that contrast.
+     The dark theme goes blue instead; on near-black a grey field just reads as
+     lifted black rather than as a colour. */
+  --dither-a: rgba(94, 95, 100, 0.45);
+  --dither-b: rgba(126, 127, 133, 0.32);
 
   --c-tab-active: #1d2539;
   --c-tab-active-bg: #f5f4f2;
