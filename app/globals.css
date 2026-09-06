@@ -83,8 +83,8 @@
   /* Much higher alpha than the light theme: on near-black there is nothing for
      a faint tint to register against, and the mask is already throwing away
      most of the coverage. */
-  --dither-a: rgba(78, 112, 210, 0.45);
-  --dither-b: rgba(52, 76, 168, 0.32);
+  --dither-a: rgba(88, 112, 188, 0.3);
+  --dither-b: rgba(60, 78, 150, 0.21);
 
   --c-tab-active: #fafafa;
   --c-tab-active-bg: #171717;
