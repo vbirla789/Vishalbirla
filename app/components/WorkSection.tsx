@@ -1,8 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import { useState } from "react";
 import { colors, t, type } from "../theme";
+import { playHover } from "../lib/sound";
+import ConceptLightbox from "./ConceptLightbox";
 import ExperienceTimeline from "./ExperienceTimeline";
 import SectionLabel from "./SectionLabel";
 
@@ -51,10 +54,29 @@ const projects: Project[] = [
 // Data lives in app/lib/experience.ts so the homepage (a Server Component)
 // can import it too — see the note in that file.
 
+/* Each blurb shows in the concept detail sidebar (ConceptLightbox). */
 const funVideos = [
-  { src: "/fun/experiment-1.mp4", title: "Expense Tracker", year: "2026" },
-  { src: "/fun/experiment-2.mp4", title: "Onboarding Flow", year: "2026" },
-  { src: "/fun/experiment-3.mp4", title: "Post Review Submission", year: "2026" },
+  {
+    src: "/fun/experiment-1.mp4",
+    title: "Expense Tracker",
+    year: "2026",
+    blurb:
+      "A native SwiftUI iPhone app that logs every spend automatically through a Shortcut — dashboard, splits with contacts, swipe to edit. A Google Sheet is the whole backend.",
+  },
+  {
+    src: "/fun/experiment-2.mp4",
+    title: "Onboarding Flow",
+    year: "2026",
+    blurb:
+      "A motion study for a first-run experience — each step earns the next screen, so setup reads as progress rather than a form.",
+  },
+  {
+    src: "/fun/experiment-3.mp4",
+    title: "Post Review Submission",
+    year: "2026",
+    blurb:
+      "The moment right after you post a review — a thank-you state that rolls straight into rating your other recent orders, one tap each, while the goodwill is still warm.",
+  },
 ];
 
 /* ---------- building blocks ---------- */
@@ -110,6 +132,10 @@ function Section({
 /* ---------- single-page stacked sections ---------- */
 
 export default function WorkSection() {
+  /* Which concept the detail overlay shows, and which way the last navigation
+     went (for the slide direction inside the overlay). null = closed. */
+  const [concept, setConcept] = useState<{ i: number; dir: number } | null>(null);
+
   return (
     <div className="space-y-20">
       {/* WORK */}
@@ -184,12 +210,18 @@ export default function WorkSection() {
       {/* CONCEPTS — three scaled-down cards that fit the column */}
       <Section id="fun" label="Concepts">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {funVideos.map((v) => (
-            <div
+          {funVideos.map((v, i) => (
+            <button
               key={v.src}
+              type="button"
+              onClick={() => {
+                playHover();
+                setConcept({ i, dir: 0 });
+              }}
+              aria-haspopup="dialog"
               // stays theme-aware: the title and year live *inside* this card,
               // so a permanently-light fill would put white text on white
-              className="flex flex-col gap-8 rounded-2xl bg-zinc-50 p-4 ring-1 ring-black/5 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
+              className="flex cursor-pointer flex-col gap-8 rounded-2xl bg-zinc-50 p-4 text-left ring-1 ring-black/5 outline-none transition-transform duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
             >
               {/* video — full, correct iPhone aspect (no crop), rounded corners */}
               <div className="flex justify-center">
@@ -216,10 +248,23 @@ export default function WorkSection() {
                   {v.year}
                 </span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </Section>
+
+      {/* concept detail overlay — media morphs left, details slide in right */}
+      <AnimatePresence>
+        {concept !== null && (
+          <ConceptLightbox
+            concepts={funVideos}
+            index={concept.i}
+            direction={concept.dir}
+            onClose={() => setConcept(null)}
+            onNavigate={(next, dir) => setConcept({ i: next, dir })}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
