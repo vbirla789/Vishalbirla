@@ -234,8 +234,13 @@ export default function HeaderNav() {
   return (
     <>
       <header
-        className="sticky top-0 z-50 w-full backdrop-blur-md"
-        style={{ backgroundColor: "color-mix(in srgb, var(--c-background) 82%, transparent)" }}
+        className="sticky top-0 z-50 w-full border-b backdrop-blur-md"
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--c-background) 82%, transparent)",
+          /* Full-width hairline the vertical structure lines hang from — the
+             section rules floated unanchored without it. */
+          borderColor: "var(--c-line)",
+        }}
       >
         {/* Repaints the dithered backdrop over the header's own translucent
             background — see .dither--nav in globals.css for why it can't just

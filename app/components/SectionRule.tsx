@@ -15,11 +15,19 @@
  */
 export default function SectionRule() {
   return (
-    <div aria-hidden className="relative mb-9">
+    /* h-9, not mb-9: every visible child is absolute, so the box is otherwise
+       zero-height and a bottom margin self-collapses — which shoved the line
+       36px down onto the section label wherever the rule had no prior sibling.
+       Real height can't collapse; the line and squares draw along its top. */
+    <div aria-hidden className="relative h-9">
       <div className="absolute left-1/2 top-0 h-px w-screen -translate-x-1/2 bg-[color:var(--c-line)]" />
-      {/* squares centred on the line, at the column's left and right edges */}
-      <div className="absolute left-0 top-0 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 bg-[color:var(--c-accent)]" />
-      <div className="absolute right-0 top-0 h-[5px] w-[5px] -translate-y-1/2 translate-x-1/2 bg-[color:var(--c-accent)]" />
+      {/* Squares centred on the line. From min-[848px] they shift out to the
+          column's BOX edges (-left-6 = the px-6 gutter) so they sit exactly on
+          the vertical structure lines in page.tsx and mark the intersections;
+          below that the verticals are hidden and the squares mark the content
+          edges instead. Keep the two breakpoints in sync. */}
+      <div className="absolute left-0 top-0 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 bg-[color:var(--c-accent)] min-[848px]:-left-6" />
+      <div className="absolute right-0 top-0 h-[5px] w-[5px] -translate-y-1/2 translate-x-1/2 bg-[color:var(--c-accent)] min-[848px]:-right-6" />
     </div>
   );
 }

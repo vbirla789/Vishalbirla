@@ -14,7 +14,24 @@ export default function Home() {
   return (
     <>
       <HeaderNav />
-      <main className="mx-auto w-full max-w-[800px] px-6 pb-24 sm:pb-32">
+      {/* pt-16 is the 64px below the header, deliberately as PADDING: as a
+          child's margin it collapsed through main and dragged the whole box —
+          vertical structure lines included — 64px below the header hairline
+          they're meant to hang from. */}
+      <main className="relative mx-auto w-full max-w-[800px] px-6 pb-24 pt-16 sm:pb-32">
+        {/* Vertical structure lines framing the column, per the Arbor
+            reference — they drop from the header's hairline, and every
+            SectionRule crosses them with a square at the intersection.
+            min-[848px]: below that the column has no outside gutter
+            (800px + 2×24px), so the lines would sit at the screen edge. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 hidden w-px bg-[color:var(--c-line)] min-[848px]:block"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-px bg-[color:var(--c-line)] min-[848px]:block"
+        />
         {/* Timeline widget (Bengaluru clock + photo strip) — hidden for now.
             Nothing links to #intro, so there are no dead anchors. To restore,
             uncomment this block and its import at the top of the file. */}
@@ -31,13 +48,11 @@ export default function Home() {
             column, and the rule's squares mark the edges of whatever contains
             them — inside, they'd land at 640px while every other section's sit
             at the 800px column, visibly misaligned. Out here it spans the same
-            column as the rest. Its wrapper also owns the 64px below the header
-            now (was mt-16 on the section). */}
-        <div className="mt-16">
-          <Appear>
-            <SectionRule />
-          </Appear>
-        </div>
+            column as the rest. The 64px below the header lives on main as
+            pt-16 — see the note there. */}
+        <Appear>
+          <SectionRule />
+        </Appear>
         <section id="about" className="max-w-[640px] scroll-mt-28">
           {/* name appears first */}
           <Appear>
