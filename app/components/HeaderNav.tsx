@@ -264,7 +264,9 @@ export default function HeaderNav() {
           <div className="absolute -bottom-px left-0 h-[5px] w-[5px] -translate-x-1/2 translate-y-1/2 bg-[color:var(--c-accent)]" />
           <div className="absolute -bottom-px right-0 h-[5px] w-[5px] translate-x-1/2 translate-y-1/2 bg-[color:var(--c-accent)]" />
         </div>
-        <div className="relative z-[1] mx-auto flex w-full max-w-[800px] items-center justify-between gap-2 px-4 pb-3.5 pt-6 sm:gap-3 sm:px-6">
+        {/* py-6, not pt-6 pb-3.5: the nav sat optically high in the bar now
+            that a hairline closes it off underneath. */}
+        <div className="relative z-[1] mx-auto flex w-full max-w-[800px] items-center justify-between gap-2 px-4 py-6 sm:gap-3 sm:px-6">
           {/* segmented section nav — sliding pill */}
           <SlidingTabs
             ariaLabel="Section navigation"
