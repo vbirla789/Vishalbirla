@@ -159,7 +159,11 @@ export default function IntroPuzzle() {
                finished fading out, so the two never overlap — the board leaves,
                THEN the squares open up. */
             delay: CLEAR_HOLD + Math.round(d * 340 + Math.random() * 180),
-            z: 120 + Math.random() * 320,
+            /* Negative: tiles recede. Kept shallow (−60 to −160 against a
+               720px perspective) so the worst case only shrinks a tile ~18%
+               — enough depth to feel dimensional, never enough to break the
+               grid. See the keyframes in globals.css. */
+            z: -(60 + Math.random() * 100),
             shade: [0, 0, 0, 4, 8, 13][Math.floor(Math.random() * 6)],
           };
         }),

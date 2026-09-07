@@ -402,22 +402,23 @@ body {
   backface-visibility: hidden;
   /* `both` fill: before its delay elapses a tile holds the 0% frame, so the
      grid reads as a solid sheet until its own moment to go. */
-  animation: intro-tile-out 820ms cubic-bezier(0.33, 0, 0.2, 1) var(--d, 0ms) both;
+  animation: intro-tile-out 760ms cubic-bezier(0.33, 0, 0.2, 1) var(--d, 0ms) both;
 }
 
+/* Tiles recede AWAY from the camera (negative Z) rather than flying at it.
+   Travelling toward the viewer scaled them past their own cells — neighbours
+   ended up 36px and 76px, overlapping at different greys, which read as
+   broken rendering rather than a dissolve. Receding shrinks each tile inside
+   its cell, so the grid stays aligned and it reads as true pixelation while
+   still having real perspective depth. */
 @keyframes intro-tile-out {
   0% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
-  /* Only a short hold — the fade overlaps most of the travel, so tiles melt
-     forward rather than staying solid and then blinking out. */
-  18% {
-    opacity: 0.96;
-  }
   100% {
     opacity: 0;
-    transform: translate3d(0, 0, var(--z, 260px));
+    transform: translate3d(0, 0, var(--z, -110px));
   }
 }
 
