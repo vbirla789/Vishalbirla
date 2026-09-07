@@ -1,5 +1,6 @@
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
+import IntroPuzzle from "./components/IntroPuzzle";
 // import TimelineWidget from "./components/TimelineWidget"; // hidden — see below
 import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
@@ -12,6 +13,11 @@ import { t, type } from "./theme";
 export default function Home() {
   return (
     <>
+      {/* Once-per-session intro game. An overlay, not a gate — the page below
+          renders from first paint, so crawlers and reduced-motion users are
+          untouched. Homepage only on purpose: a case study deep link should
+          never make someone play a game first. */}
+      <IntroPuzzle />
       <HeaderNav />
       {/* pt-16 is the 64px below the header, deliberately as PADDING: as a
           child's margin it collapsed through main and dragged the whole box —
