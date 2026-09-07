@@ -182,18 +182,7 @@ export default function IntroPuzzle() {
 
           {/* board — hairline frame with accent squares at the corners, echoing
               the structure grid's intersection marks */}
-          <div
-            className="relative w-[min(82vw,324px)]"
-            style={{
-              aspectRatio: `${COLS} / ${ROWS}`,
-              /* How far the tap-zone chevrons sit outside the board: 56px on
-                 wide screens, clamped so they never leave the viewport on
-                 phones — (100vw - board)/2 is the gutter, minus a 12px inset.
-                 Resolved where it's used (the absolute children), so 100%
-                 means the board width. */
-              ["--zone" as string]: "min(3.5rem, (100vw - 100%) / 2 - 12px)",
-            }}
-          >
+          <div className="relative w-[min(82vw,324px)]" style={{ aspectRatio: `${COLS} / ${ROWS}` }}>
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0"
@@ -249,47 +238,46 @@ export default function IntroPuzzle() {
               </motion.div>
             ))}
 
-            {/* tap zones — full-height halves, chevrons pinned at the edges */}
+          </div>
+
+          {/* controls — an explicit arrow pair UNDER the board. They started as
+              full-height side zones, which read as a carousel rather than game
+              input; down here they say "press me", and mirror the ← → keys. */}
+          <div className="mt-7 flex items-center gap-3">
             <button
               type="button"
               aria-label="Move block left"
               onClick={() => move(-1)}
-              className="absolute left-[calc(var(--zone)*-1)] top-0 flex h-full w-[calc(50%+var(--zone))] items-center justify-start outline-none"
+              className="flex h-11 w-11 items-center justify-center rounded-full outline-none transition-colors hover:bg-[color:var(--c-tab-active-bg)] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 active:scale-95"
+              style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
             >
-              <span
-                className="flex h-9 w-9 items-center justify-center rounded-full"
-                style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-              </span>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M19 12H5" />
+                <path d="m12 19-7-7 7-7" />
+              </svg>
             </button>
             <button
               type="button"
               aria-label="Move block right"
               onClick={() => move(1)}
-              className="absolute right-[calc(var(--zone)*-1)] top-0 flex h-full w-[calc(50%+var(--zone))] items-center justify-end outline-none"
+              className="flex h-11 w-11 items-center justify-center rounded-full outline-none transition-colors hover:bg-[color:var(--c-tab-active-bg)] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 active:scale-95"
+              style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
             >
-              <span
-                className="flex h-9 w-9 items-center justify-center rounded-full"
-                style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
-              </span>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
             </button>
           </div>
 
           {/* hint — nudges toward the gap after two misses */}
           <p
-            className="mt-8 font-mono text-[11px] uppercase tracking-wide"
+            className="mt-5 font-mono text-[11px] uppercase tracking-wide"
             style={{ color: colors.tertiary }}
           >
             {misses >= 2 && status !== "won"
               ? `The gap is on the ${gapCol < SPAWN_COL ? "left" : "right"}`
-              : "← → move · tap sides"}
+              : "Tap · or use ← → keys"}
           </p>
         </motion.div>
       )}
