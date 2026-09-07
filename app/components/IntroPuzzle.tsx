@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { colors } from "../theme";
 import { playError, playHover, playSuccess } from "../lib/sound";
 
@@ -60,12 +60,31 @@ function DropDot() {
 /* won = ripple + pulse on the board; zoom = fly-through exit that follows it */
 type Status = "falling" | "missed" | "won" | "zoom";
 
+/* Pixel-dissolve mosaic: the exit breaks the overlay into this many tiles. */
+const MOSAIC_COLS = 20;
+const MOSAIC_ROWS = 12;
+
 export default function IntroPuzzle() {
   const [show, setShow] = useState(false);
   const [gapCol, setGapCol] = useState(1);
   const [piece, setPiece] = useState({ col: SPAWN_COL, row: 0 });
   const [status, setStatus] = useState<Status>("falling");
   const [misses, setMisses] = useState(0);
+
+  /* One tile per mosaic cell, each with a random clear-delay and a slight
+     tonal shade — the mix of greys is what makes the dissolve read as the
+     vuk.fyi-style pixelation rather than a plain fade. Memoised once; the
+     randomness is only ever painted client-side (the zoom phase), so SSR
+     never sees it. */
+  const mosaic = useMemo(
+    () =>
+      Array.from({ length: MOSAIC_COLS * MOSAIC_ROWS }, (_, i) => ({
+        i,
+        delay: Math.random() * 0.55,
+        shade: [0, 0, 0, 5, 9, 14][Math.floor(Math.random() * 6)],
+      })),
+    [],
+  );
 
   /* Mount gate. Off-centre gap only, so the puzzle always needs at least two
      moves — a gap under the spawn point would win itself. */
@@ -170,33 +189,65 @@ export default function IntroPuzzle() {
       {show && (
         <motion.div
           className="fixed inset-0 z-[10020] flex flex-col items-center justify-center px-6"
-          style={{ backgroundColor: colors.background }}
+          /* During the zoom the solid background hands over to the mosaic in
+             the same commit — the tiles ARE the background, and they clear one
+             by one to reveal the page. No root fade: that would take the tiles
+             with it. */
+          style={{ backgroundColor: status === "zoom" ? "transparent" : colors.background }}
           initial={{ opacity: 0 }}
-          /* the zoom phase dissolves the whole overlay while the board scales
-             up beneath — by the time AnimatePresence exit runs, opacity is
-             already 0, so unmount is seamless */
-          animate={{ opacity: status === "zoom" ? 0 : 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.2 } }}
-          transition={{ duration: status === "zoom" ? 0.6 : 0.3, ease: EASE }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.15 } }}
+          transition={{ duration: 0.3, ease: EASE }}
           role="dialog"
           aria-modal
           aria-label="Intro puzzle — fit the block, or skip"
         >
+          {/* pixel-dissolve exit: viewport-covering tiles in slightly varied
+              greys that clear in random order, revealing the page underneath.
+              Mounted only for the zoom phase, behind the overlay's content, in
+              the same commit that the root background goes transparent. */}
+          {status === "zoom" && (
+            <div aria-hidden className="absolute inset-0 -z-10">
+              {mosaic.map(({ i, delay, shade }) => (
+                <motion.div
+                  key={i}
+                  className="absolute"
+                  style={{
+                    left: `${(i % MOSAIC_COLS) * (100 / MOSAIC_COLS)}%`,
+                    top: `${Math.floor(i / MOSAIC_COLS) * (100 / MOSAIC_ROWS)}%`,
+                    width: `${100 / MOSAIC_COLS + 0.05}%`,
+                    height: `${100 / MOSAIC_ROWS + 0.05}%`,
+                    backgroundColor: `color-mix(in srgb, var(--c-primary) ${shade}%, var(--c-background))`,
+                  }}
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 0 }}
+                  transition={{ delay, duration: 0.18, ease: "easeOut" }}
+                />
+              ))}
+            </div>
+          )}
+
           {/* skip — always visible, per every preloader guideline in existence */}
-          <button
+          <motion.button
             type="button"
             onClick={() => {
               playHover();
               close();
             }}
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
+            transition={{ duration: 0.2 }}
             className="absolute right-5 top-5 flex h-9 items-center gap-1 rounded-full px-4 font-mono text-[11px] uppercase tracking-wide outline-none transition-colors hover:bg-[color:var(--c-tab-active-bg)] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40"
             style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
           >
             Skip →
-          </button>
+          </motion.button>
 
-          {/* title + brief */}
-          <div className="mb-5 flex items-center gap-3">
+          {/* title + brief — fades early in the zoom so the dissolve owns the
+              moment */}
+          <motion.div
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
+            transition={{ duration: 0.25 }}
+            className="mb-5 flex items-center gap-3">
             <DropDot />
             <p
               className="font-mono text-[11px] uppercase tracking-wide"
@@ -204,8 +255,10 @@ export default function IntroPuzzle() {
             >
               {status === "won" || status === "zoom" ? "Perfect fit" : "Loading portfolio"}
             </p>
-          </div>
-          <p
+          </motion.div>
+          <motion.p
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
+            transition={{ duration: 0.25 }}
             className="mb-8 max-w-[340px] text-center text-[22px] leading-snug"
             style={{
               fontFamily: "var(--font-geist-pixel), ui-monospace, monospace",
@@ -215,16 +268,21 @@ export default function IntroPuzzle() {
             {status === "won" || status === "zoom"
               ? "Welcome in."
               : "One block short of a portfolio"}
-          </p>
+          </motion.p>
 
           {/* board — hairline frame with accent squares at the corners, echoing
               the structure grid's intersection marks */}
           <motion.div
             className="relative w-[min(82vw,324px)]"
             /* zoom-through: scale up anchored on the gap column near the stack,
-               so the camera flies through the hole the player just filled */
-            animate={status === "zoom" ? { scale: 7 } : { scale: 1 }}
-            transition={{ duration: 0.75, ease: EASE }}
+               so the camera flies through the hole the player just filled. It
+               fades late in the flight so the mosaic reveal isn't left with a
+               giant board floating over the page. */
+            animate={status === "zoom" ? { scale: 7, opacity: 0 } : { scale: 1, opacity: 1 }}
+            transition={{
+              scale: { duration: 0.75, ease: EASE },
+              opacity: status === "zoom" ? { delay: 0.3, duration: 0.4 } : { duration: 0.2 },
+            }}
             style={{
               aspectRatio: `${COLS} / ${ROWS}`,
               transformOrigin: `${((gapCol + 0.5) * 100) / COLS}% 82%`,
@@ -309,7 +367,10 @@ export default function IntroPuzzle() {
           {/* controls — an explicit arrow pair UNDER the board. They started as
               full-height side zones, which read as a carousel rather than game
               input; down here they say "press me", and mirror the ← → keys. */}
-          <div className="mt-7 flex items-center gap-3">
+          <motion.div
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
+            transition={{ duration: 0.2 }}
+            className="mt-7 flex items-center gap-3">
             <button
               type="button"
               aria-label="Move block left"
@@ -334,17 +395,19 @@ export default function IntroPuzzle() {
                 <path d="m12 5 7 7-7 7" />
               </svg>
             </button>
-          </div>
+          </motion.div>
 
           {/* hint — nudges toward the gap after two misses */}
-          <p
+          <motion.p
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
+            transition={{ duration: 0.2 }}
             className="mt-5 font-mono text-[11px] uppercase tracking-wide"
             style={{ color: colors.tertiary }}
           >
             {misses >= 2 && status !== "won"
               ? `The gap is on the ${gapCol < SPAWN_COL ? "left" : "right"}`
               : "Tap · or use ← → keys"}
-          </p>
+          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>
