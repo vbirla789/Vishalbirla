@@ -36,6 +36,29 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const restRow = (col: number, gapCol: number) =>
   col === gapCol ? ROWS - 2 : ROWS - STACK_H - 1;
 
+/** 3×3 pulsing-square loader beside the LOADING label — the diagonal stagger
+ *  reads as a little wave. Primary-token cubes, so it's white on dark and
+ *  near-black on light. */
+function SquareSnake() {
+  return (
+    <div className="grid h-6 w-6 grid-cols-3 gap-[2px]">
+      {[
+        [0, 0], [1, 0], [2, 0],
+        [0, 1], [1, 1], [2, 1],
+        [0, 2], [1, 2], [2, 2],
+      ].map(([x, y], i) => (
+        <motion.div
+          key={i}
+          className="h-full w-full rounded-[1px]"
+          style={{ backgroundColor: colors.primary }}
+          animate={{ opacity: [0.1, 1, 0.1] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: (x + y) * 0.15, ease: "easeInOut" }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* won = ripple + pulse on the board; zoom = fly-through exit that follows it */
 type Status = "falling" | "missed" | "won" | "zoom";
 
@@ -175,20 +198,25 @@ export default function IntroPuzzle() {
           </button>
 
           {/* title + brief */}
+          <div className="mb-5 flex items-center gap-3">
+            <SquareSnake />
+            <p
+              className="font-mono text-[11px] uppercase tracking-wide"
+              style={{ color: colors.tertiary }}
+            >
+              {status === "won" || status === "zoom" ? "Perfect fit" : "Loading portfolio"}
+            </p>
+          </div>
           <p
-            className="mb-2 font-mono text-[11px] uppercase tracking-wide"
-            style={{ color: colors.tertiary }}
-          >
-            {status === "won" || status === "zoom" ? "Perfect fit" : "Loading portfolio"}
-          </p>
-          <p
-            className="mb-8 text-center text-[22px] leading-tight"
+            className="mb-8 max-w-[340px] text-center text-[22px] leading-snug"
             style={{
               fontFamily: "var(--font-geist-pixel), ui-monospace, monospace",
               color: colors.primary,
             }}
           >
-            {status === "won" || status === "zoom" ? "Welcome in." : "Fit the last block"}
+            {status === "won" || status === "zoom"
+              ? "Welcome in."
+              : "One block short of a portfolio"}
           </p>
 
           {/* board — hairline frame with accent squares at the corners, echoing
@@ -235,21 +263,23 @@ export default function IntroPuzzle() {
                     boxShadow: `inset 0 0 0 1px ${colors.line}`,
                   }}
                 />
-                {/* win shockwave: every cell flashes accent, delayed by its
-                    distance from the landing column, so a wave radiates out
-                    from the fit */}
+                {/* win shockwave: every cell pops toward the viewer — a
+                    primary-token (white on dark) cube scaling up past its
+                    borders — delayed by its distance from the landing column,
+                    so a wave radiates out from the fit. Primary, not accent:
+                    the orange flash read as an error state. */}
                 <motion.div
                   className="absolute inset-[8%]"
-                  style={{ backgroundColor: colors.accent }}
-                  initial={{ opacity: 0 }}
+                  style={{ backgroundColor: colors.primary }}
+                  initial={{ opacity: 0, scale: 1 }}
                   animate={
                     status === "won" || status === "zoom"
-                      ? { opacity: [0, 1, 0] }
-                      : { opacity: 0 }
+                      ? { opacity: [0, 1, 0], scale: [1, 1.65, 1] }
+                      : { opacity: 0, scale: 1 }
                   }
                   transition={
                     status === "won"
-                      ? { duration: 0.5, delay: Math.abs(c - gapCol) * 0.055, ease: "easeOut" }
+                      ? { duration: 0.55, delay: Math.abs(c - gapCol) * 0.055, ease: "easeOut" }
                       : { duration: 0 }
                   }
                 />
