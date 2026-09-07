@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { colors } from "../theme";
 import { playError, playHover, playSuccess } from "../lib/sound";
 
@@ -57,18 +57,12 @@ function DropDot() {
   );
 }
 
-/* won = ripple on the board; reveal = structure leaves, then tiles dissolve */
-type Status = "falling" | "missed" | "won" | "reveal";
+/* won = ripple + pulse on the board; zoom = fly-through exit that follows it */
+type Status = "falling" | "missed" | "won" | "zoom";
 
-/* Pixel-dissolve mosaic. Tiles are sized in CSS pixels rather than a fixed
-   grid, so they stay small and square on any viewport — a fixed column count
-   made them huge on desktop. ~34px matches the reference's texture. */
-const TILE_PX = 34;
-
-/* How long the tiles sit solid at the start of the reveal, covering the page,
-   while the game structure fades out behind them. Must exceed the structure's
-   own fade (0.28s) or the two animations tangle. */
-const CLEAR_HOLD = 300;
+/* Pixel-dissolve mosaic: the exit breaks the overlay into this many tiles. */
+const MOSAIC_COLS = 20;
+const MOSAIC_ROWS = 12;
 
 export default function IntroPuzzle() {
   const [show, setShow] = useState(false);
@@ -77,11 +71,23 @@ export default function IntroPuzzle() {
   const [status, setStatus] = useState<Status>("falling");
   const [misses, setMisses] = useState(0);
 
-  const [mosaic, setMosaic] = useState<{
-    cols: number;
-    rows: number;
-    tiles: { i: number; delay: number; z: number; shade: number }[];
-  }>({ cols: 0, rows: 0, tiles: [] });
+  /* One tile per mosaic cell, each with a random clear-delay and a slight
+     tonal shade — the mix of greys is what makes the dissolve read as the
+     vuk.fyi-style pixelation rather than a plain fade. Memoised once; the
+     randomness is only ever painted client-side (the zoom phase), so SSR
+     never sees it. */
+  const mosaic = useMemo(
+    () =>
+      Array.from({ length: MOSAIC_COLS * MOSAIC_ROWS }, (_, i) => ({
+        i,
+        /* 0.32s base = the structure's fade-out, so no tile starts clearing
+           until the board is gone. The two overlapping is what made the exit
+           feel messy. Then a 0.5s random spread across the grid. */
+        delay: 0.32 + Math.random() * 0.5,
+        shade: [0, 0, 0, 5, 9, 14][Math.floor(Math.random() * 6)],
+      })),
+    [],
+  );
 
   /* Mount gate. Off-centre gap only, so the puzzle always needs at least two
      moves — a gap under the spawn point would win itself. */
@@ -116,9 +122,9 @@ export default function IntroPuzzle() {
   }, [show, status, gapCol]);
 
   /* Miss: soft error, brief pause, new piece.
-     Win: chord + shockwave ripple through the stack (~0.85s), then the reveal
-     phase — the whole game structure fades out, and only then do the mosaic
-     tiles open up to show the page. */
+     Win: chord + shockwave ripple through the stack (~0.85s), then the zoom
+     phase — the board scales up around the filled gap while the overlay
+     dissolves, so the exit reads as flying through the hole into the page. */
   useEffect(() => {
     if (!show) return;
     if (status === "missed") {
@@ -132,49 +138,12 @@ export default function IntroPuzzle() {
     }
     if (status === "won") {
       playSuccess();
-      /* Build the mosaic HERE, not at mount: it has to match the viewport at
-         the moment of the dissolve (the window may have been resized), and
-         measuring during the first render can read a 0×0 window — in a
-         background tab or a collapsed frame — which silently produced an
-         empty grid and no dissolve at all. The || fallbacks guarantee a grid
-         even if the measurement is still degenerate. */
-      const w = window.innerWidth || document.documentElement.clientWidth || 1280;
-      const h = window.innerHeight || document.documentElement.clientHeight || 800;
-      const cols = Math.max(8, Math.ceil(w / TILE_PX));
-      const rows = Math.max(6, Math.ceil(h / TILE_PX));
-      const cx = (cols - 1) / 2;
-      const cy = (rows - 1) / 2;
-      const maxD = Math.hypot(cx, cy) || 1;
-      setMosaic({
-        cols,
-        rows,
-        tiles: Array.from({ length: cols * rows }, (_, i) => {
-          /* Delay leans on distance from centre, with jitter — the dissolve
-             opens from the middle (where the board just was) and races
-             outward, rather than flickering uniformly. */
-          const d = Math.hypot((i % cols) - cx, Math.floor(i / cols) - cy) / maxD;
-          return {
-            i,
-            /* CLEAR_HOLD base: nothing dissolves until the game structure has
-               finished fading out, so the two never overlap — the board leaves,
-               THEN the squares open up. */
-            delay: CLEAR_HOLD + Math.round(d * 340 + Math.random() * 180),
-            /* Negative: tiles recede. Kept shallow (−60 to −160 against a
-               720px perspective) so the worst case only shrinks a tile ~18%
-               — enough depth to feel dimensional, never enough to break the
-               grid. See the keyframes in globals.css. */
-            z: -(60 + Math.random() * 100),
-            shade: [0, 0, 0, 4, 8, 13][Math.floor(Math.random() * 6)],
-          };
-        }),
-      });
-      const t = setTimeout(() => setStatus("reveal"), 850);
+      const t = setTimeout(() => setStatus("zoom"), 850);
       return () => clearTimeout(t);
     }
-    if (status === "reveal") {
-      /* Long enough for the furthest tile to finish: the CLEAR_HOLD, plus the
-         max stagger (340 + 180), plus the 820ms tile animation, plus slack. */
-      const t = setTimeout(close, CLEAR_HOLD + 520 + 820 + 120);
+    if (status === "zoom") {
+      /* base delay 0.32 + max spread 0.5 + the 0.55 fade, plus slack */
+      const t = setTimeout(close, 1500);
       return () => clearTimeout(t);
     }
   }, [status, show, close]);
@@ -228,7 +197,7 @@ export default function IntroPuzzle() {
              the same commit — the tiles ARE the background, and they clear one
              by one to reveal the page. No root fade: that would take the tiles
              with it. */
-          style={{ backgroundColor: status === "reveal" ? "transparent" : colors.background }}
+          style={{ backgroundColor: status === "zoom" ? "transparent" : colors.background }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.15 } }}
@@ -237,34 +206,31 @@ export default function IntroPuzzle() {
           aria-modal
           aria-label="Intro puzzle — fit the block, or skip"
         >
-          {/* Pixel-dissolve exit: a fine grid of tiles in varied greys that fly
-              toward the viewer and fade, revealing the page underneath.
-
-              Mounted from the WON phase, not the zoom, so the cost of ~1000
-              nodes is paid during the ripple rather than as a hitch at the
-              exact moment the animation starts. They're invisible until then:
-              the root still has its solid background behind them, and each
-              tile only gets its animation class in the zoom phase. */}
-          {(status === "won" || status === "reveal") && (
-            <div
-              aria-hidden
-              className="intro-mosaic absolute inset-0 -z-10"
-              style={{ opacity: status === "reveal" ? 1 : 0 }}
-            >
-              {mosaic.tiles.map(({ i, delay, z, shade }) => (
-                <div
+          {/* pixel-dissolve exit: viewport-covering tiles in slightly varied
+              greys that clear in random order, revealing the page underneath.
+              Mounted only for the zoom phase, behind the overlay's content, in
+              the same commit that the root background goes transparent. */}
+          {status === "zoom" && (
+            <div aria-hidden className="absolute inset-0 -z-10">
+              {mosaic.map(({ i, delay, shade }) => (
+                <motion.div
                   key={i}
-                  className={`absolute rounded-[2px] ${status === "reveal" ? "intro-tile" : ""}`}
+                  className="absolute"
                   style={{
-                    left: `${((i % mosaic.cols) * 100) / mosaic.cols}%`,
-                    top: `${(Math.floor(i / mosaic.cols) * 100) / mosaic.rows}%`,
-                    /* padded a hair so rounded corners never open pinholes */
-                    width: `calc(${100 / mosaic.cols}% + 1.5px)`,
-                    height: `calc(${100 / mosaic.rows}% + 1.5px)`,
+                    left: `${(i % MOSAIC_COLS) * (100 / MOSAIC_COLS)}%`,
+                    top: `${Math.floor(i / MOSAIC_COLS) * (100 / MOSAIC_ROWS)}%`,
+                    width: `${100 / MOSAIC_COLS + 0.05}%`,
+                    height: `${100 / MOSAIC_ROWS + 0.05}%`,
                     backgroundColor: `color-mix(in srgb, var(--c-primary) ${shade}%, var(--c-background))`,
-                    ["--d" as string]: `${delay}ms`,
-                    ["--z" as string]: `${Math.round(z)}px`,
                   }}
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 0 }}
+                  /* 0.55s, not 0.18s: at 0.18 each tile blinked out, so the
+                     dissolve read as flicker. A longer per-tile fade overlaps
+                     its neighbours' and the grid melts instead. Opacity only —
+                     no scale or Z. Moving the tiles makes them overlap each
+                     other and the whole thing reads as broken. */
+                  transition={{ delay, duration: 0.55, ease: "easeOut" }}
                 />
               ))}
             </div>
@@ -277,7 +243,7 @@ export default function IntroPuzzle() {
               playHover();
               close();
             }}
-            animate={{ opacity: status === "reveal" ? 0 : 1 }}
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
             transition={{ duration: 0.2 }}
             className="absolute right-5 top-5 flex h-9 items-center gap-1 rounded-full px-4 font-mono text-[11px] uppercase tracking-wide outline-none transition-colors hover:bg-[color:var(--c-tab-active-bg)] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40"
             style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
@@ -288,7 +254,7 @@ export default function IntroPuzzle() {
           {/* title + brief — fades early in the zoom so the dissolve owns the
               moment */}
           <motion.div
-            animate={{ opacity: status === "reveal" ? 0 : 1 }}
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
             transition={{ duration: 0.25 }}
             className="mb-5 flex items-center gap-3">
             <DropDot />
@@ -296,11 +262,11 @@ export default function IntroPuzzle() {
               className="font-mono text-[11px] uppercase tracking-wide"
               style={{ color: colors.tertiary }}
             >
-              {status === "won" || status === "reveal" ? "Perfect fit" : "Loading portfolio"}
+              {status === "won" || status === "zoom" ? "Perfect fit" : "Loading portfolio"}
             </p>
           </motion.div>
           <motion.p
-            animate={{ opacity: status === "reveal" ? 0 : 1 }}
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
             transition={{ duration: 0.25 }}
             className="mb-8 max-w-[340px] text-center text-[22px] leading-snug"
             style={{
@@ -308,7 +274,7 @@ export default function IntroPuzzle() {
               color: colors.primary,
             }}
           >
-            {status === "won" || status === "reveal"
+            {status === "won" || status === "zoom"
               ? "Welcome in."
               : "One block short of a portfolio"}
           </motion.p>
@@ -317,12 +283,12 @@ export default function IntroPuzzle() {
               the structure grid's intersection marks */}
           <motion.div
             className="relative w-[min(82vw,324px)]"
-            /* The board does NOT scale on the way out. An earlier version blew
-               it up to 7x as a fly-through; at that size the game's own blocks
-               became enormous slabs over the page and read as broken layout.
-               The structure simply leaves, and the mosaic does the reveal. */
-            animate={status === "reveal" ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.28, ease: EASE }}
+            /* The board does NOT scale on the way out. It used to blow up to 7x
+               as a fly-through, which turned the game's own blocks into
+               enormous slabs across the page — that read as broken layout, not
+               depth. It just leaves, and the tiles do the reveal. */
+            animate={status === "zoom" ? { opacity: 0 } : { opacity: 1 }}
+            transition={{ duration: 0.3, ease: EASE }}
             style={{ aspectRatio: `${COLS} / ${ROWS}` }}
           >
             <div
@@ -350,7 +316,7 @@ export default function IntroPuzzle() {
             {stackCells.map(({ r, c }) => (
               <div key={`${r}-${c}`} className="absolute" style={cellPos(r, c)}>
                 <div
-                  className="absolute inset-[8%] rounded-[3px]"
+                  className="absolute inset-[8%]"
                   style={{
                     backgroundColor: "var(--c-panel)",
                     boxShadow: `inset 0 0 0 1px ${colors.line}`,
@@ -361,11 +327,11 @@ export default function IntroPuzzle() {
                     from the fit. (A white scale-up variant was tried and
                     reverted — the orange read better.) */}
                 <motion.div
-                  className="absolute inset-[8%] rounded-[3px]"
+                  className="absolute inset-[8%]"
                   style={{ backgroundColor: colors.accent }}
                   initial={{ opacity: 0 }}
                   animate={
-                    status === "won" || status === "reveal"
+                    status === "won" || status === "zoom"
                       ? { opacity: [0, 1, 0] }
                       : { opacity: 0 }
                   }
@@ -391,7 +357,7 @@ export default function IntroPuzzle() {
                 initial={false}
               >
                 <motion.div
-                  className="absolute inset-[8%] rounded-[3px]"
+                  className="absolute inset-[8%]"
                   style={{ backgroundColor: colors.accent }}
                   animate={status === "won" ? { opacity: [1, 0.35, 1, 0.35, 1] } : { opacity: 1 }}
                   transition={{ duration: 0.7, ease: "easeInOut" }}
@@ -405,7 +371,7 @@ export default function IntroPuzzle() {
               full-height side zones, which read as a carousel rather than game
               input; down here they say "press me", and mirror the ← → keys. */}
           <motion.div
-            animate={{ opacity: status === "reveal" ? 0 : 1 }}
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
             transition={{ duration: 0.2 }}
             className="mt-7 flex items-center gap-3">
             <button
@@ -436,7 +402,7 @@ export default function IntroPuzzle() {
 
           {/* hint — nudges toward the gap after two misses */}
           <motion.p
-            animate={{ opacity: status === "reveal" ? 0 : 1 }}
+            animate={{ opacity: status === "zoom" ? 0 : 1 }}
             transition={{ duration: 0.2 }}
             className="mt-5 font-mono text-[11px] uppercase tracking-wide"
             style={{ color: colors.tertiary }}

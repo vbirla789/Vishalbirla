@@ -380,48 +380,6 @@ body {
     border-radius 480ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ---- INTRO PUZZLE: PIXEL DISSOLVE -----------------------------------------
-   The win exit shatters the overlay into a fine grid of tiles that fly toward
-   the viewer and fade, revealing the page.
-
-   Driven by CSS animation, not framer-motion: there are ~1000 tiles, and one
-   motion component each would cost far more than this whole loader is allowed
-   to. Each tile only carries two custom properties — its delay and its depth.
-
-   No Three.js on purpose. A perspective container gives genuine 3D here (tiles
-   near the edges diverge outward as they approach, ones at the centre grow in
-   place) for zero bytes, and a preloader is the last place to spend ~600KB.
-   --------------------------------------------------------------------------*/
-.intro-mosaic {
-  perspective: 720px;
-  perspective-origin: 50% 52%;
-  transform-style: preserve-3d;
-}
-
-.intro-tile {
-  backface-visibility: hidden;
-  /* `both` fill: before its delay elapses a tile holds the 0% frame, so the
-     grid reads as a solid sheet until its own moment to go. */
-  animation: intro-tile-out 760ms cubic-bezier(0.33, 0, 0.2, 1) var(--d, 0ms) both;
-}
-
-/* Tiles recede AWAY from the camera (negative Z) rather than flying at it.
-   Travelling toward the viewer scaled them past their own cells — neighbours
-   ended up 36px and 76px, overlapping at different greys, which read as
-   broken rendering rather than a dissolve. Receding shrinks each tile inside
-   its cell, so the grid stays aligned and it reads as true pixelation while
-   still having real perspective depth. */
-@keyframes intro-tile-out {
-  0% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(0, 0, var(--z, -110px));
-  }
-}
-
 /* ---- DITHERED BACKDROP ----------------------------------------------------
    A slow-drifting colour field quantised through a dot grid, so the page has
    some depth instead of sitting on flat paint.
