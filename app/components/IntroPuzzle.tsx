@@ -27,7 +27,7 @@ import { playError, playHover, playSuccess } from "../lib/sound";
 const COLS = 9;
 const ROWS = 9;
 const STACK_H = 3; // stack occupies the bottom 3 rows
-const TICK_MS = 380; // one row of fall per tick
+const TICK_MS = 500; // one row of fall per tick — unhurried; 380 felt rushed
 const SPAWN_COL = 4; // centre
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -36,7 +36,8 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const restRow = (col: number, gapCol: number) =>
   col === gapCol ? ROWS - 2 : ROWS - STACK_H - 1;
 
-type Status = "falling" | "missed" | "won";
+/* won = ripple + pulse on the board; zoom = fly-through exit that follows it */
+type Status = "falling" | "missed" | "won" | "zoom";
 
 export default function IntroPuzzle() {
   const [show, setShow] = useState(false);
@@ -77,7 +78,10 @@ export default function IntroPuzzle() {
     return () => clearInterval(id);
   }, [show, status, gapCol]);
 
-  /* Miss: soft error, brief pause, new piece. Win: chord, then lift. */
+  /* Miss: soft error, brief pause, new piece.
+     Win: chord + shockwave ripple through the stack (~0.85s), then the zoom
+     phase — the board scales up around the filled gap while the overlay
+     dissolves, so the exit reads as flying through the hole into the page. */
   useEffect(() => {
     if (!show) return;
     if (status === "missed") {
@@ -91,7 +95,11 @@ export default function IntroPuzzle() {
     }
     if (status === "won") {
       playSuccess();
-      const t = setTimeout(close, 1200);
+      const t = setTimeout(() => setStatus("zoom"), 850);
+      return () => clearTimeout(t);
+    }
+    if (status === "zoom") {
+      const t = setTimeout(close, 750);
       return () => clearTimeout(t);
     }
   }, [status, show, close]);
@@ -143,9 +151,12 @@ export default function IntroPuzzle() {
           className="fixed inset-0 z-[10020] flex flex-col items-center justify-center px-6"
           style={{ backgroundColor: colors.background }}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ y: "-100%", transition: { duration: 0.65, ease: EASE } }}
-          transition={{ duration: 0.3, ease: EASE }}
+          /* the zoom phase dissolves the whole overlay while the board scales
+             up beneath — by the time AnimatePresence exit runs, opacity is
+             already 0, so unmount is seamless */
+          animate={{ opacity: status === "zoom" ? 0 : 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.2 } }}
+          transition={{ duration: status === "zoom" ? 0.6 : 0.3, ease: EASE }}
           role="dialog"
           aria-modal
           aria-label="Intro puzzle — fit the block, or skip"
@@ -168,7 +179,7 @@ export default function IntroPuzzle() {
             className="mb-2 font-mono text-[11px] uppercase tracking-wide"
             style={{ color: colors.tertiary }}
           >
-            {status === "won" ? "Perfect fit" : "Loading portfolio"}
+            {status === "won" || status === "zoom" ? "Perfect fit" : "Loading portfolio"}
           </p>
           <p
             className="mb-8 text-center text-[22px] leading-tight"
@@ -177,12 +188,22 @@ export default function IntroPuzzle() {
               color: colors.primary,
             }}
           >
-            {status === "won" ? "Welcome in." : "Fit the last block"}
+            {status === "won" || status === "zoom" ? "Welcome in." : "Fit the last block"}
           </p>
 
           {/* board — hairline frame with accent squares at the corners, echoing
               the structure grid's intersection marks */}
-          <div className="relative w-[min(82vw,324px)]" style={{ aspectRatio: `${COLS} / ${ROWS}` }}>
+          <motion.div
+            className="relative w-[min(82vw,324px)]"
+            /* zoom-through: scale up anchored on the gap column near the stack,
+               so the camera flies through the hole the player just filled */
+            animate={status === "zoom" ? { scale: 7 } : { scale: 1 }}
+            transition={{ duration: 0.75, ease: EASE }}
+            style={{
+              aspectRatio: `${COLS} / ${ROWS}`,
+              transformOrigin: `${((gapCol + 0.5) * 100) / COLS}% 82%`,
+            }}
+          >
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0"
@@ -214,6 +235,24 @@ export default function IntroPuzzle() {
                     boxShadow: `inset 0 0 0 1px ${colors.line}`,
                   }}
                 />
+                {/* win shockwave: every cell flashes accent, delayed by its
+                    distance from the landing column, so a wave radiates out
+                    from the fit */}
+                <motion.div
+                  className="absolute inset-[8%]"
+                  style={{ backgroundColor: colors.accent }}
+                  initial={{ opacity: 0 }}
+                  animate={
+                    status === "won" || status === "zoom"
+                      ? { opacity: [0, 1, 0] }
+                      : { opacity: 0 }
+                  }
+                  transition={
+                    status === "won"
+                      ? { duration: 0.5, delay: Math.abs(c - gapCol) * 0.055, ease: "easeOut" }
+                      : { duration: 0 }
+                  }
+                />
               </div>
             ))}
 
@@ -238,7 +277,7 @@ export default function IntroPuzzle() {
               </motion.div>
             ))}
 
-          </div>
+          </motion.div>
 
           {/* controls — an explicit arrow pair UNDER the board. They started as
               full-height side zones, which read as a carousel rather than game
