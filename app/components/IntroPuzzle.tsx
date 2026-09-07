@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { colors } from "../theme";
 import { playError, playHover, playSuccess } from "../lib/sound";
 
@@ -60,9 +60,15 @@ function DropDot() {
 /* won = ripple + pulse on the board; zoom = fly-through exit that follows it */
 type Status = "falling" | "missed" | "won" | "zoom";
 
-/* Pixel-dissolve mosaic: the exit breaks the overlay into this many tiles. */
-const MOSAIC_COLS = 20;
-const MOSAIC_ROWS = 12;
+/* Pixel-dissolve mosaic. Tiles are sized in CSS pixels, not a fixed column
+   count: 20 columns meant 100px slabs on a 2000px screen, which read as blocks
+   popping rather than a dissolve. ~44px keeps them fine at any width. */
+const TILE_PX = 44;
+
+/* How long the tiles sit solid at the start of the exit while the game
+   structure fades out behind them. Must exceed that fade (0.3s) so the two
+   never overlap — the board leaves, THEN the grid opens. */
+const CLEAR_HOLD = 320;
 
 export default function IntroPuzzle() {
   const [show, setShow] = useState(false);
@@ -71,23 +77,11 @@ export default function IntroPuzzle() {
   const [status, setStatus] = useState<Status>("falling");
   const [misses, setMisses] = useState(0);
 
-  /* One tile per mosaic cell, each with a random clear-delay and a slight
-     tonal shade — the mix of greys is what makes the dissolve read as the
-     vuk.fyi-style pixelation rather than a plain fade. Memoised once; the
-     randomness is only ever painted client-side (the zoom phase), so SSR
-     never sees it. */
-  const mosaic = useMemo(
-    () =>
-      Array.from({ length: MOSAIC_COLS * MOSAIC_ROWS }, (_, i) => ({
-        i,
-        /* 0.32s base = the structure's fade-out, so no tile starts clearing
-           until the board is gone. The two overlapping is what made the exit
-           feel messy. Then a 0.5s random spread across the grid. */
-        delay: 0.32 + Math.random() * 0.5,
-        shade: [0, 0, 0, 5, 9, 14][Math.floor(Math.random() * 6)],
-      })),
-    [],
-  );
+  const [mosaic, setMosaic] = useState<{
+    cols: number;
+    rows: number;
+    tiles: { i: number; delay: number; shade: number }[];
+  }>({ cols: 0, rows: 0, tiles: [] });
 
   /* Mount gate. Off-centre gap only, so the puzzle always needs at least two
      moves — a gap under the spawn point would win itself. */
@@ -138,12 +132,33 @@ export default function IntroPuzzle() {
     }
     if (status === "won") {
       playSuccess();
+      /* Build the grid HERE, not at mount: it has to match the viewport at the
+         moment of the exit (the window may have been resized since), and
+         measuring during the first render can read a 0×0 window in a
+         background tab or collapsed frame, which silently yields no tiles at
+         all. The fallbacks guarantee a grid regardless. */
+      const w = window.innerWidth || document.documentElement.clientWidth || 1280;
+      const h = window.innerHeight || document.documentElement.clientHeight || 800;
+      const cols = Math.max(8, Math.ceil(w / TILE_PX));
+      const rows = Math.max(6, Math.ceil(h / TILE_PX));
+      setMosaic({
+        cols,
+        rows,
+        tiles: Array.from({ length: cols * rows }, (_, i) => ({
+          i,
+          delay: CLEAR_HOLD + Math.round(Math.random() * 520),
+          /* Only a whisper of tonal variation. At 0-14% the tiles formed a
+             harsh light/dark checkerboard over the page; 0-5% still reads as
+             pixel texture but dissolves evenly. */
+          shade: [0, 0, 0, 2, 3, 5][Math.floor(Math.random() * 6)],
+        })),
+      });
       const t = setTimeout(() => setStatus("zoom"), 850);
       return () => clearTimeout(t);
     }
     if (status === "zoom") {
-      /* base delay 0.32 + max spread 0.5 + the 0.55 fade, plus slack */
-      const t = setTimeout(close, 1500);
+      /* CLEAR_HOLD + max stagger (520) + the 600ms fade, plus slack */
+      const t = setTimeout(close, CLEAR_HOLD + 520 + 600 + 120);
       return () => clearTimeout(t);
     }
   }, [status, show, close]);
@@ -206,31 +221,33 @@ export default function IntroPuzzle() {
           aria-modal
           aria-label="Intro puzzle — fit the block, or skip"
         >
-          {/* pixel-dissolve exit: viewport-covering tiles in slightly varied
-              greys that clear in random order, revealing the page underneath.
-              Mounted only for the zoom phase, behind the overlay's content, in
-              the same commit that the root background goes transparent. */}
-          {status === "zoom" && (
-            <div aria-hidden className="absolute inset-0 -z-10">
-              {mosaic.map(({ i, delay, shade }) => (
-                <motion.div
+          {/* Pixel-dissolve exit: a fine grid of tiles that fade away in
+              random order to reveal the page underneath.
+
+              Mounted from the WON phase, not the zoom, so the cost of ~1000
+              nodes lands during the ripple rather than as a hitch the instant
+              the animation starts. They're invisible until then — the root
+              still has its solid background behind them, and a tile only gets
+              its animation class in the zoom phase. */}
+          {(status === "won" || status === "zoom") && (
+            <div
+              aria-hidden
+              className="absolute inset-0 -z-10"
+              style={{ opacity: status === "zoom" ? 1 : 0 }}
+            >
+              {mosaic.tiles.map(({ i, delay, shade }) => (
+                <div
                   key={i}
-                  className="absolute"
+                  className={`absolute ${status === "zoom" ? "intro-tile" : ""}`}
                   style={{
-                    left: `${(i % MOSAIC_COLS) * (100 / MOSAIC_COLS)}%`,
-                    top: `${Math.floor(i / MOSAIC_COLS) * (100 / MOSAIC_ROWS)}%`,
-                    width: `${100 / MOSAIC_COLS + 0.05}%`,
-                    height: `${100 / MOSAIC_ROWS + 0.05}%`,
+                    left: `${((i % mosaic.cols) * 100) / mosaic.cols}%`,
+                    top: `${(Math.floor(i / mosaic.cols) * 100) / mosaic.rows}%`,
+                    /* padded a hair so neighbours never leave a hairline seam */
+                    width: `calc(${100 / mosaic.cols}% + 1px)`,
+                    height: `calc(${100 / mosaic.rows}% + 1px)`,
                     backgroundColor: `color-mix(in srgb, var(--c-primary) ${shade}%, var(--c-background))`,
+                    ["--d" as string]: `${delay}ms`,
                   }}
-                  initial={{ opacity: 1 }}
-                  animate={{ opacity: 0 }}
-                  /* 0.55s, not 0.18s: at 0.18 each tile blinked out, so the
-                     dissolve read as flicker. A longer per-tile fade overlaps
-                     its neighbours' and the grid melts instead. Opacity only —
-                     no scale or Z. Moving the tiles makes them overlap each
-                     other and the whole thing reads as broken. */
-                  transition={{ delay, duration: 0.55, ease: "easeOut" }}
                 />
               ))}
             </div>
