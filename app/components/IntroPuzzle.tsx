@@ -36,25 +36,23 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const restRow = (col: number, gapCol: number) =>
   col === gapCol ? ROWS - 2 : ROWS - STACK_H - 1;
 
-/** 3×3 pulsing-square loader beside the LOADING label — the diagonal stagger
- *  reads as a little wave. Primary-token cubes, so it's white on dark and
- *  near-black on light. */
-function SquareSnake() {
+/** Bouncing-dot loader beside the LOADING label — a dot drops onto a soft
+ *  shadow with a little squash on impact. Sized to the label: the whole
+ *  loader is 11px tall, matching the type beside it. Primary-token dot, so
+ *  it's white on dark and near-black on light. */
+function DropDot() {
   return (
-    <div className="grid h-6 w-6 grid-cols-3 gap-[2px]">
-      {[
-        [0, 0], [1, 0], [2, 0],
-        [0, 1], [1, 1], [2, 1],
-        [0, 2], [1, 2], [2, 2],
-      ].map(([x, y], i) => (
-        <motion.div
-          key={i}
-          className="h-full w-full rounded-[1px]"
-          style={{ backgroundColor: colors.primary }}
-          animate={{ opacity: [0.1, 1, 0.1] }}
-          transition={{ duration: 1.5, repeat: Infinity, delay: (x + y) * 0.15, ease: "easeInOut" }}
-        />
-      ))}
+    <div className="relative flex h-[11px] w-[11px] flex-col items-center">
+      <motion.div
+        className="absolute top-0 z-10 h-[4px] w-[4px] rounded-full"
+        style={{ backgroundColor: colors.primary }}
+        animate={{ y: [0, 6, 0], scaleY: [1, 1.2, 1], scaleX: [1, 0.8, 1] }}
+        transition={{ duration: 1, repeat: Infinity, ease: "circIn" }}
+      />
+      <div
+        className="absolute bottom-0 h-[1.5px] w-[8px] rounded-full blur-[1px]"
+        style={{ backgroundColor: colors.tertiary, opacity: 0.5 }}
+      />
     </div>
   );
 }
@@ -199,7 +197,7 @@ export default function IntroPuzzle() {
 
           {/* title + brief */}
           <div className="mb-5 flex items-center gap-3">
-            <SquareSnake />
+            <DropDot />
             <p
               className="font-mono text-[11px] uppercase tracking-wide"
               style={{ color: colors.tertiary }}
@@ -263,23 +261,22 @@ export default function IntroPuzzle() {
                     boxShadow: `inset 0 0 0 1px ${colors.line}`,
                   }}
                 />
-                {/* win shockwave: every cell pops toward the viewer — a
-                    primary-token (white on dark) cube scaling up past its
-                    borders — delayed by its distance from the landing column,
-                    so a wave radiates out from the fit. Primary, not accent:
-                    the orange flash read as an error state. */}
+                {/* win shockwave: every cell flashes accent, delayed by its
+                    distance from the landing column, so a wave radiates out
+                    from the fit. (A white scale-up variant was tried and
+                    reverted — the orange read better.) */}
                 <motion.div
                   className="absolute inset-[8%]"
-                  style={{ backgroundColor: colors.primary }}
-                  initial={{ opacity: 0, scale: 1 }}
+                  style={{ backgroundColor: colors.accent }}
+                  initial={{ opacity: 0 }}
                   animate={
                     status === "won" || status === "zoom"
-                      ? { opacity: [0, 1, 0], scale: [1, 1.65, 1] }
-                      : { opacity: 0, scale: 1 }
+                      ? { opacity: [0, 1, 0] }
+                      : { opacity: 0 }
                   }
                   transition={
                     status === "won"
-                      ? { duration: 0.55, delay: Math.abs(c - gapCol) * 0.055, ease: "easeOut" }
+                      ? { duration: 0.5, delay: Math.abs(c - gapCol) * 0.055, ease: "easeOut" }
                       : { duration: 0 }
                   }
                 />
