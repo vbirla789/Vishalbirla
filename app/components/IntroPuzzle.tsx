@@ -57,7 +57,7 @@ function DropDot() {
   );
 }
 
-/* won = ripple + pulse on the board; zoom = fly-through exit that follows it */
+/* won = ripple across the stack; zoom = structure leaves, then tiles clear */
 type Status = "falling" | "missed" | "won" | "zoom";
 
 /* Pixel-dissolve mosaic. Tiles are sized in CSS pixels, not a fixed column
@@ -65,10 +65,24 @@ type Status = "falling" | "missed" | "won" | "zoom";
    popping rather than a dissolve. ~44px keeps them fine at any width. */
 const TILE_PX = 44;
 
-/* How long the tiles sit solid at the start of the exit while the game
-   structure fades out behind them. Must exceed that fade (0.3s) so the two
-   never overlap — the board leaves, THEN the grid opens. */
-const CLEAR_HOLD = 320;
+/* The exit is one continuous motion, so these are tuned to hand off with no
+   dead frame between them:
+     ripple (RIPPLE_MS) → structure fades (STRUCTURE_FADE) → tiles clear
+   Every earlier version parked on a static screen twice — an 850ms ripple hold
+   and then a stretch with the tiles solid and nothing moving. That pause is
+   what read as the animation stopping. */
+/* These deliberately OVERLAP rather than queue. Running them back-to-back
+   still left dead windows — measured a 245ms stretch where the ripple had
+   finished, the board hadn't started fading, and no tile had moved. Each
+   stage now begins while the previous one is still going. */
+const RIPPLE_MS = 300; // land → structure starts leaving, wave still mid-flight
+const STRUCTURE_FADE = 0.2; // seconds; board/title/controls leaving
+/* Under STRUCTURE_FADE on purpose: the first tiles clear while the board is
+   still on its way out (~25% opacity), so there is never a frame with nothing
+   in motion. */
+const CLEAR_HOLD = 120;
+const TILE_STAGGER = 620; // spread of the dissolve across the grid
+const TILE_FADE = 620; // per-tile fade (see .intro-tile in globals.css)
 
 export default function IntroPuzzle() {
   const [show, setShow] = useState(false);
@@ -116,9 +130,9 @@ export default function IntroPuzzle() {
   }, [show, status, gapCol]);
 
   /* Miss: soft error, brief pause, new piece.
-     Win: chord + shockwave ripple through the stack (~0.85s), then the zoom
-     phase — the board scales up around the filled gap while the overlay
-     dissolves, so the exit reads as flying through the hole into the page. */
+     Win: one continuous exit — chord + ripple through the stack, the structure
+     leaving while that wave is still travelling, and the tiles clearing the
+     moment it's gone. See the timing constants above. */
   useEffect(() => {
     if (!show) return;
     if (status === "missed") {
@@ -146,19 +160,23 @@ export default function IntroPuzzle() {
         rows,
         tiles: Array.from({ length: cols * rows }, (_, i) => ({
           i,
-          delay: CLEAR_HOLD + Math.round(Math.random() * 520),
+          delay: CLEAR_HOLD + Math.round(Math.random() * TILE_STAGGER),
           /* Only a whisper of tonal variation. At 0-14% the tiles formed a
              harsh light/dark checkerboard over the page; 0-5% still reads as
              pixel texture but dissolves evenly. */
           shade: [0, 0, 0, 2, 3, 5][Math.floor(Math.random() * 6)],
         })),
       });
-      const t = setTimeout(() => setStatus("zoom"), 850);
+      /* Hand off while the ripple is still travelling, so the structure starts
+         leaving before the wave settles — no beat where the screen is still. */
+      const t = setTimeout(() => setStatus("zoom"), RIPPLE_MS);
       return () => clearTimeout(t);
     }
     if (status === "zoom") {
-      /* CLEAR_HOLD + max stagger (520) + the 600ms fade, plus slack */
-      const t = setTimeout(close, CLEAR_HOLD + 520 + 600 + 120);
+      /* No slack term: the last tile hits zero at exactly this point, and any
+         padding is a stretch of fully-transparent overlay still mounted —
+         measured as a 168ms dead tail. */
+      const t = setTimeout(close, CLEAR_HOLD + TILE_STAGGER + TILE_FADE);
       return () => clearTimeout(t);
     }
   }, [status, show, close]);
@@ -215,7 +233,9 @@ export default function IntroPuzzle() {
           style={{ backgroundColor: status === "zoom" ? "transparent" : colors.background }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.15 } }}
+          /* Near-instant: by unmount every tile is already at zero opacity, so
+             a real exit fade is just more transparent overlay on screen. */
+          exit={{ opacity: 0, transition: { duration: 0.06 } }}
           transition={{ duration: 0.3, ease: EASE }}
           role="dialog"
           aria-modal
@@ -261,7 +281,7 @@ export default function IntroPuzzle() {
               close();
             }}
             animate={{ opacity: status === "zoom" ? 0 : 1 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
             className="absolute right-5 top-5 flex h-9 items-center gap-1 rounded-full px-4 font-mono text-[11px] uppercase tracking-wide outline-none transition-colors hover:bg-[color:var(--c-tab-active-bg)] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40"
             style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
           >
@@ -272,7 +292,7 @@ export default function IntroPuzzle() {
               moment */}
           <motion.div
             animate={{ opacity: status === "zoom" ? 0 : 1 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
             className="mb-5 flex items-center gap-3">
             <DropDot />
             <p
@@ -284,7 +304,7 @@ export default function IntroPuzzle() {
           </motion.div>
           <motion.p
             animate={{ opacity: status === "zoom" ? 0 : 1 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
             className="mb-8 max-w-[340px] text-center text-[22px] leading-snug"
             style={{
               fontFamily: "var(--font-geist-pixel), ui-monospace, monospace",
@@ -305,7 +325,7 @@ export default function IntroPuzzle() {
                enormous slabs across the page — that read as broken layout, not
                depth. It just leaves, and the tiles do the reveal. */
             animate={status === "zoom" ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.3, ease: EASE }}
+            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
             style={{ aspectRatio: `${COLS} / ${ROWS}` }}
           >
             <div
@@ -354,7 +374,11 @@ export default function IntroPuzzle() {
                   }
                   transition={
                     status === "won"
-                      ? { duration: 0.5, delay: Math.abs(c - gapCol) * 0.055, ease: "easeOut" }
+                      ? /* Tightened so the wave crosses the board inside
+                           RIPPLE_MS — it used to run ~940ms against an 850ms
+                           hold, so it was still mid-flight when the phase
+                           changed and the cut showed. */
+                        { duration: 0.34, delay: Math.abs(c - gapCol) * 0.03, ease: "easeOut" }
                       : { duration: 0 }
                   }
                 />
@@ -389,7 +413,7 @@ export default function IntroPuzzle() {
               input; down here they say "press me", and mirror the ← → keys. */}
           <motion.div
             animate={{ opacity: status === "zoom" ? 0 : 1 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
             className="mt-7 flex items-center gap-3">
             <button
               type="button"
@@ -420,7 +444,7 @@ export default function IntroPuzzle() {
           {/* hint — nudges toward the gap after two misses */}
           <motion.p
             animate={{ opacity: status === "zoom" ? 0 : 1 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
             className="mt-5 font-mono text-[11px] uppercase tracking-wide"
             style={{ color: colors.tertiary }}
           >

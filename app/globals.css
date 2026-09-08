@@ -395,7 +395,7 @@ body {
 .intro-tile {
   /* `both` fill: a tile holds full opacity until its delay elapses, so the
      grid is a solid sheet until its own moment to go. */
-  animation: intro-tile-out 600ms cubic-bezier(0.4, 0, 0.3, 1) var(--d, 0ms) both;
+  animation: intro-tile-out 620ms cubic-bezier(0.4, 0, 0.3, 1) var(--d, 0ms) both;
 }
 
 @keyframes intro-tile-out {
