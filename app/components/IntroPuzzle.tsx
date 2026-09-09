@@ -3,19 +3,24 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { colors } from "../theme";
-import { playError, playHover, playSuccess } from "../lib/sound";
+import { playHover, playSuccess } from "../lib/sound";
 
 /* ----------------------------------------------------------------------------
- * Intro puzzle — a one-move block game shown before the homepage.
+ * Intro loader — a self-playing block animation shown before the homepage.
  *
- * A 1×2 accent block falls toward a stack with a two-deep notch in it; steer
- * with ← / → (or tap the side zones) so it lands in the notch. Fit it and the
- * overlay lifts to reveal the page. Pixel blocks + accent squares are already
- * the site's language (Geist Pixel, dither grid, SectionRule intersections),
- * so the game IS the brand, not a bolt-on.
+ * A 1×2 accent block falls toward a stack with a two-deep notch in it, sliding
+ * one column per tick toward the gap so it drops into place on its own. It
+ * fits, a ripple crosses the stack, and the overlay dissolves into the page.
+ * Pixel blocks + accent squares are already the site's language (Geist Pixel,
+ * dither grid, SectionRule intersections), so this reads as the brand rather
+ * than a bolt-on.
+ *
+ * Nothing is asked of the visitor — it was briefly a game they steered, and
+ * that made a loading screen into a task. Hence: no controls, no hint, no miss
+ * state, and a much faster tick.
  *
  * Ground rules (the preloader literature is unambiguous about these):
- * - Always skippable — Skip button + Escape. The game must never gate content.
+ * - Always skippable — Skip button + Escape. It must never gate content.
  * - Once per session (sessionStorage) — returning visitors go straight in.
  * - Zero assets: DOM squares and CSS only, so the loader can't cost load time.
  * - prefers-reduced-motion users never see it at all.
@@ -27,7 +32,10 @@ import { playError, playHover, playSuccess } from "../lib/sound";
 const COLS = 9;
 const ROWS = 9;
 const STACK_H = 3; // stack occupies the bottom 3 rows
-const TICK_MS = 500; // one row of fall per tick — unhurried; 380 felt rushed
+/* One row of fall per tick. Much quicker than the 500ms it used when the
+   visitor was steering: nobody has a decision to make now, so the whole intro
+   is ~2.5s (≈1.2s fall + ~1.3s exit) rather than five seconds of watching. */
+const TICK_MS = 165;
 const SPAWN_COL = 4; // centre
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -58,7 +66,8 @@ function DropDot() {
 }
 
 /* won = ripple across the stack; zoom = structure leaves, then tiles clear */
-type Status = "falling" | "missed" | "won" | "zoom";
+/* No "missed": the block steers itself into the gap, so a miss is unreachable. */
+type Status = "falling" | "won" | "zoom";
 
 /* Pixel-dissolve mosaic. Tiles are sized in CSS pixels, not a fixed column
    count: 20 columns meant 100px slabs on a 2000px screen, which read as blocks
@@ -89,7 +98,6 @@ export default function IntroPuzzle() {
   const [gapCol, setGapCol] = useState(1);
   const [piece, setPiece] = useState({ col: SPAWN_COL, row: 0 });
   const [status, setStatus] = useState<Status>("falling");
-  const [misses, setMisses] = useState(0);
 
   const [mosaic, setMosaic] = useState<{
     cols: number;
@@ -102,6 +110,14 @@ export default function IntroPuzzle() {
   useEffect(() => {
     if (sessionStorage.getItem("intro-played")) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    /* Skip entirely in a background tab. Timers keep firing while a document
+       is hidden but animations do not advance, so the sequence would run its
+       clock out with nothing moving and leave a half-exited overlay covering
+       the page. Mark it played so it doesn't ambush them later either. */
+    if (document.hidden) {
+      sessionStorage.setItem("intro-played", "1");
+      return;
+    }
     const options = [0, 1, 2, 6, 7, 8];
     setGapCol(options[Math.floor(Math.random() * options.length)]);
     setShow(true);
@@ -112,38 +128,34 @@ export default function IntroPuzzle() {
     setShow(false);
   }, []);
 
-  /* Gravity. One interval per fall; landing flips status, which tears the
-     interval down via the dependency. */
+  /* Gravity + auto-steer. The block drops a row per tick and simultaneously
+     steps one column toward the gap, so it slides into place on its own — this
+     is a loading animation, not a game, and nothing waits on the visitor.
+     It therefore always lands in the notch; there is no miss state.
+
+     One interval per fall; landing flips status, which tears the interval down
+     via the dependency. */
   useEffect(() => {
     if (!show || status !== "falling") return;
     const id = setInterval(() => {
       setPiece((p) => {
-        const limit = restRow(p.col, gapCol);
+        const col = p.col + Math.sign(gapCol - p.col);
+        const limit = restRow(col, gapCol);
         if (p.row + 2 > limit) {
-          setStatus(p.col === gapCol ? "won" : "missed");
-          return p;
+          setStatus("won");
+          return { ...p, col };
         }
-        return { ...p, row: p.row + 1 };
+        return { col, row: p.row + 1 };
       });
     }, TICK_MS);
     return () => clearInterval(id);
   }, [show, status, gapCol]);
 
-  /* Miss: soft error, brief pause, new piece.
-     Win: one continuous exit — chord + ripple through the stack, the structure
-     leaving while that wave is still travelling, and the tiles clearing the
-     moment it's gone. See the timing constants above. */
+  /* The fit: one continuous exit — chord + ripple through the stack, the
+     structure leaving while that wave is still travelling, and the tiles
+     clearing the moment it's gone. See the timing constants above. */
   useEffect(() => {
     if (!show) return;
-    if (status === "missed") {
-      playError();
-      const t = setTimeout(() => {
-        setPiece({ col: SPAWN_COL, row: 0 });
-        setMisses((m) => m + 1);
-        setStatus("falling");
-      }, 550);
-      return () => clearTimeout(t);
-    }
     if (status === "won") {
       playSuccess();
       /* Build the grid HERE, not at mount: it has to match the viewport at the
@@ -181,21 +193,12 @@ export default function IntroPuzzle() {
     }
   }, [status, show, close]);
 
-  const move = useCallback(
-    (dir: -1 | 1) => {
-      if (status !== "falling") return;
-      playHover();
-      setPiece((p) => ({ ...p, col: Math.min(COLS - 1, Math.max(0, p.col + dir)) }));
-    },
-    [status],
-  );
-
+  /* Escape still skips — it plays itself, but a visitor who has seen it once
+     this session shouldn't have to sit through it again. */
   useEffect(() => {
     if (!show) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft" || e.key === "a") move(-1);
-      else if (e.key === "ArrowRight" || e.key === "d") move(1);
-      else if (e.key === "Escape") close();
+      if (e.key === "Escape") close();
     };
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -204,7 +207,7 @@ export default function IntroPuzzle() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [show, move, close]);
+  }, [show, close]);
 
   /* ---- board cells ---------------------------------------------------- */
   const stackCells: { r: number; c: number }[] = [];
@@ -314,6 +317,8 @@ export default function IntroPuzzle() {
             {status === "won" || status === "zoom"
               ? "Welcome in."
               : "One block short of a portfolio"}
+            {/* Copy stays the same: it reads as a loading state, not a task —
+                which is what it is now that nothing is asked of the visitor. */}
           </motion.p>
 
           {/* board — hairline frame with accent squares at the corners, echoing
@@ -390,11 +395,12 @@ export default function IntroPuzzle() {
               <motion.div
                 key={i}
                 className="absolute"
-                animate={{
-                  ...cellPos(r, piece.col),
-                  ...(status === "missed" ? { x: [0, -5, 5, -3, 0] } : {}),
-                }}
-                transition={{ duration: 0.16, ease: "linear" }}
+                /* Slides horizontally as it drops — the auto-steer changes col
+                   on the same tick as row, and this tween is what makes that a
+                   diagonal glide rather than a jump. Slightly under TICK_MS so
+                   each step settles before the next. */
+                animate={cellPos(r, piece.col)}
+                transition={{ duration: 0.14, ease: "easeOut" }}
                 initial={false}
               >
                 <motion.div
@@ -408,50 +414,8 @@ export default function IntroPuzzle() {
 
           </motion.div>
 
-          {/* controls — an explicit arrow pair UNDER the board. They started as
-              full-height side zones, which read as a carousel rather than game
-              input; down here they say "press me", and mirror the ← → keys. */}
-          <motion.div
-            animate={{ opacity: status === "zoom" ? 0 : 1 }}
-            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
-            className="mt-7 flex items-center gap-3">
-            <button
-              type="button"
-              aria-label="Move block left"
-              onClick={() => move(-1)}
-              className="flex h-11 w-11 items-center justify-center rounded-full outline-none transition-colors hover:bg-[color:var(--c-tab-active-bg)] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 active:scale-95"
-              style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
-            >
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M19 12H5" />
-                <path d="m12 19-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              aria-label="Move block right"
-              onClick={() => move(1)}
-              className="flex h-11 w-11 items-center justify-center rounded-full outline-none transition-colors hover:bg-[color:var(--c-tab-active-bg)] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 active:scale-95"
-              style={{ color: colors.secondary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
-            >
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </button>
-          </motion.div>
-
-          {/* hint — nudges toward the gap after two misses */}
-          <motion.p
-            animate={{ opacity: status === "zoom" ? 0 : 1 }}
-            transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
-            className="mt-5 font-mono text-[11px] uppercase tracking-wide"
-            style={{ color: colors.tertiary }}
-          >
-            {misses >= 2 && status !== "won"
-              ? `The gap is on the ${gapCol < SPAWN_COL ? "left" : "right"}`
-              : "Tap · or use ← → keys"}
-          </motion.p>
+          {/* No controls and no hint: the block steers itself, so there is
+              nothing to press and nothing to explain. Skip stays, top right. */}
         </motion.div>
       )}
     </AnimatePresence>
