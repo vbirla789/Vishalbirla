@@ -32,10 +32,15 @@ import { playHover, playSuccess } from "../lib/sound";
 const COLS = 9;
 const ROWS = 9;
 const STACK_H = 3; // stack occupies the bottom 3 rows
-/* One row of fall per tick. Much quicker than the 500ms it used when the
-   visitor was steering: nobody has a decision to make now, so the whole intro
-   is ~2.5s (≈1.2s fall + ~1.3s exit) rather than five seconds of watching. */
-const TICK_MS = 165;
+/* One row of fall per tick. A calm, deliberate descent: 165ms read as the
+   block being dropped, which undersold the moment it slides into the gap.
+   Seven ticks, so the fall is ~2.1s and the whole intro ~3.7s. */
+const TICK_MS = 300;
+
+/* The piece's horizontal/vertical tween, derived from the tick rather than
+   hardcoded: it has to finish just before the next step or the glide either
+   stutters (too short) or never arrives (too long). Change TICK_MS alone. */
+const PIECE_GLIDE = (TICK_MS - 45) / 1000;
 const SPAWN_COL = 4; // centre
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -397,10 +402,10 @@ export default function IntroPuzzle() {
                 className="absolute"
                 /* Slides horizontally as it drops — the auto-steer changes col
                    on the same tick as row, and this tween is what makes that a
-                   diagonal glide rather than a jump. Slightly under TICK_MS so
-                   each step settles before the next. */
+                   diagonal glide rather than a jump. PIECE_GLIDE tracks
+                   TICK_MS so the two can't drift apart. */
                 animate={cellPos(r, piece.col)}
-                transition={{ duration: 0.14, ease: "easeOut" }}
+                transition={{ duration: PIECE_GLIDE, ease: "easeInOut" }}
                 initial={false}
               >
                 <motion.div
