@@ -414,33 +414,6 @@ body {
     border-radius 480ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ---- INTRO PUZZLE: PIXEL DISSOLVE -----------------------------------------
-   The win exit fades a fine grid of tiles away to reveal the page.
-
-   Opacity ONLY — deliberately no transform. Earlier versions moved the tiles
-   (toward the camera, then away); perspective rescaled them past their own
-   cells, neighbours ended up different sizes overlapping each other, and the
-   whole thing read as broken rendering rather than a dissolve. Tiles that
-   stay put and only fade cannot break.
-
-   Driven by CSS rather than a motion component per tile: there are ~1000 of
-   them, and this way each carries nothing but its own delay.
-   --------------------------------------------------------------------------*/
-.intro-tile {
-  /* `both` fill: a tile holds full opacity until its delay elapses, so the
-     grid is a solid sheet until its own moment to go. */
-  animation: intro-tile-out 620ms cubic-bezier(0.4, 0, 0.3, 1) var(--d, 0ms) both;
-}
-
-@keyframes intro-tile-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
 /* ---- DITHERED BACKDROP ----------------------------------------------------
    A slow-drifting colour field quantised through a dot grid, so the page has
    some depth instead of sitting on flat paint.

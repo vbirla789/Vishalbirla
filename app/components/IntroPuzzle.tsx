@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
 import { playHover, playSuccess } from "../lib/sound";
 
@@ -74,29 +74,26 @@ function DropDot() {
 /* No "missed": the block steers itself into the gap, so a miss is unreachable. */
 type Status = "falling" | "won" | "zoom";
 
-/* Pixel-dissolve mosaic. Tiles are sized in CSS pixels, not a fixed column
-   count: 20 columns meant 100px slabs on a 2000px screen, which read as blocks
-   popping rather than a dissolve. ~44px keeps them fine at any width. */
-const TILE_PX = 44;
+/* ---- exit: the box extends into the page ---------------------------------
+   Four panels in the page's own background colour cover everything OUTSIDE
+   the board. Sliding them off-screen grows the board's opening until it is
+   the whole viewport — so the little framed box literally becomes the
+   portfolio, with its accent corner marks travelling out to the viewport
+   corners.
 
-/* The exit is one continuous motion, so these are tuned to hand off with no
-   dead frame between them:
-     ripple (RIPPLE_MS) → structure fades (STRUCTURE_FADE) → tiles clear
-   Every earlier version parked on a static screen twice — an 850ms ripple hold
-   and then a stretch with the tiles solid and nothing moving. That pause is
-   what read as the animation stopping. */
-/* These deliberately OVERLAP rather than queue. Running them back-to-back
-   still left dead windows — measured a 245ms stretch where the ripple had
-   finished, the board hadn't started fading, and no tile had moved. Each
-   stage now begins while the previous one is still going. */
-const RIPPLE_MS = 300; // land → structure starts leaving, wave still mid-flight
-const STRUCTURE_FADE = 0.2; // seconds; board/title/controls leaving
-/* Under STRUCTURE_FADE on purpose: the first tiles clear while the board is
-   still on its way out (~25% opacity), so there is never a frame with nothing
-   in motion. */
-const CLEAR_HOLD = 120;
-const TILE_STAGGER = 620; // spread of the dissolve across the grid
-const TILE_FADE = 620; // per-tile fade (see .intro-tile in globals.css)
+   Panels rather than scaling the board: scaling took the blocks with it and
+   turned them into enormous slabs. Panels only ever translate, so nothing
+   inside the frame can distort. */
+
+/* Stages overlap rather than queue — running them back-to-back left dead
+   windows where nothing on screen was moving, which read as the animation
+   stopping. */
+const RIPPLE_MS = 520; // land → the box starts opening, wave still travelling
+const STRUCTURE_FADE = 0.24; // seconds; blocks + chrome leaving
+const EXPAND_MS = 900; // the opening growing to fill the viewport
+/* Panels start moving before the blocks have finished fading, so the box is
+   already opening as its contents leave. */
+const EXPAND_EASE = [0.65, 0, 0.35, 1] as const;
 
 export default function IntroPuzzle() {
   const [show, setShow] = useState(false);
@@ -104,11 +101,13 @@ export default function IntroPuzzle() {
   const [piece, setPiece] = useState({ col: SPAWN_COL, row: 0 });
   const [status, setStatus] = useState<Status>("falling");
 
-  const [mosaic, setMosaic] = useState<{
-    cols: number;
-    rows: number;
-    tiles: { i: number; delay: number; shade: number }[];
-  }>({ cols: 0, rows: 0, tiles: [] });
+  /* The board's on-screen rect, captured the moment the exit begins. The
+     panels and the travelling corner marks are both positioned from it. */
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [frame, setFrame] = useState<{
+    top: number; left: number; right: number; bottom: number;
+    width: number; height: number; vw: number; vh: number;
+  } | null>(null);
 
   /* Mount gate. Off-centre gap only, so the puzzle always needs at least two
      moves — a gap under the spawn point would win itself. */
@@ -163,37 +162,29 @@ export default function IntroPuzzle() {
     if (!show) return;
     if (status === "won") {
       playSuccess();
-      /* Build the grid HERE, not at mount: it has to match the viewport at the
-         moment of the exit (the window may have been resized since), and
-         measuring during the first render can read a 0×0 window in a
-         background tab or collapsed frame, which silently yields no tiles at
-         all. The fallbacks guarantee a grid regardless. */
-      const w = window.innerWidth || document.documentElement.clientWidth || 1280;
-      const h = window.innerHeight || document.documentElement.clientHeight || 800;
-      const cols = Math.max(8, Math.ceil(w / TILE_PX));
-      const rows = Math.max(6, Math.ceil(h / TILE_PX));
-      setMosaic({
-        cols,
-        rows,
-        tiles: Array.from({ length: cols * rows }, (_, i) => ({
-          i,
-          delay: CLEAR_HOLD + Math.round(Math.random() * TILE_STAGGER),
-          /* Only a whisper of tonal variation. At 0-14% the tiles formed a
-             harsh light/dark checkerboard over the page; 0-5% still reads as
-             pixel texture but dissolves evenly. */
-          shade: [0, 0, 0, 2, 3, 5][Math.floor(Math.random() * 6)],
-        })),
+      /* Measure the board HERE, not at mount: the panels have to match where
+         it actually sits now (the window may have been resized), and reading
+         during the first render can catch a 0×0 viewport in a collapsed frame.
+         Fall back to a centred 320px box so the exit still plays if the
+         measurement is degenerate. */
+      const vw = window.innerWidth || document.documentElement.clientWidth || 1280;
+      const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+      const r = boardRef.current?.getBoundingClientRect();
+      const box =
+        r && r.width > 1
+          ? r
+          : { left: vw / 2 - 160, top: vh / 2 - 160, right: vw / 2 + 160, bottom: vh / 2 + 160, width: 320, height: 320 };
+      setFrame({
+        top: box.top, left: box.left, right: box.right, bottom: box.bottom,
+        width: box.width, height: box.height, vw, vh,
       });
-      /* Hand off while the ripple is still travelling, so the structure starts
-         leaving before the wave settles — no beat where the screen is still. */
+      /* Hand off while the ripple is still travelling, so the box starts
+         opening before the wave settles — no beat where the screen is still. */
       const t = setTimeout(() => setStatus("zoom"), RIPPLE_MS);
       return () => clearTimeout(t);
     }
     if (status === "zoom") {
-      /* No slack term: the last tile hits zero at exactly this point, and any
-         padding is a stretch of fully-transparent overlay still mounted —
-         measured as a 168ms dead tail. */
-      const t = setTimeout(close, CLEAR_HOLD + TILE_STAGGER + TILE_FADE);
+      const t = setTimeout(close, EXPAND_MS);
       return () => clearTimeout(t);
     }
   }, [status, show, close]);
@@ -234,47 +225,63 @@ export default function IntroPuzzle() {
       {show && (
         <motion.div
           className="fixed inset-0 z-[10020] flex flex-col items-center justify-center px-6"
-          /* During the zoom the solid background hands over to the mosaic in
-             the same commit — the tiles ARE the background, and they clear one
-             by one to reveal the page. No root fade: that would take the tiles
-             with it. */
-          style={{ backgroundColor: status === "zoom" ? "transparent" : colors.background }}
+          /* Once the panels exist they provide the cover, so the root's own
+             background steps aside in the same commit — otherwise it would sit
+             over the page and there'd be nothing for the box to open onto. */
+          style={{ backgroundColor: frame ? "transparent" : colors.background }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          /* Near-instant: by unmount every tile is already at zero opacity, so
-             a real exit fade is just more transparent overlay on screen. */
           exit={{ opacity: 0, transition: { duration: 0.06 } }}
           transition={{ duration: 0.3, ease: EASE }}
           role="dialog"
           aria-modal
           aria-label="Intro puzzle — fit the block, or skip"
         >
-          {/* Pixel-dissolve exit: a fine grid of tiles that fade away in
-              random order to reveal the page underneath.
+          {/* The four panels covering everything outside the board. They sit
+              still through the `won` beat, then slide off-screen so the board's
+              opening grows into the whole viewport. Transform only — nothing
+              re-lays-out, and nothing inside the frame can be distorted. */}
+          {frame && (
+            <div aria-hidden className="absolute inset-0 -z-10">
+              {[
+                { k: "t", s: { left: 0, top: 0, width: frame.vw, height: frame.top }, to: { y: -frame.top } },
+                { k: "b", s: { left: 0, top: frame.bottom, width: frame.vw, height: frame.vh - frame.bottom }, to: { y: frame.vh - frame.bottom } },
+                { k: "l", s: { left: 0, top: frame.top, width: frame.left, height: frame.height }, to: { x: -frame.left } },
+                { k: "r", s: { left: frame.right, top: frame.top, width: frame.vw - frame.right, height: frame.height }, to: { x: frame.vw - frame.right } },
+              ].map(({ k, s, to }) => (
+                <motion.div
+                  key={k}
+                  className="absolute"
+                  style={{ ...s, backgroundColor: colors.background }}
+                  initial={{ x: 0, y: 0 }}
+                  animate={status === "zoom" ? to : { x: 0, y: 0 }}
+                  transition={{ duration: EXPAND_MS / 1000, ease: EXPAND_EASE }}
+                />
+              ))}
+            </div>
+          )}
 
-              Mounted from the WON phase, not the zoom, so the cost of ~1000
-              nodes lands during the ripple rather than as a hitch the instant
-              the animation starts. They're invisible until then — the root
-              still has its solid background behind them, and a tile only gets
-              its animation class in the zoom phase. */}
-          {(status === "won" || status === "zoom") && (
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10"
-              style={{ opacity: status === "zoom" ? 1 : 0 }}
-            >
-              {mosaic.tiles.map(({ i, delay, shade }) => (
-                <div
-                  key={i}
-                  className={`absolute ${status === "zoom" ? "intro-tile" : ""}`}
-                  style={{
-                    left: `${((i % mosaic.cols) * 100) / mosaic.cols}%`,
-                    top: `${(Math.floor(i / mosaic.cols) * 100) / mosaic.rows}%`,
-                    /* padded a hair so neighbours never leave a hairline seam */
-                    width: `calc(${100 / mosaic.cols}% + 1px)`,
-                    height: `calc(${100 / mosaic.rows}% + 1px)`,
-                    backgroundColor: `color-mix(in srgb, var(--c-primary) ${shade}%, var(--c-background))`,
-                    ["--d" as string]: `${delay}ms`,
+          {/* The accent corner marks ride the opening out to the viewport
+              corners — the same squares the section rules use, which is what
+              ties the intro to the page it opens onto. */}
+          {frame && (
+            <div aria-hidden className="pointer-events-none absolute inset-0 z-[1]">
+              {[
+                { k: "tl", left: frame.left, top: frame.top, to: { x: -frame.left, y: -frame.top } },
+                { k: "tr", left: frame.right, top: frame.top, to: { x: frame.vw - frame.right, y: -frame.top } },
+                { k: "bl", left: frame.left, top: frame.bottom, to: { x: -frame.left, y: frame.vh - frame.bottom } },
+                { k: "br", left: frame.right, top: frame.bottom, to: { x: frame.vw - frame.right, y: frame.vh - frame.bottom } },
+              ].map(({ k, left, top, to }) => (
+                <motion.div
+                  key={k}
+                  className="absolute h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2"
+                  style={{ left, top, backgroundColor: colors.accent }}
+                  initial={{ x: 0, y: 0 }}
+                  animate={status === "zoom" ? { ...to, opacity: 0 } : { x: 0, y: 0, opacity: 1 }}
+                  transition={{
+                    duration: EXPAND_MS / 1000,
+                    ease: EXPAND_EASE,
+                    opacity: { delay: EXPAND_MS / 1000 - 0.25, duration: 0.25 },
                   }}
                 />
               ))}
@@ -329,11 +336,11 @@ export default function IntroPuzzle() {
           {/* board — hairline frame with accent squares at the corners, echoing
               the structure grid's intersection marks */}
           <motion.div
+            ref={boardRef}
             className="relative w-[min(82vw,324px)]"
-            /* The board does NOT scale on the way out. It used to blow up to 7x
-               as a fly-through, which turned the game's own blocks into
-               enormous slabs across the page — that read as broken layout, not
-               depth. It just leaves, and the tiles do the reveal. */
+            /* The board itself never scales — only its contents fade while the
+               panels open around it. Scaling it took the blocks along and
+               turned them into enormous slabs. */
             animate={status === "zoom" ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: STRUCTURE_FADE, ease: "easeOut" }}
             style={{ aspectRatio: `${COLS} / ${ROWS}` }}
@@ -343,7 +350,9 @@ export default function IntroPuzzle() {
               className="pointer-events-none absolute inset-0"
               style={{ boxShadow: `inset 0 0 0 1px ${colors.line}` }}
             />
-            {[
+            {/* Static corner marks. Hidden the instant the travelling pair is
+                mounted, so the two never double up on the same corner. */}
+            {!frame && [
               { left: 0, top: 0 }, { right: 0, top: 0 },
               { left: 0, bottom: 0 }, { right: 0, bottom: 0 },
             ].map((pos, i) => (
