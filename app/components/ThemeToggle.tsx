@@ -13,7 +13,9 @@ type ViewTransitionDocument = Document & {
   startViewTransition?: (cb: () => void) => { ready: Promise<void> };
 };
 
-const REVEAL_MS = 500;
+/* The reveal's duration and easing live in globals.css (@keyframes
+   theme-reveal), not here — see the note there for why it can't be applied
+   imperatively from this file. */
 
 function SunIcon() {
   return (
@@ -48,7 +50,7 @@ export default function ThemeToggle() {
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
-  const toggle = async () => {
+  const toggle = () => {
     playHover();
     const next = !document.documentElement.classList.contains("dark");
 
@@ -72,35 +74,31 @@ export default function ThemeToggle() {
       return;
     }
 
-    /* flushSync is load-bearing: startViewTransition snapshots the DOM when
-       the callback returns, so React's normally-async state update has to be
-       committed synchronously or the snapshot catches the old theme. */
-    await doc.startViewTransition(() => {
-      flushSync(apply);
-    }).ready;
-
-    // Circle grows from the toggle's centre to whichever corner is furthest,
-    // so the reveal always covers the viewport.
+    /* Publish the circle's geometry BEFORE starting the transition. The
+       keyframes in globals.css read these, so the reveal is already attached
+       to ::view-transition-new(root) when the browser begins — which is the
+       whole point. Attaching it afterwards with element.animate() did nothing:
+       with no animation on the pseudo tree the transition finished and tore
+       the pseudos down first, leaving a frozen frame and then a snap. */
     const { top, left, width, height } = btnRef.current.getBoundingClientRect();
     const x = left + width / 2;
     const y = top + height / 2;
-    const right = window.innerWidth - left;
-    const bottom = window.innerHeight - top;
-    const maxRadius = Math.hypot(Math.max(left, right), Math.max(top, bottom));
-
-    document.documentElement.animate(
-      {
-        clipPath: [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${maxRadius}px at ${x}px ${y}px)`,
-        ],
-      },
-      {
-        duration: REVEAL_MS,
-        easing: "ease-in-out",
-        pseudoElement: "::view-transition-new(root)",
-      },
+    // furthest corner from the button, so the circle always covers the viewport
+    const maxRadius = Math.hypot(
+      Math.max(left, window.innerWidth - left),
+      Math.max(top, window.innerHeight - top),
     );
+    const root = document.documentElement;
+    root.style.setProperty("--vt-x", `${x}px`);
+    root.style.setProperty("--vt-y", `${y}px`);
+    root.style.setProperty("--vt-r", `${maxRadius}px`);
+
+    /* flushSync is load-bearing: startViewTransition snapshots the DOM when
+       the callback returns, so React's normally-async state update has to be
+       committed synchronously or the snapshot catches the old theme. */
+    doc.startViewTransition(() => {
+      flushSync(apply);
+    });
   };
 
   return (

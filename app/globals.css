@@ -122,14 +122,48 @@ html {
 }
 
 /* ---- THEME VIEW TRANSITION ------------------------------------------------
-   ThemeToggle animates ::view-transition-new(root) as a circle growing out of
-   the button. The browser's default is a cross-fade between the two snapshots;
-   left on, it fades underneath the wipe and muddies it. Killing the animation
-   leaves the old snapshot still while the new theme is revealed over it. */
-::view-transition-old(root),
-::view-transition-new(root) {
+   The old snapshot holds still while the new theme is revealed over it by a
+   circle growing from the toggle. Both opt out of the default cross-fade,
+   which otherwise fades underneath the wipe and muddies it.
+
+   The reveal is declared HERE rather than attached with element.animate()
+   after awaiting transition.ready. That version silently did nothing: with
+   `animation: none` on both pseudos there were no animations on the pseudo
+   tree, so the browser finished the transition and tore the pseudos down
+   before the imperative call could land. Measured it — zero animations on the
+   pseudo tree for the entire toggle. What you saw was the old frame held for
+   ~250ms and then an abrupt snap, which is exactly what read as lag.
+
+   Declared in CSS the animation exists when the transition starts, so the
+   browser waits for it. ThemeToggle only has to publish the circle's origin
+   and radius as custom properties on :root, which these inherit. */
+::view-transition-old(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+
+/* 380ms, down from 500ms. Half a second is a long time to sit through for a
+   theme swap, and "the switcher lags" is at least partly just that. */
+::view-transition-new(root) {
+  animation: theme-reveal 380ms cubic-bezier(0.4, 0, 0.2, 1);
+  mix-blend-mode: normal;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+  to {
+    /* 150vmax fallback covers any viewport if the JS values are missing */
+    clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+}
+
+/* Reduced motion: swap instantly, no wipe. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }
 
 
