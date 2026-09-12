@@ -87,7 +87,6 @@ export default function Home() {
                     "This is Vishal",
                     "Designer who builds",
                     "Coffee enthusiast",
-                    "Framer expert",
                     "2px negotiator",
                   ]}
                   speed={70}
