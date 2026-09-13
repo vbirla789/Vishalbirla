@@ -65,17 +65,13 @@ function Phone({ scheme = "light" }: { scheme?: "light" | "dark" }) {
 /** A soft grey stage that centers a piece of media (matches the reference). */
 function Stage({
   children,
-  tone = "light",
 }: {
   children: React.ReactNode;
   tone?: "light" | "dark";
 }) {
   return (
     <div
-      className="flex items-center justify-center rounded-2xl px-6 py-12"
-      style={{
-        background: tone === "dark" ? "#0b0b0e" : "#f4f4f5",
-      }}
+      className="flex items-center justify-center rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] px-6 py-12 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
     >
       {children}
     </div>
@@ -85,7 +81,7 @@ function Stage({
 /** Abstract line chart on a card — for outcome / analytics moments. */
 function Chart() {
   return (
-    <div className="w-full max-w-[420px] rounded-xl bg-white p-5 ring-1 ring-black/5">
+    <div className="w-full max-w-[420px] rounded-xl bg-white p-5 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]">
       <div className="mb-4 flex items-center justify-between">
         <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-400">
           Adoption
@@ -125,7 +121,7 @@ function Photos() {
       {[0, 1].map((i) => (
         <div
           key={i}
-          className="flex aspect-[4/3] items-center justify-center rounded-xl"
+          className="flex aspect-[4/3] items-center justify-center rounded-xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
           style={{
             background:
               "linear-gradient(135deg,#3f3f46,#52525b 55%,#71717a)",
@@ -161,8 +157,8 @@ function ImageFrame({
       alt={alt}
       className={
         large
-          ? "mx-auto max-h-[62vh] w-auto rounded-2xl ring-1 ring-black/5"
-          : "w-full rounded-2xl ring-1 ring-black/5"
+          ? "mx-auto max-h-[62vh] w-auto rounded-2xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
+          : "w-full rounded-2xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
       }
       loading="lazy"
     />
@@ -200,8 +196,8 @@ export function CaseMedia({
 }) {
   if (video) {
     const stageClass = large
-      ? "flex w-[min(1040px,88vw)] items-center justify-center rounded-2xl bg-zinc-100 px-6 py-14"
-      : "flex items-center justify-center rounded-2xl bg-zinc-100 px-6 py-12";
+      ? "flex w-[min(1040px,88vw)] items-center justify-center rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] px-6 py-14 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
+      : "flex items-center justify-center rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] px-6 py-12 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]";
     const stage = (
       <div className="overflow-hidden rounded-[26px]">
         <video

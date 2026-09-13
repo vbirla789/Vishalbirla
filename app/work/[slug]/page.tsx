@@ -486,7 +486,7 @@ export default async function CaseStudyPage({
 
               <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 {project.outcomes.metrics.map((m) => (
-                  <div key={m.label} className="rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-6">
+                  <div key={m.label} className="rounded-2xl bg-zinc-50 dark:bg-[color:var(--c-panel)] p-6 ring-1 ring-black/5 dark:ring-[color:var(--c-line)]">
                     <div style={{ ...t(type.caseMetric), fontSize: "clamp(1.5rem, 6vw, 2rem)" }}>{m.value}</div>
                     <p className="mt-2" style={{ ...t(type.expMeta), color: colors.secondary }}>
                       {m.label}
