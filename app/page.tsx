@@ -1,4 +1,3 @@
-import AboutPhoto from "./components/AboutPhoto";
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
 import IntroPuzzle from "./components/IntroPuzzle";
@@ -54,9 +53,8 @@ export default function Home() {
             so adding one would draw a second line 64px under the first. Every
             LATER section still gets its own rule. */}
         <section id="about" className="max-w-[640px] scroll-mt-28">
-          {/* portrait, then greeting */}
+          {/* greeting */}
           <Appear>
-            <AboutPhoto />
             {/* The page's only h1, and the section's own label — which is why
                 there's no SectionLabel above it the way later sections have
                 one. It instead reads aboutLabel, the very token SectionLabel
@@ -76,8 +74,9 @@ export default function Home() {
           <Appear delay={0.14}>
             <div className="mt-4 space-y-4">
               {/* Primary rather than the token's secondary: with the portrait
-                  and name gone, this paragraph is the section's main voice and
-                  carries it at full contrast. */}
+                  and name gone, these paragraphs are the section's only voice
+                  and carry it at full contrast. space-y-4 on the wrapper sets
+                  the gap between them. */}
               <p
                 className="w-full max-w-[576px]"
                 style={{ ...t(type.aboutBody), fontWeight: 400, color: colors.primary }}
@@ -85,6 +84,12 @@ export default function Home() {
                 Product designer based in India, currently working at
                 <span className="font-semibold text-[color:var(--c-primary)]"> noon</span>.
                 I love using AI to shape designs and bring them to life as living, interactive experiences.
+              </p>
+              <p
+                className="w-full max-w-[576px]"
+                style={{ ...t(type.aboutBody), fontWeight: 400, color: colors.primary }}
+              >
+                Outside of work, I love playing tennis, brewing coffee and travelling.
               </p>
             </div>
             <ContactCtas />
