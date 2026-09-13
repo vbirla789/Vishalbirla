@@ -114,9 +114,9 @@ export default function PhotoStrip() {
     /* 320px, not 376: the frames divide this width between them, so the track
        is what sets how wide each one gets. At 376 they came out 72px across
        and read as wide crops rather than as photographs. */
-    <div className="w-[320px] max-w-full select-none">
+    <div className="w-[256px] max-w-full select-none">
       {/* pt leaves room for the playhead's head, which sits above the ruler */}
-      <div ref={trackRef} className="relative pt-[7px]">
+      <div ref={trackRef} className="relative pt-[6px]">
         {/* ruler: a mark every two hours, labelled at noon, 6pm and midnight */}
         <div
           aria-hidden
@@ -152,14 +152,14 @@ export default function PhotoStrip() {
               type="button"
               onClick={() => setLightboxIndex(i)}
               aria-label="Open photo"
-              className="group relative block h-[60px] flex-1 cursor-pointer overflow-hidden rounded-[8px] outline-none"
+              className="group relative block h-[48px] flex-1 cursor-pointer overflow-hidden rounded-[6px] outline-none"
               style={{ boxShadow: "inset 0 0 0 1.5px rgba(255,255,255,0.88)" }}
             >
               <Image
                 src={src}
                 alt=""
                 fill
-                sizes="80px"
+                sizes="64px"
                 quality={90}
                 priority
                 /* Grey at rest, true colour on hover — the treatment the rest
@@ -175,7 +175,7 @@ export default function PhotoStrip() {
             frames. Deliberately slight — at 15px across with a 2px stem it
             was the loudest thing on the page. */}
         <div
-          className={`absolute top-0 z-20 flex h-full w-5 -translate-x-1/2 justify-center ${
+          className={`absolute top-0 z-20 flex h-full w-4 -translate-x-1/2 justify-center ${
             dragging ? "cursor-grabbing" : "cursor-grab"
           } ${dragging ? "" : "transition-[left] duration-500 ease-out"}`}
           style={{ left: `${pinPct}%`, touchAction: "none" }}
@@ -195,11 +195,11 @@ export default function PhotoStrip() {
           }}
         >
           <span
-            className="pointer-events-none absolute top-0 h-[9px] w-[9px] rounded-full"
+            className="pointer-events-none absolute top-0 h-[7px] w-[7px] rounded-full"
             style={{ backgroundColor: colors.accent }}
           />
           <span
-            className="pointer-events-none absolute bottom-0 top-[4px] w-px"
+            className="pointer-events-none absolute bottom-0 top-[3px] w-px"
             style={{ backgroundColor: colors.accent }}
           />
         </div>
