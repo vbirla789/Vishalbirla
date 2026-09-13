@@ -35,12 +35,12 @@ export default function AboutPhoto() {
               tightening the padding from 4px to 2px is what last grew the
               photo from 42px, since the frame total has to hold at 52.
 
-              Width then follows the photo rather than the other way round:
-              46 × 4/5 = 36.8, so 37px lets the whole frame show instead of
-              cropping it. object-top survives only to absorb the fraction
-              that rounding up to 37 leaves over, and it drops that from the
-              lap rather than the top of his head. */}
-          <div className="relative h-[46px] w-[37px] overflow-hidden">
+              Width is set rather than derived. 46 × 4/5 = 36.8 would fit the
+              4:5 source whole; 48px is wider than that on purpose, so
+              object-cover has real vertical to throw away — the photo scales
+              to 48×60 and the box keeps 46 of those 60 rows. object-top
+              decides which 46: the lap goes, his head stays. */}
+          <div className="relative h-[46px] w-[48px] overflow-hidden">
             <Image
               /* Filename carries the crop, so replacing the photo means a new
                  name rather than overwriting this one. next/image keys its
@@ -49,7 +49,7 @@ export default function AboutPhoto() {
               src="/vishal.jpg"
               alt="Vishal Birla"
               fill
-              sizes="37px"
+              sizes="48px"
               /* 90, not a higher number: next.config.ts declares
                  qualities: [75, 90], and anything outside that list fails the
                  production build. */
