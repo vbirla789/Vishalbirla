@@ -56,7 +56,8 @@ export default function Home() {
         <section id="about" className="max-w-[640px] scroll-mt-28">
           {/* name appears first */}
           <Appear>
-            <SectionLabel>About</SectionLabel>
+            {/* No ABOUT label here: the name and portrait introduce the
+                section on their own. The later sections still carry theirs. */}
             {/* Carries the page's h1 and the typed line — the big pixel
                 headline that used to sit here moved into the role slot under
                 the name, so this section has one heading, not two. */}

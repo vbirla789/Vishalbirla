@@ -27,13 +27,17 @@ export default function AboutPhoto() {
           className="border p-[4px] shadow-[0_6px_20px_rgba(0,0,0,0.18)]"
           style={{ backgroundColor: colors.panel, borderColor: colors.line }}
         >
-          {/* 48×60 holds the source's 4:5 exactly, so the crop isn't squeezed.
-              Sized against the name block beside it: the reference this follows
-              sits the picture only a little taller than its two lines of type,
-              and every step down from the original 105px has been closing that
-              gap. The head-and-shoulders crop is what lets it go this small and
-              still read as a face. */}
-          <div className="relative h-[60px] w-[48px] overflow-hidden">
+          {/* Height is derived, not chosen: the frame is meant to stand exactly
+              as tall as the name and typed line beside it. Those are two 24px
+              lines with a 4px gap — 52px — and the frame adds 8px of padding
+              and 2px of border, so the picture itself is 52 − 10 = 42px.
+              Change the type or the padding and this number has to follow.
+
+              That makes the box wider than it is tall, against a 4:5 source, so
+              object-cover trims the vertical. object-top decides what goes:
+              centring would take 9px off the top and clip the top of his head,
+              and the lap at the bottom is the part worth losing. */}
+          <div className="relative h-[42px] w-[48px] overflow-hidden">
             <Image
               /* Filename carries the crop, so replacing the photo means a new
                  name rather than overwriting this one. next/image keys its
@@ -48,7 +52,7 @@ export default function AboutPhoto() {
                  production build. */
               quality={90}
               priority
-              className="object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
+              className="object-cover object-top grayscale transition-[filter] duration-500 group-hover:grayscale-0"
             />
           </div>
         </div>
@@ -64,8 +68,9 @@ export default function AboutPhoto() {
           Vishal Birla
         </h1>
         {/* 16px/400 — same values as the paragraph below, reached through
-            aboutBody rather than by resizing expMeta into a duplicate of it. */}
-        <p style={{ ...t(type.aboutBody), fontWeight: 400 }}>
+            aboutBody rather than by resizing expMeta into a duplicate of it.
+            mt-1 is the 4px gap the frame's height is measured against. */}
+        <p className="mt-1" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
           {/* The typed text starts empty, so on its own this line is blank in
               the server HTML. The real role is here and hidden visually; the
               animation is decorative and marked aria-hidden. */}
