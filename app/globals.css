@@ -76,11 +76,11 @@
   --c-secondary: #a1a1a1;
   --c-tertiary: #6e6e6e;
   --c-line: rgba(255, 255, 255, 0.08);
-  /* Black, sitting a step BELOW the #0a0a0a page rather than above it, so a
-     card reads as a recess rather than as a raised grey slab. The hairline
-     ring is what draws its edge now, which is why panels can afford to have
-     no fill of their own. */
-  --c-panel: #000000;
+  /* Deliberately the same value as --c-background: a panel is not a lighter
+     slab or a darker recess, it is the page, and its hairline ring is the
+     only thing that draws its edge. Keep the two in step — if the page moves
+     off #0a0a0a, this has to follow or cards start showing as blocks. */
+  --c-panel: #0a0a0a;
   --c-accent: #ff5c33; /* lifted + redder than #f54a00, which goes muddy on black */
   --c-surface: #1c1c1c;
 
