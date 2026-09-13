@@ -70,16 +70,22 @@ export default function AboutPhoto() {
         <h1 style={{ ...t(type.expOrg), fontSize: "18px", lineHeight: "24px" }}>
           Vishal Birla
         </h1>
-        {/* 16px/400 — same values as the paragraph below, reached through
-            aboutBody rather than by resizing expMeta into a duplicate of it.
-            mt-1 is the 4px gap the frame's height is measured against.
+        {/* Built from aboutLabel — the token the section labels use — so the
+            typed line carries their mono face, 500 weight and tertiary colour,
+            and can only ever drift from them if that token itself changes.
+            Size is the one departure: 16px here against the label's 12px,
+            since this reads as a line about him rather than a caption.
 
-            font-mono matches the section labels (ABOUT, WORK, CRAFTED
-            EXPERIENCES AT), which is also what keeps the typed line from
-            reflowing mid-cycle: every glyph is the same width, so the cursor
-            advances evenly instead of jittering as letters of different widths
-            arrive. */}
-        <p className="mt-1 font-mono" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
+            mt-1 is the 4px gap the frame's height is measured against, and
+            24px of line-height is half of what that 52px total is built from.
+
+            A monospace face also suits a line that types itself — every glyph
+            is the same width, so the cursor advances evenly instead of
+            jittering as letters of different widths arrive. */}
+        <p
+          className="mt-1 font-mono"
+          style={{ ...t(type.aboutLabel), fontSize: "16px", lineHeight: "24px" }}
+        >
           {/* The typed text starts empty, so on its own this line is blank in
               the server HTML. The real role is here and hidden visually; the
               animation is decorative and marked aria-hidden. */}
