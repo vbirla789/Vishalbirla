@@ -31,7 +31,6 @@ const projects: Project[] = [
     logo: "/logos/noon.jpeg",
     title: "Designing an AI-assisted review flow to add a review in seconds",
     image: "/work/noon/preview.png",
-    video: "/work/noon/ai-1.mp4",
   },
   {
     slug: "ambitio",
