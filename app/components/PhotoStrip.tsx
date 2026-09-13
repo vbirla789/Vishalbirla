@@ -106,20 +106,6 @@ export default function PhotoStrip() {
     <div className="w-[376px] max-w-full select-none">
       {/* pt leaves room for the playhead's head, which sits above the ruler */}
       <div ref={trackRef} className="relative pt-[7px]">
-        {/* Elapsed tint, left edge to the playhead. Behind the frames on
-            purpose: it colours the ground the strip stands on rather than
-            washing over the photographs. */}
-        <div
-          aria-hidden
-          className={`pointer-events-none absolute inset-y-0 left-0 z-0 ${
-            dragging ? "" : "transition-[width] duration-500 ease-out"
-          }`}
-          style={{
-            width: `${pinPct}%`,
-            background: "color-mix(in srgb, var(--c-accent) 18%, transparent)",
-          }}
-        />
-
         {/* ruler: a mark every two hours, labelled at noon, 6pm and midnight */}
         <div
           aria-hidden
@@ -148,14 +134,14 @@ export default function PhotoStrip() {
         </div>
 
         {/* filmstrip */}
-        <div className="relative z-10 mt-[6px] flex gap-[2px]">
+        <div className="relative z-10 mt-[6px] flex gap-[4px]">
           {photoSrcs.map((src, i) => (
             <button
               key={src}
               type="button"
               onClick={() => setLightboxIndex(i)}
               aria-label="Open photo"
-              className="group relative block h-[72px] flex-1 cursor-pointer overflow-hidden rounded-[2px] outline-none"
+              className="group relative block h-[60px] flex-1 cursor-pointer overflow-hidden rounded-[2px] outline-none"
               style={{ boxShadow: "inset 0 0 0 1.5px rgba(255,255,255,0.88)" }}
             >
               <Image
