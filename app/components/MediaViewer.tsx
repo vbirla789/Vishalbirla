@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useScrollLock } from "../lib/useScrollLock";
 
 /* ----------------------------------------------------------------------------
  * Global media lightbox.
@@ -59,13 +60,10 @@ export function MediaViewerProvider({ children }: { children: React.ReactNode })
       if (e.key === "Escape") close();
     };
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [content, close]);
+
+  useScrollLock(content != null);
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 

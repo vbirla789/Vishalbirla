@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { colors } from "../theme";
 import { playHover, playSuccess } from "../lib/sound";
+import { useScrollLock } from "../lib/useScrollLock";
 
 /* ----------------------------------------------------------------------------
  * Intro loader — a self-playing block animation shown before the homepage.
@@ -280,13 +281,10 @@ export default function IntroPuzzle() {
       if (e.key === "Escape") close();
     };
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [show, close]);
+
+  useScrollLock(show);
 
   /* ---- board cells ---------------------------------------------------- */
   const stackCells: { r: number; c: number }[] = [];

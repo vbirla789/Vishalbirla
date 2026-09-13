@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
+import { useScrollLock } from "../lib/useScrollLock";
 
 /* ----------------------------------------------------------------------------
  * Full-screen photo lightbox / carousel.
@@ -65,13 +66,10 @@ export default function PhotoLightbox({
       else if (e.key === "ArrowLeft") paginate(-1);
     };
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose, paginate]);
+
+  useScrollLock();
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 

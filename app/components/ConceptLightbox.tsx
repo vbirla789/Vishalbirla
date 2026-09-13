@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect } from "react";
 import { colors } from "../theme";
 import { playHover } from "../lib/sound";
+import { useScrollLock } from "../lib/useScrollLock";
 
 /* ----------------------------------------------------------------------------
  * Concept detail overlay — inspora.design-style.
@@ -91,13 +92,10 @@ export default function ConceptLightbox({
       else if (e.key === "ArrowLeft") paginate(-1);
     };
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose, paginate]);
+
+  useScrollLock();
 
   return (
     <motion.div
