@@ -76,7 +76,11 @@
   --c-secondary: #a1a1a1;
   --c-tertiary: #6e6e6e;
   --c-line: rgba(255, 255, 255, 0.08);
-  --c-panel: #141414;
+  /* Black, sitting a step BELOW the #0a0a0a page rather than above it, so a
+     card reads as a recess rather than as a raised grey slab. The hairline
+     ring is what draws its edge now, which is why panels can afford to have
+     no fill of their own. */
+  --c-panel: #000000;
   --c-accent: #ff5c33; /* lifted + redder than #f54a00, which goes muddy on black */
   --c-surface: #1c1c1c;
 
