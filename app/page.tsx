@@ -1,3 +1,4 @@
+import AboutPhoto from "./components/AboutPhoto";
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
 import IntroPuzzle from "./components/IntroPuzzle";
@@ -56,6 +57,7 @@ export default function Home() {
         <section id="about" className="max-w-[640px] scroll-mt-28">
           {/* name appears first */}
           <Appear>
+            <AboutPhoto />
             <SectionLabel>About</SectionLabel>
             {/* min-height reserves the tallest line so the paragraph below
                 doesn't jump as the text types and deletes */}
