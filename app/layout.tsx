@@ -55,12 +55,15 @@ const THEME_INIT = `
    The conditions here must mirror IntroPuzzle's mount gate exactly, or the two
    disagree and the cover is left behind. IntroPuzzle clears the class itself
    whenever it decides not to run, and the timeout below is a last-resort
-   backstop so a JS error can never leave the site hidden. */
+   backstop so a JS error can never leave the site hidden.
+
+   No document.hidden check: IntroPuzzle *defers* on a hidden tab rather than
+   skipping, so the cover has to stay up until the tab comes forward and the
+   loader actually plays. */
 const INTRO_INIT = `
 (function(){try{
   if(sessionStorage.getItem("intro-played"))return;
   if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-  if(document.hidden)return;
   var r=document.documentElement;
   r.classList.add("intro-pending");
   setTimeout(function(){r.classList.remove("intro-pending");},8000);

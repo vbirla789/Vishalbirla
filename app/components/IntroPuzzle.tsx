@@ -118,19 +118,40 @@ export default function IntroPuzzle() {
      component decides not to run, nothing else would ever take it down. */
   useEffect(() => {
     const uncover = () => document.documentElement.classList.remove("intro-pending");
-    if (sessionStorage.getItem("intro-played")) return uncover();
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return uncover();
-    /* Skip entirely in a background tab. Timers keep firing while a document
-       is hidden but animations do not advance, so the sequence would run its
-       clock out with nothing moving and leave a half-exited overlay covering
-       the page. Mark it played so it doesn't ambush them later either. */
-    if (document.hidden) {
-      sessionStorage.setItem("intro-played", "1");
-      return uncover();
+    if (sessionStorage.getItem("intro-played")) {
+      uncover();
+      return;
     }
-    const options = [0, 1, 2, 6, 7, 8];
-    setGapCol(options[Math.floor(Math.random() * options.length)]);
-    setShow(true);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      uncover();
+      return;
+    }
+
+    const start = () => {
+      const options = [0, 1, 2, 6, 7, 8];
+      setGapCol(options[Math.floor(Math.random() * options.length)]);
+      setShow(true);
+    };
+
+    /* Hidden tab: DEFER, don't skip. Timers keep firing while a document is
+       hidden but animations don't advance, so playing now would burn the whole
+       sequence on a screen nobody is looking at.
+
+       An earlier version marked it played here instead — which meant a single
+       load in a background tab silently disabled the loader for the rest of
+       the session, and it stopped appearing at all. Waiting for the tab to
+       come forward gets the visitor the intro they were meant to see. */
+    if (document.hidden) {
+      const onVisible = () => {
+        if (document.hidden) return;
+        document.removeEventListener("visibilitychange", onVisible);
+        start();
+      };
+      document.addEventListener("visibilitychange", onVisible);
+      return () => document.removeEventListener("visibilitychange", onVisible);
+    }
+
+    start();
   }, []);
 
   const close = useCallback(() => {
