@@ -1,7 +1,7 @@
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
 import IntroPuzzle from "./components/IntroPuzzle";
-import TimelineWidget from "./components/TimelineWidget";
+import PhotoStrip from "./components/PhotoStrip";
 import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
@@ -51,12 +51,11 @@ export default function Home() {
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 hidden w-px bg-[color:var(--c-line)] min-[888px]:block"
         />
-        {/* Timeline widget — the clock and the draggable photo polaroids.
-            Opens the page, above the greeting. Nothing in the nav links to
-            #intro, so the id is only here for direct links. */}
+        {/* Photo strip. Opens the page, above the greeting. Nothing in the nav
+            links to #intro, so the id is only here for direct links. */}
         <Appear>
           <div id="intro" className="mb-9 scroll-mt-28">
-            <TimelineWidget />
+            <PhotoStrip />
           </div>
         </Appear>
 

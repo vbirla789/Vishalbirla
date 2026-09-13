@@ -94,17 +94,19 @@ export default function RootLayout({
         className="min-h-screen"
         style={{ backgroundColor: colors.background, color: colors.primary }}
       >
-        {/* Dithered backdrop. Deliberately outside #page-shell, so the Ask
-            panel's slide-and-scale moves the page across it instead of
-            dragging it along. Decorative — see .dither in globals.css. */}
+        {/* Dithered backdrop, sitting outside #page-shell so the page layers
+            over it rather than carrying it. Decorative — see .dither. */}
         <div className="dither" aria-hidden="true" />
         {/* NerdModeProvider wraps the page rather than sitting beside it, so
             the toggle in the header can reach the state through context. The
             overlay itself is still portalled to <body>. Press "n" anywhere. */}
         <NerdModeProvider>
-          {/* Everything the Ask AI panel scales back sits inside #page-shell.
-              The panel itself is portalled to <body>, so it stays outside and
-              doesn't shrink with the page. See .ask-open in globals.css. */}
+          {/* Still needed with the Ask panel gone: globals.css gives this
+              position:relative and z-index:1 so the page paints above the
+              dither. That also makes it a stacking context, which is why
+              full-screen overlays portal to <body> — a z-index inside here
+              can never outrank something outside it. IntroPuzzle learned
+              that the hard way. */}
           <div id="page-shell">{children}</div>
         </NerdModeProvider>
         {/* Visual tuning overlay — dev only. Press Option+D (Alt+D) to toggle. */}

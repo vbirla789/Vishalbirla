@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
-import AskAiPanel from "./AskAiPanel";
 import { NerdModeToggle } from "./NerdMode";
 import SlidingTabs from "./SlidingTabs";
 
@@ -82,26 +81,8 @@ const items: { id: string; label: string; icon: React.ReactNode }[] = [
   },
 ];
 
-/** Four-point sparkle. Orange, per the accent token. */
-export function SparkleIcon({ size = 15 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      <path d="M12 2.5l1.9 6.1a1 1 0 0 0 .65.66L20.5 11l-6.05 1.74a1 1 0 0 0-.65.66L12 19.5l-1.9-6.1a1 1 0 0 0-.65-.66L3.5 11l6.05-1.74a1 1 0 0 0 .65-.66L12 2.5z" />
-      <path d="M19 3l.6 1.9L21.5 5.5 19.6 6.1 19 8l-.6-1.9-1.9-.6 1.9-.6L19 3z" opacity="0.75" />
-    </svg>
-  );
-}
-
 export default function HeaderNav() {
   const [active, setActive] = useState("about");
-  const [askOpen, setAskOpen] = useState(false);
   // while true, ignore scroll-spy so a click's chosen section stays active mid-scroll
   const lockRef = useRef(false);
   const lockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -289,30 +270,6 @@ export default function HeaderNav() {
         </div>
       </header>
 
-      {/* Ask Jarvis floats bottom-right, taking the spot AI glasses had.
-          Hidden on phones: the panel it opens is a 430px side sheet. */}
-      <button
-        type="button"
-        onClick={() => {
-          playHover();
-          setAskOpen(true);
-        }}
-        aria-haspopup="dialog"
-        aria-expanded={askOpen}
-        className="fixed bottom-6 right-6 z-[9999] hidden h-11 items-center gap-2 rounded-full pl-4 pr-5 text-[13px] font-medium leading-none outline-none transition-colors duration-200 sm:flex"
-        style={{
-          backgroundColor: colors.surface,
-          color: colors.tabActive,
-          boxShadow: `inset 0 0 0 1px ${colors.line}, 0 8px 24px -10px rgba(0,0,0,.5)`,
-        }}
-      >
-        <span style={{ color: colors.accent }}>
-          <SparkleIcon />
-        </span>
-        Ask Jarvis
-      </button>
-
-      <AskAiPanel open={askOpen} onClose={() => setAskOpen(false)} />
     </>
   );
 }
