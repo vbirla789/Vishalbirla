@@ -5,16 +5,14 @@ import { motion } from "framer-motion";
 import Typewriter from "./fancy/typewriter";
 import { colors, t, type } from "../theme";
 
-/* Framed portrait with the name and role set beside it.
+/* Framed portrait with the name and typed line set beside it.
 
-   The frame keeps the timeline widget's fill-and-hairline treatment, but the
-   padding is even on all four sides and the photo itself is square-cornered.
-   The radius on the outer frame is therefore 6px to match that 6px gap: with a
-   square inner edge, outer = inner + padding is what keeps the two outlines
-   concentric instead of the corner appearing to thicken.
+   The frame keeps the timeline widget's fill-and-hairline treatment, but both
+   corners are square and the 4px padding is even on all four sides — so the
+   outer and inner edges stay parallel with no radius to reconcile between them.
 
    Desaturated at rest so it sits behind the type rather than competing with
-   the headline, and comes to colour as it straightens on hover. */
+   the name, and comes to colour as it straightens on hover. */
 export default function AboutPhoto() {
   return (
     <div className="mb-6 flex items-center gap-4">
@@ -27,15 +25,16 @@ export default function AboutPhoto() {
         transition={{ type: "spring", stiffness: 300, damping: 22 }}
       >
         <div
-          className="rounded-[6px] border p-[6px] shadow-[0_6px_20px_rgba(0,0,0,0.18)]"
+          className="border p-[4px] shadow-[0_6px_20px_rgba(0,0,0,0.18)]"
           style={{ backgroundColor: colors.panel, borderColor: colors.line }}
         >
-          {/* 64×80 holds the source's 4:5 exactly, so the crop isn't squeezed.
-              Sized down against the name block beside it: the reference this
-              follows sits the picture only a little taller than its two lines
-              of type, and at the previous 105px the photo stood two and a half
-              times the text and read as a headshot with a caption. */}
-          <div className="relative h-[80px] w-[64px] overflow-hidden">
+          {/* 48×60 holds the source's 4:5 exactly, so the crop isn't squeezed.
+              Sized against the name block beside it: the reference this follows
+              sits the picture only a little taller than its two lines of type,
+              and every step down from the original 105px has been closing that
+              gap. The head-and-shoulders crop is what lets it go this small and
+              still read as a face. */}
+          <div className="relative h-[60px] w-[48px] overflow-hidden">
             <Image
               /* Filename carries the crop, so replacing the photo means a new
                  name rather than overwriting this one. next/image keys its
@@ -44,7 +43,7 @@ export default function AboutPhoto() {
               src="/vishal.jpg"
               alt="Vishal Birla"
               fill
-              sizes="64px"
+              sizes="48px"
               /* 90, not a higher number: next.config.ts declares
                  qualities: [75, 90], and anything outside that list fails the
                  production build. */
@@ -72,12 +71,12 @@ export default function AboutPhoto() {
           <span aria-hidden="true">
             <Typewriter
               as="span"
-              /* Opens on the actual role so the first pass reads straight, then
-                 wanders. "This is Vishal" retired with the move — the name now
-                 sits directly above, so introducing himself twice in one line
-                 of type was redundant. */
+              /* Qualities only. The literal job title was the first entry and
+                 is gone: the paragraph below already opens "Product designer
+                 based in India", so this line spent its first pass repeating
+                 what the next one says. The sr-only text above still carries
+                 the real role for screen readers and crawlers. */
               text={[
-                "Product Designer",
                 "Designer who builds",
                 "Coffee enthusiast",
                 "2px negotiator",
