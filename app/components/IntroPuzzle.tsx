@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { colors } from "../theme";
 import { playHover, playSuccess } from "../lib/sound";
 
@@ -302,7 +303,23 @@ export default function IntroPuzzle() {
     height: `${100 / ROWS}%`,
   });
 
-  return (
+  /* Portalled to <body>, NOT rendered in place.
+   *
+   * This is the bug that made the loader "never appear". IntroPuzzle renders
+   * from page.tsx, which lives inside #page-shell — and #page-shell sets
+   * position: relative + z-index: 1, which creates a stacking context. Inside
+   * it, the overlay's z-index of 10020 only competes with its siblings; the
+   * whole shell still sits at z-index 1 in the root. The .intro-pending cover
+   * is a pseudo-element of <html>, outside that context, so its z-index of
+   * 10019 painted straight over the entire shell — overlay included.
+   *
+   * The puzzle was rendering and animating correctly the whole time. It was
+   * simply underneath a solid sheet for four seconds. Portalling puts it in
+   * the same stacking context as the cover, where 10020 > 10019 means what it
+   * looks like it means. */
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {show && (
         <motion.div
@@ -496,6 +513,7 @@ export default function IntroPuzzle() {
               nothing to press and nothing to explain. Skip stays, top right. */}
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
