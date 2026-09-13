@@ -97,8 +97,13 @@ export default function PhotoLightbox({
 
       {/* stage — the photograph itself, nothing behind it. object-contain so a
           portrait and a landscape shot both show whole rather than being
-          cropped to a fixed frame, which is what the old card forced. */}
-      <div className="flex h-full w-full items-center justify-center" onClick={stop}>
+          cropped to a fixed frame, which is what the old card forced.
+
+          No stopPropagation here: this box fills the viewport, so swallowing
+          clicks on it meant the backdrop was only clickable in the thin strip
+          of padding around it. The photo below stops its own clicks, which is
+          the only thing that should. */}
+      <div className="flex h-full w-full items-center justify-center">
         <AnimatePresence initial={false} custom={dir} mode="wait">
           <motion.img
             key={index}
@@ -118,31 +123,36 @@ export default function PhotoLightbox({
               if (info.offset.x < -70) paginate(1);
               else if (info.offset.x > 70) paginate(-1);
             }}
-            className="max-h-full max-w-full cursor-grab rounded-[2px] object-contain active:cursor-grabbing"
+            onClick={stop}
+            className="max-h-full max-w-full cursor-grab rounded-[8px] object-contain active:cursor-grabbing"
           />
         </AnimatePresence>
       </div>
 
-      {/* step controls, bottom centre, with the position between them */}
-      <div
-        className="fixed inset-x-0 bottom-6 flex items-center justify-center gap-3"
-        onClick={stop}
-      >
-        <ControlButton label="Previous" onClick={(e) => { stop(e); paginate(-1); }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </ControlButton>
+      {/* step controls, bottom centre, with the position between them.
 
-        <span className="min-w-[56px] text-center text-[13px] tabular-nums text-white/70">
-          {index + 1} of {photos.length}
-        </span>
+          The positioning strip runs the full width, so it is left click-through
+          and only the controls themselves take the pointer — otherwise a click
+          anywhere along the bottom of the screen would hit this instead of the
+          backdrop and the overlay would refuse to close. */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 flex items-center justify-center">
+        <div className="pointer-events-auto flex items-center gap-3" onClick={stop}>
+          <ControlButton label="Previous" onClick={(e) => { stop(e); paginate(-1); }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </ControlButton>
 
-        <ControlButton label="Next" onClick={(e) => { stop(e); paginate(1); }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m9 18 6-6-6-6" />
-          </svg>
-        </ControlButton>
+          <span className="min-w-[56px] text-center text-[13px] tabular-nums text-white/70">
+            {index + 1} of {photos.length}
+          </span>
+
+          <ControlButton label="Next" onClick={(e) => { stop(e); paginate(1); }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </ControlButton>
+        </div>
       </div>
     </motion.div>
   );
