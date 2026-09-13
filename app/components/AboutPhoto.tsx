@@ -46,7 +46,7 @@ export default function AboutPhoto() {
                  name rather than overwriting this one. next/image keys its
                  cache on the URL, so an in-place swap keeps serving the old
                  picture to anyone who already has it — browser and CDN alike. */
-              src="/vishal-table.jpg"
+              src="/vishal.jpg"
               alt="Vishal Birla"
               fill
               sizes="37px"
