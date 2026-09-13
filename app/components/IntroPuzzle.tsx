@@ -111,17 +111,22 @@ export default function IntroPuzzle() {
   }>({ cols: 0, rows: 0, tiles: [] });
 
   /* Mount gate. Off-centre gap only, so the puzzle always needs at least two
-     moves — a gap under the spawn point would win itself. */
+     moves — a gap under the spawn point would win itself.
+
+     Every `return` below has to drop .intro-pending first: INTRO_INIT in
+     layout.tsx put a solid cover over the page before first paint, and if this
+     component decides not to run, nothing else would ever take it down. */
   useEffect(() => {
-    if (sessionStorage.getItem("intro-played")) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const uncover = () => document.documentElement.classList.remove("intro-pending");
+    if (sessionStorage.getItem("intro-played")) return uncover();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return uncover();
     /* Skip entirely in a background tab. Timers keep firing while a document
        is hidden but animations do not advance, so the sequence would run its
        clock out with nothing moving and leave a half-exited overlay covering
        the page. Mark it played so it doesn't ambush them later either. */
     if (document.hidden) {
       sessionStorage.setItem("intro-played", "1");
-      return;
+      return uncover();
     }
     const options = [0, 1, 2, 6, 7, 8];
     setGapCol(options[Math.floor(Math.random() * options.length)]);
@@ -130,8 +135,19 @@ export default function IntroPuzzle() {
 
   const close = useCallback(() => {
     sessionStorage.setItem("intro-played", "1");
+    document.documentElement.classList.remove("intro-pending");
     setShow(false);
   }, []);
+
+  /* Drop the cover the instant the exit starts. Until then the overlay is
+     opaque and the cover is harmless, but the dissolve reveals the page
+     underneath — which the cover would otherwise still be hiding. Skipping
+     early goes through close(), which clears it too. */
+  useEffect(() => {
+    if (status === "zoom") {
+      document.documentElement.classList.remove("intro-pending");
+    }
+  }, [status]);
 
   /* Gravity + auto-steer. The block drops a row per tick and simultaneously
      steps one column toward the gap, so it slides into place on its own — this

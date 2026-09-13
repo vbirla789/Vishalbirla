@@ -44,6 +44,29 @@ const THEME_INIT = `
 }catch(e){}})();
 `;
 
+/* Also before first paint: if the intro loader is going to play, lay a solid
+   cover over the page NOW.
+
+   Without this the homepage flashes first. IntroPuzzle is a client component
+   whose `show` starts false, so the server sends the page, the browser paints
+   it, and only after hydration does the effect flip `show` — the loader lands
+   on top of a page the visitor has already seen.
+
+   The conditions here must mirror IntroPuzzle's mount gate exactly, or the two
+   disagree and the cover is left behind. IntroPuzzle clears the class itself
+   whenever it decides not to run, and the timeout below is a last-resort
+   backstop so a JS error can never leave the site hidden. */
+const INTRO_INIT = `
+(function(){try{
+  if(sessionStorage.getItem("intro-played"))return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  if(document.hidden)return;
+  var r=document.documentElement;
+  r.classList.add("intro-pending");
+  setTimeout(function(){r.classList.remove("intro-pending");},8000);
+}catch(e){}})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -65,6 +88,9 @@ export default function RootLayout({
             production React build, and the script does execute from the SSR
             HTML exactly as intended. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+        {/* Order matters: the theme class must be on <html> before this runs,
+            so the cover paints in the right background colour. */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_INIT }} />
       </head>
       <body
         className="min-h-screen"

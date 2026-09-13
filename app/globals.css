@@ -441,6 +441,23 @@ body {
   }
 }
 
+/* ---- INTRO COVER ----------------------------------------------------------
+   Painted from the very first frame by INTRO_INIT in layout.tsx, so the
+   homepage is never visible before the loader mounts. Sits one below the
+   overlay's z-index (10020) — the overlay is opaque while it plays, so this
+   is only doing work in the gap between first paint and hydration.
+
+   IntroPuzzle removes .intro-pending the moment its exit begins, because from
+   that point the reveal needs the page underneath to be visible.
+   --------------------------------------------------------------------------*/
+html.intro-pending::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 10019;
+  background: var(--c-background);
+}
+
 /* ---- DITHERED BACKDROP ----------------------------------------------------
    A slow-drifting colour field quantised through a dot grid, so the page has
    some depth instead of sitting on flat paint.
