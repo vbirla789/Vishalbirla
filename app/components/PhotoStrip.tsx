@@ -152,7 +152,7 @@ export default function PhotoStrip() {
               type="button"
               onClick={() => setLightboxIndex(i)}
               aria-label="Open photo"
-              className="group relative block h-[60px] flex-1 cursor-pointer overflow-hidden rounded-[2px] outline-none"
+              className="group relative block h-[60px] flex-1 cursor-pointer overflow-hidden rounded-[8px] outline-none"
               style={{ boxShadow: "inset 0 0 0 1.5px rgba(255,255,255,0.88)" }}
             >
               <Image
