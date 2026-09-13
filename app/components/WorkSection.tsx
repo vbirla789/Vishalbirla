@@ -157,7 +157,7 @@ export default function WorkSection() {
                   Work list. The image branch uses object-cover and fills this
                   box completely, so those cards are unaffected either way —
                   their background is baked into the file, not drawn here. */}
-              <div className="h-[240px] overflow-hidden rounded-2xl bg-[color:var(--c-panel)] sm:h-[360px] lg:h-[480px]">
+              <div className="h-[240px] overflow-hidden rounded-2xl bg-[color:var(--c-panel)] ring-1 ring-black/5 sm:h-[360px] lg:h-[480px] dark:ring-[color:var(--c-line)]">
                 {p.video ? (
                   <div className="flex h-full items-center justify-center p-6 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
                     <div className="h-full overflow-hidden rounded-[7px] sm:rounded-[10px] lg:rounded-[24px]">
