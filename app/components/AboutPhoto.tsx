@@ -12,16 +12,15 @@ import { colors, t, type } from "../theme";
    outer and inner edges stay parallel with no radius to reconcile between them.
 
    Desaturated at rest so it sits behind the type rather than competing with
-   the name, and comes to colour as it straightens on hover. */
+   the name, and comes to colour on hover. */
 export default function AboutPhoto() {
   return (
     <div className="mb-6 flex items-center gap-4">
       <motion.div
         className="group shrink-0 will-change-transform"
-        /* The tilt is the resting state, not an entrance — animating from 0 to
-           -3 would read as the photo drifting out of true after load. */
-        initial={{ rotate: -3 }}
-        whileHover={{ rotate: 0, scale: 1.03 }}
+        /* Hangs square. With the tilt gone, hover only lifts it a little —
+           there is no longer anything to straighten. */
+        whileHover={{ scale: 1.03 }}
         transition={{ type: "spring", stiffness: 300, damping: 22 }}
       >
         <div
@@ -56,14 +55,17 @@ export default function AboutPhoto() {
       </motion.div>
 
       <div>
-        {/* The page's only h1, now that the pixel headline below is gone.
-            font-sans opts out of the Geist Pixel treatment @layer base gives
-            every heading — and with it the stroke weight bump, which would
-            fake-bold Geist, a font that already has real weights. */}
-        <h1 className="font-sans" style={t(type.expOrg)}>
+        {/* The page's only h1. Deliberately no font-sans: that class is the
+            opt-out from the Geist Pixel treatment @layer base gives every
+            heading, so leaving it off is what puts the name in pixel type —
+            and brings the stroke weight bump with it, which is the correction
+            Geist Pixel needs since it ships a single 400 face. */}
+        <h1 style={{ ...t(type.expOrg), fontSize: "18px", lineHeight: "24px" }}>
           Vishal Birla
         </h1>
-        <p style={t(type.expMeta)}>
+        {/* 16px/400 — same values as the paragraph below, reached through
+            aboutBody rather than by resizing expMeta into a duplicate of it. */}
+        <p style={{ ...t(type.aboutBody), fontWeight: 400 }}>
           {/* The typed text starts empty, so on its own this line is blank in
               the server HTML. The real role is here and hidden visually; the
               animation is decorative and marked aria-hidden. */}
