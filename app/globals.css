@@ -210,16 +210,18 @@ body {
      what actually thickens it, and half the stroke lands inside the glyph so
      advance widths are untouched.
 
-     :not(.font-sans) matters: headings opt back into Geist with Tailwind's
-     font-sans (the Work card titles do), and those must keep their real
-     weight — the stroke would fake-bold Geist, which already has proper
-     weights. Any future opt-out gets this for free. */
-  h1:not(.font-sans),
-  h2:not(.font-sans),
-  h3:not(.font-sans),
-  h4:not(.font-sans),
-  h5:not(.font-sans),
-  h6:not(.font-sans) {
+     The :not() guards matter: headings opt back out of pixel with Tailwind's
+     font-sans (the Work card titles) or font-mono (the About greeting, which
+     is set to match the WORK/EXPERIENCE labels), and those must keep their
+     real weight — the stroke would fake-bold Geist and Geist Mono, both of
+     which already have proper weights. Without the font-mono guard that
+     greeting rendered a hair heavier than the labels it is meant to match. */
+  h1:not(.font-sans):not(.font-mono),
+  h2:not(.font-sans):not(.font-mono),
+  h3:not(.font-sans):not(.font-mono),
+  h4:not(.font-sans):not(.font-mono),
+  h5:not(.font-sans):not(.font-mono),
+  h6:not(.font-sans):not(.font-mono) {
     -webkit-text-stroke: 0.45px currentColor;
   }
 }

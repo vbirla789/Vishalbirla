@@ -1,3 +1,4 @@
+import AboutPhoto from "./components/AboutPhoto";
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
 import IntroPuzzle from "./components/IntroPuzzle";
@@ -53,27 +54,20 @@ export default function Home() {
             so adding one would draw a second line 64px under the first. Every
             LATER section still gets its own rule. */}
         <section id="about" className="max-w-[640px] scroll-mt-28">
-          {/* greeting first */}
+          {/* portrait, then greeting */}
           <Appear>
+            <AboutPhoto />
             {/* The page's only h1, and the section's own label — which is why
                 there's no SectionLabel above it the way later sections have
-                one. font-sans opts out of the Geist Pixel treatment @layer
-                base gives every heading: this reads as something said, not as
-                display type, and the stroke bump that comes with pixel would
-                fake-bold a font that already has real weights.
+                one. It instead reads aboutLabel, the very token SectionLabel
+                uses, alongside the same font-mono and uppercase, so it renders
+                identically to WORK and EXPERIENCE and can only drift from them
+                if that token changes.
 
-                Set quieter and smaller than the paragraph under it on purpose
-                — the greeting introduces, the paragraph carries the weight. */}
-            <h1
-              className="font-sans"
-              style={{
-                ...t(type.aboutBody),
-                fontSize: "14px",
-                lineHeight: "20px",
-                fontWeight: 400,
-                color: colors.tertiary,
-              }}
-            >
+                font-mono also keeps it out of the Geist Pixel treatment
+                @layer base gives every heading, and with it the stroke bump
+                that would fake-bold a font with real weights. */}
+            <h1 className="font-mono uppercase" style={t(type.aboutLabel)}>
               Hi, This is Vishal
             </h1>
           </Appear>
