@@ -1,7 +1,7 @@
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
 import IntroPuzzle from "./components/IntroPuzzle";
-// import TimelineWidget from "./components/TimelineWidget"; // hidden — see below
+import TimelineWidget from "./components/TimelineWidget";
 import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
@@ -51,16 +51,14 @@ export default function Home() {
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 hidden w-px bg-[color:var(--c-line)] min-[888px]:block"
         />
-        {/* Timeline widget (Bengaluru clock + photo strip) — hidden for now.
-            Nothing links to #intro, so there are no dead anchors. To restore,
-            uncomment this block and its import at the top of the file. */}
-        {/*
-        <Appear delay={0.35}>
-          <div id="intro" className="scroll-mt-28">
+        {/* Timeline widget — the clock and the draggable photo polaroids.
+            Opens the page, above the greeting. Nothing in the nav links to
+            #intro, so the id is only here for direct links. */}
+        <Appear>
+          <div id="intro" className="mb-9 scroll-mt-28">
             <TimelineWidget />
           </div>
         </Appear>
-        */}
 
         {/* about / intro */}
         {/* No SectionRule here on purpose: the header's own bottom hairline
