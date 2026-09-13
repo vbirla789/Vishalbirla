@@ -6,14 +6,22 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
 import PhotoLightbox from "./PhotoLightbox";
 
-/* Photos shown in the strip. Click one to open the carousel. */
-const photoSrcs = [
-  "/timeline/1.jpg",
-  "/timeline/2.jpg",
-  "/timeline/3.jpg",
-  "/timeline/4.jpg",
-  "/timeline/5.jpg",
+/* Photos shown in the strip. Click one to open the carousel.
+
+   `position` is the object-position for that frame, defaulting to centred.
+   The frames are near-square while the sources are 3:4, so object-cover has
+   about 21px of height to throw away and takes half off the top. On the first
+   photo that lands exactly on the top of his head, so its window is pulled up
+   to leave headroom. The others centre fine. */
+const photos: { src: string; position?: string }[] = [
+  { src: "/timeline/1.jpg", position: "center 20%" },
+  { src: "/timeline/2.jpg" },
+  { src: "/timeline/3.jpg" },
+  { src: "/timeline/4.jpg" },
+  { src: "/timeline/5.jpg" },
 ];
+
+const photoSrcs = photos.map((p) => p.src);
 
 /* The track spans a waking day in IST: 6am on the left, 2am the next morning
    on the right. Hours past midnight are counted as 24+ so the window stays a
@@ -138,7 +146,7 @@ export default function PhotoStrip() {
 
         {/* filmstrip */}
         <div className="relative z-10 mt-[6px] flex gap-[4px]">
-          {photoSrcs.map((src, i) => (
+          {photos.map(({ src, position }, i) => (
             <button
               key={src}
               type="button"
@@ -157,6 +165,7 @@ export default function PhotoStrip() {
                 /* Grey at rest, true colour on hover — the treatment the rest
                    of the page gives photographs. */
                 className="object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
+                style={position ? { objectPosition: position } : undefined}
               />
             </button>
           ))}
