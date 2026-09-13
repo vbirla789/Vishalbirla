@@ -52,17 +52,20 @@ const THEME_INIT = `
    it, and only after hydration does the effect flip `show` — the loader lands
    on top of a page the visitor has already seen.
 
-   The conditions here must mirror IntroPuzzle's mount gate exactly, or the two
-   disagree and the cover is left behind. IntroPuzzle clears the class itself
-   whenever it decides not to run, and the timeout below is a last-resort
-   backstop so a JS error can never leave the site hidden.
+   This runs on every full page load, which is exactly when IntroPuzzle's
+   per-load flag is fresh and the loader is going to play — so the only reason
+   to skip is reduced motion. No sessionStorage check: that key was what made
+   the loader disappear for a whole tab once anything set it, and it is gone.
 
-   No document.hidden check: IntroPuzzle *defers* on a hidden tab rather than
-   skipping, so the cover has to stay up until the tab comes forward and the
-   loader actually plays. */
+   No document.hidden check either: IntroPuzzle *defers* on a hidden tab rather
+   than skipping, so the cover has to stay up until the tab comes forward and
+   the loader actually plays.
+
+   IntroPuzzle clears the class itself whenever it decides not to run, and the
+   timeout below is a last-resort backstop so a JS error can never leave the
+   site hidden. */
 const INTRO_INIT = `
 (function(){try{
-  if(sessionStorage.getItem("intro-played"))return;
   if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   var r=document.documentElement;
   r.classList.add("intro-pending");

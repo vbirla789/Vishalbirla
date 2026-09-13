@@ -98,6 +98,16 @@ const CLEAR_HOLD = 120;
 const TILE_STAGGER = 620; // spread of the dissolve across the grid
 const TILE_FADE = 620; // per-tile fade (see .intro-tile in globals.css)
 
+/* Has the intro run in THIS document? Module scope, so it resets on every full
+   page load but survives client-side navigation.
+ *
+ * Deliberately not sessionStorage. That persisted for the life of the tab, so
+ * once anything set it — including a bug that burned it on a hidden tab — the
+ * loader stayed gone through every reload, and the only cure was closing the
+ * tab. A module flag can't get stuck: refresh and it plays, navigate home from
+ * a case study and it doesn't. */
+let playedThisLoad = false;
+
 export default function IntroPuzzle() {
   const [show, setShow] = useState(false);
   const [gapCol, setGapCol] = useState(1);
@@ -118,7 +128,7 @@ export default function IntroPuzzle() {
      component decides not to run, nothing else would ever take it down. */
   useEffect(() => {
     const uncover = () => document.documentElement.classList.remove("intro-pending");
-    if (sessionStorage.getItem("intro-played")) {
+    if (playedThisLoad) {
       uncover();
       return;
     }
@@ -155,7 +165,7 @@ export default function IntroPuzzle() {
   }, []);
 
   const close = useCallback(() => {
-    sessionStorage.setItem("intro-played", "1");
+    playedThisLoad = true;
     document.documentElement.classList.remove("intro-pending");
     setShow(false);
   }, []);
