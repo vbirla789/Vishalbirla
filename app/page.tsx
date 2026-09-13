@@ -9,6 +9,21 @@ import Appear from "./components/Appear";
 import SectionLabel from "./components/SectionLabel";
 import { colors, t, type } from "./theme";
 
+/* The About paragraphs, hoisted because both carry it identically and drifting
+   apart would be invisible until someone noticed one line reading heavier.
+
+   Overridden here rather than in the token: aboutBody is 16px and shared with
+   the case study body, which is staying where it is. Primary rather than the
+   token's secondary too — with no portrait or name above them, these carry the
+   section alone. */
+const ABOUT_PARAGRAPH: React.CSSProperties = {
+  ...t(type.aboutBody),
+  fontSize: "18px",
+  lineHeight: "28px",
+  fontWeight: 400,
+  color: colors.primary,
+};
+
 export default function Home() {
   return (
     <>
@@ -73,22 +88,14 @@ export default function Home() {
           {/* description */}
           <Appear delay={0.14}>
             <div className="mt-4 space-y-4">
-              {/* Primary rather than the token's secondary: with the portrait
-                  and name gone, these paragraphs are the section's only voice
-                  and carry it at full contrast. space-y-4 on the wrapper sets
-                  the gap between them. */}
-              <p
-                className="w-full max-w-[576px]"
-                style={{ ...t(type.aboutBody), fontWeight: 400, color: colors.primary }}
-              >
+              {/* space-y-4 on the wrapper sets the gap between the two.
+                  Type comes from ABOUT_PARAGRAPH above. */}
+              <p className="w-full max-w-[576px]" style={ABOUT_PARAGRAPH}>
                 Product designer based in India, currently working at
                 <span className="font-semibold text-[color:var(--c-primary)]"> noon</span>.
                 I love using AI to shape designs and bring them to life as living, interactive experiences.
               </p>
-              <p
-                className="w-full max-w-[576px]"
-                style={{ ...t(type.aboutBody), fontWeight: 400, color: colors.primary }}
-              >
+              <p className="w-full max-w-[576px]" style={ABOUT_PARAGRAPH}>
                 Outside of work, I love playing tennis, brewing coffee and travelling.
               </p>
             </div>
