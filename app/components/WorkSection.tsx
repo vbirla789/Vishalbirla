@@ -151,8 +151,13 @@ export default function WorkSection() {
         <div className="grid grid-cols-1 gap-16">
           {projects.map((p) => (
             <Link key={p.company} href={`/work/${p.slug}`} className="group block">
-              {/* single image container */}
-              <div className="h-[240px] overflow-hidden rounded-2xl bg-zinc-100 sm:h-[360px] lg:h-[480px]">
+              {/* Single media container. Panel rather than zinc-100: the video
+                  branch below insets its phone by p-6, so this colour shows as
+                  a frame around it and a light one was the white box in the
+                  Work list. The image branch uses object-cover and fills this
+                  box completely, so those cards are unaffected either way —
+                  their background is baked into the file, not drawn here. */}
+              <div className="h-[240px] overflow-hidden rounded-2xl bg-[color:var(--c-panel)] sm:h-[360px] lg:h-[480px]">
                 {p.video ? (
                   <div className="flex h-full items-center justify-center p-6 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
                     <div className="h-full overflow-hidden rounded-[7px] sm:rounded-[10px] lg:rounded-[24px]">
