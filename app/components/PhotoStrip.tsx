@@ -114,7 +114,7 @@ export default function PhotoStrip() {
     /* 320px, not 376: the frames divide this width between them, so the track
        is what sets how wide each one gets. At 376 they came out 72px across
        and read as wide crops rather than as photographs. */
-    <div className="w-[256px] max-w-full select-none">
+    <div className="w-[296px] max-w-full select-none">
       {/* pt leaves room for the playhead's head, which sits above the ruler */}
       <div ref={trackRef} className="relative pt-[6px]">
         {/* ruler: a mark every two hours, labelled at noon, 6pm and midnight */}
@@ -152,14 +152,14 @@ export default function PhotoStrip() {
               type="button"
               onClick={() => setLightboxIndex(i)}
               aria-label="Open photo"
-              className="group relative block h-[48px] flex-1 cursor-pointer overflow-hidden rounded-[6px] outline-none"
+              className="group relative block h-[56px] flex-1 cursor-pointer overflow-hidden rounded-[8px] outline-none"
               style={{ boxShadow: "inset 0 0 0 1.5px rgba(255,255,255,0.88)" }}
             >
               <Image
                 src={src}
                 alt=""
                 fill
-                sizes="64px"
+                sizes="80px"
                 quality={90}
                 priority
                 /* Grey at rest, true colour on hover — the treatment the rest
