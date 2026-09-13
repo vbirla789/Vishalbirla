@@ -8,7 +8,6 @@ import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
 import Appear from "./components/Appear";
 import SectionLabel from "./components/SectionLabel";
-import Typewriter from "./components/fancy/typewriter";
 import { t, type } from "./theme";
 
 export default function Home() {
@@ -58,47 +57,10 @@ export default function Home() {
           {/* name appears first */}
           <Appear>
             <SectionLabel>About</SectionLabel>
+            {/* Carries the page's h1 and the typed line — the big pixel
+                headline that used to sit here moved into the role slot under
+                the name, so this section has one heading, not two. */}
             <AboutPhoto />
-            {/* min-height reserves the tallest line so the paragraph below
-                doesn't jump as the text types and deletes */}
-            <h1
-              className="min-h-[1.2em] text-[color:var(--c-primary)]"
-              style={{
-                ...t(type.headline),
-                fontSize: "clamp(1.75rem, 5vw, 2rem)",
-                lineHeight: 1.2,
-                cursor: "default",
-              }}
-            >
-              {/* The typed text starts empty, so on its own this h1 is blank in
-                  the server HTML — bad for search engines and screen readers.
-                  The real heading is here and hidden visually; the animation is
-                  decorative and marked aria-hidden. */}
-              <span className="sr-only">Vishal Birla — Product Designer</span>
-              <span aria-hidden="true">
-                <Typewriter
-                  as="span"
-                  /* Short noun-phrase labels, opening with the name so the
-                     first pass reads as an introduction.
-                     Every line is kept under ~21 characters on purpose: at the
-                     28px mobile size the h1 only has 327px, and a line that
-                     wraps adds a second row that shifts the whole page down by
-                     34px each time the cycle reaches it. Measure before adding
-                     a longer one. */
-                  text={[
-                    "This is Vishal",
-                    "Designer who builds",
-                    "Coffee enthusiast",
-                    "2px negotiator",
-                  ]}
-                  speed={70}
-                  deleteSpeed={40}
-                  waitTime={2200}
-                  cursorChar="_"
-                  cursorClassName="ml-1 text-[color:var(--c-accent)]"
-                />
-              </span>
-            </h1>
           </Appear>
 
           {/* description */}

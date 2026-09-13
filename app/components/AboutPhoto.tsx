@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Typewriter from "./fancy/typewriter";
 import { colors, t, type } from "../theme";
 
 /* Framed portrait with the name and role set beside it.
@@ -56,8 +57,39 @@ export default function AboutPhoto() {
       </motion.div>
 
       <div>
-        <div style={t(type.expOrg)}>Vishal Birla</div>
-        <div style={t(type.expMeta)}>Product Designer</div>
+        {/* The page's only h1, now that the pixel headline below is gone.
+            font-sans opts out of the Geist Pixel treatment @layer base gives
+            every heading — and with it the stroke weight bump, which would
+            fake-bold Geist, a font that already has real weights. */}
+        <h1 className="font-sans" style={t(type.expOrg)}>
+          Vishal Birla
+        </h1>
+        <p style={t(type.expMeta)}>
+          {/* The typed text starts empty, so on its own this line is blank in
+              the server HTML. The real role is here and hidden visually; the
+              animation is decorative and marked aria-hidden. */}
+          <span className="sr-only">Product Designer</span>
+          <span aria-hidden="true">
+            <Typewriter
+              as="span"
+              /* Opens on the actual role so the first pass reads straight, then
+                 wanders. "This is Vishal" retired with the move — the name now
+                 sits directly above, so introducing himself twice in one line
+                 of type was redundant. */
+              text={[
+                "Product Designer",
+                "Designer who builds",
+                "Coffee enthusiast",
+                "2px negotiator",
+              ]}
+              speed={70}
+              deleteSpeed={40}
+              waitTime={2200}
+              cursorChar="_"
+              cursorClassName="ml-1 text-[color:var(--c-accent)]"
+            />
+          </span>
+        </p>
       </div>
     </div>
   );
