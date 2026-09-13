@@ -1,4 +1,3 @@
-import AboutPhoto from "./components/AboutPhoto";
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
 import IntroPuzzle from "./components/IntroPuzzle";
@@ -8,7 +7,7 @@ import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
 import Appear from "./components/Appear";
 import SectionLabel from "./components/SectionLabel";
-import { t, type } from "./theme";
+import { colors, t, type } from "./theme";
 
 export default function Home() {
   return (
@@ -54,20 +53,41 @@ export default function Home() {
             so adding one would draw a second line 64px under the first. Every
             LATER section still gets its own rule. */}
         <section id="about" className="max-w-[640px] scroll-mt-28">
-          {/* name appears first */}
+          {/* greeting first */}
           <Appear>
-            {/* No ABOUT label here: the name and portrait introduce the
-                section on their own. The later sections still carry theirs. */}
-            {/* Carries the page's h1 and the typed line — the big pixel
-                headline that used to sit here moved into the role slot under
-                the name, so this section has one heading, not two. */}
-            <AboutPhoto />
+            {/* The page's only h1, and the section's own label — which is why
+                there's no SectionLabel above it the way later sections have
+                one. font-sans opts out of the Geist Pixel treatment @layer
+                base gives every heading: this reads as something said, not as
+                display type, and the stroke bump that comes with pixel would
+                fake-bold a font that already has real weights.
+
+                Set quieter and smaller than the paragraph under it on purpose
+                — the greeting introduces, the paragraph carries the weight. */}
+            <h1
+              className="font-sans"
+              style={{
+                ...t(type.aboutBody),
+                fontSize: "14px",
+                lineHeight: "20px",
+                fontWeight: 400,
+                color: colors.tertiary,
+              }}
+            >
+              Hi, This is Vishal
+            </h1>
           </Appear>
 
           {/* description */}
           <Appear delay={0.14}>
             <div className="mt-4 space-y-4">
-              <p className="w-full max-w-[576px]" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
+              {/* Primary rather than the token's secondary: with the portrait
+                  and name gone, this paragraph is the section's main voice and
+                  carries it at full contrast. */}
+              <p
+                className="w-full max-w-[576px]"
+                style={{ ...t(type.aboutBody), fontWeight: 400, color: colors.primary }}
+              >
                 Product designer based in India, currently working at
                 <span className="font-semibold text-[color:var(--c-primary)]"> noon</span>.
                 I love using AI to shape designs and bring them to life as living, interactive experiences.
