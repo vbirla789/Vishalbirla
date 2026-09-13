@@ -29,13 +29,21 @@ export default function AboutPhoto() {
           className="rounded-[6px] border p-[6px] shadow-[0_6px_20px_rgba(0,0,0,0.18)]"
           style={{ backgroundColor: colors.panel, borderColor: colors.line }}
         >
-          {/* 84×105 holds the source's 4:5 exactly, so the crop isn't squeezed. */}
-          <div className="relative h-[105px] w-[84px] overflow-hidden">
+          {/* 64×80 holds the source's 4:5 exactly, so the crop isn't squeezed.
+              Sized down against the name block beside it: the reference this
+              follows sits the picture only a little taller than its two lines
+              of type, and at the previous 105px the photo stood two and a half
+              times the text and read as a headshot with a caption. */}
+          <div className="relative h-[80px] w-[64px] overflow-hidden">
             <Image
-              src="/me.jpg"
+              /* Filename carries the crop, so replacing the photo means a new
+                 name rather than overwriting this one. next/image keys its
+                 cache on the URL, so an in-place swap keeps serving the old
+                 picture to anyone who already has it — browser and CDN alike. */
+              src="/vishal.jpg"
               alt="Vishal Birla"
               fill
-              sizes="84px"
+              sizes="64px"
               /* 90, not a higher number: next.config.ts declares
                  qualities: [75, 90], and anything outside that list fails the
                  production build. */
