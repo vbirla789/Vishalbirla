@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
 import { playHover, playSuccess } from "../lib/sound";
 
@@ -97,6 +97,15 @@ const STRUCTURE_FADE = 0.2; // seconds; board/title/controls leaving
 const CLEAR_HOLD = 120;
 const TILE_STAGGER = 620; // spread of the dissolve across the grid
 const TILE_FADE = 620; // per-tile fade (see .intro-tile in globals.css)
+/** Everything after the block lands: hold → stagger → fade. */
+const EXIT_MS = CLEAR_HOLD + TILE_STAGGER + TILE_FADE;
+
+/* How long the intro is on screen, start to finish. The fall is ~2.1s and the
+   exit ~1.36s, which left the whole thing over before it registered; this puts
+   a wall-clock floor under it so the blocks are actually watchable. Enforced
+   by holding the landed board a beat longer, NOT by padding the exit — padding
+   the exit would just leave a transparent overlay sitting there. */
+const INTRO_MIN_MS = 4000;
 
 /* Has the intro run in THIS document? Module scope, so it resets on every full
    page load but survives client-side navigation.
@@ -113,6 +122,8 @@ export default function IntroPuzzle() {
   const [gapCol, setGapCol] = useState(1);
   const [piece, setPiece] = useState({ col: SPAWN_COL, row: 0 });
   const [status, setStatus] = useState<Status>("falling");
+  /** Wall clock at the moment the intro appeared — the INTRO_MIN_MS floor. */
+  const startedAt = useRef(0);
 
   const [mosaic, setMosaic] = useState<{
     cols: number;
@@ -137,31 +148,17 @@ export default function IntroPuzzle() {
       return;
     }
 
-    const start = () => {
-      const options = [0, 1, 2, 6, 7, 8];
-      setGapCol(options[Math.floor(Math.random() * options.length)]);
-      setShow(true);
-    };
-
-    /* Hidden tab: DEFER, don't skip. Timers keep firing while a document is
-       hidden but animations don't advance, so playing now would burn the whole
-       sequence on a screen nobody is looking at.
-
-       An earlier version marked it played here instead — which meant a single
-       load in a background tab silently disabled the loader for the rest of
-       the session, and it stopped appearing at all. Waiting for the tab to
-       come forward gets the visitor the intro they were meant to see. */
-    if (document.hidden) {
-      const onVisible = () => {
-        if (document.hidden) return;
-        document.removeEventListener("visibilitychange", onVisible);
-        start();
-      };
-      document.addEventListener("visibilitychange", onVisible);
-      return () => document.removeEventListener("visibilitychange", onVisible);
-    }
-
-    start();
+    /* No visibility check any more. Two versions tried to be clever about
+       hidden tabs — one marked the intro played (which disabled it for the
+       whole session), one deferred until visible (which meant any environment
+       reporting itself hidden showed nothing at all). Both failed the same
+       way: the loader didn't appear. Just play it. The floor below is wall
+       clock, so even in a background tab it resolves and hands over cleanly
+       rather than hanging. */
+    const options = [0, 1, 2, 6, 7, 8];
+    setGapCol(options[Math.floor(Math.random() * options.length)]);
+    startedAt.current = Date.now();
+    setShow(true);
   }, []);
 
   const close = useCallback(() => {
@@ -231,16 +228,22 @@ export default function IntroPuzzle() {
           shade: [0, 0, 0, 2, 3, 5][Math.floor(Math.random() * 6)],
         })),
       });
-      /* Hand off while the ripple is still travelling, so the structure starts
-         leaving before the wave settles — no beat where the screen is still. */
-      const t = setTimeout(() => setStatus("zoom"), RIPPLE_MS);
+      /* Normally hands off while the ripple is still travelling, so the
+         structure starts leaving before the wave settles — no beat where the
+         screen is still. But if the fall finished early, stretch this hold so
+         the whole intro still lasts INTRO_MIN_MS. The extra time is spent on
+         the completed board, which is the part worth looking at, rather than
+         on a half-transparent overlay. */
+      const elapsed = Date.now() - startedAt.current;
+      const hold = Math.max(RIPPLE_MS, INTRO_MIN_MS - EXIT_MS - elapsed);
+      const t = setTimeout(() => setStatus("zoom"), hold);
       return () => clearTimeout(t);
     }
     if (status === "zoom") {
       /* No slack term: the last tile hits zero at exactly this point, and any
          padding is a stretch of fully-transparent overlay still mounted —
          measured as a 168ms dead tail. */
-      const t = setTimeout(close, CLEAR_HOLD + TILE_STAGGER + TILE_FADE);
+      const t = setTimeout(close, EXIT_MS);
       return () => clearTimeout(t);
     }
   }, [status, show, close]);
