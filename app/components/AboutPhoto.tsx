@@ -72,8 +72,14 @@ export default function AboutPhoto() {
         </h1>
         {/* 16px/400 — same values as the paragraph below, reached through
             aboutBody rather than by resizing expMeta into a duplicate of it.
-            mt-1 is the 4px gap the frame's height is measured against. */}
-        <p className="mt-1" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
+            mt-1 is the 4px gap the frame's height is measured against.
+
+            font-mono matches the section labels (ABOUT, WORK, CRAFTED
+            EXPERIENCES AT), which is also what keeps the typed line from
+            reflowing mid-cycle: every glyph is the same width, so the cursor
+            advances evenly instead of jittering as letters of different widths
+            arrive. */}
+        <p className="mt-1 font-mono" style={{ ...t(type.aboutBody), fontWeight: 400 }}>
           {/* The typed text starts empty, so on its own this line is blank in
               the server HTML. The real role is here and hidden visually; the
               animation is decorative and marked aria-hidden. */}
