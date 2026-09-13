@@ -89,13 +89,19 @@ export default function Home() {
           <Appear delay={0.14}>
             <div className="mt-4 space-y-4">
               {/* space-y-4 on the wrapper sets the gap between the two.
-                  Type comes from ABOUT_PARAGRAPH above. */}
-              <p className="w-full max-w-[576px]" style={ABOUT_PARAGRAPH}>
+                  Type comes from ABOUT_PARAGRAPH above.
+
+                  No max-width of their own: the measure is the section's
+                  640px, so there's one number to change rather than two that
+                  can disagree. The old 576px broke "experiences." onto a third
+                  line once the type went to 18px — two lines need 608px, so
+                  640 clears it with room rather than sitting on the edge. */}
+              <p className="w-full" style={ABOUT_PARAGRAPH}>
                 Product designer based in India, currently working at
                 <span className="font-semibold text-[color:var(--c-primary)]"> noon</span>.
                 I love using AI to shape designs and bring them to life as living, interactive experiences.
               </p>
-              <p className="w-full max-w-[576px]" style={ABOUT_PARAGRAPH}>
+              <p className="w-full" style={ABOUT_PARAGRAPH}>
                 Outside of work, I love playing tennis, brewing coffee and travelling.
               </p>
             </div>
