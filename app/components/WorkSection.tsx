@@ -229,7 +229,7 @@ export default function WorkSection() {
               aria-haspopup="dialog"
               // stays theme-aware: the title and year live *inside* this card,
               // so a permanently-light fill would put white text on white
-              className="flex cursor-pointer flex-col gap-8 rounded-2xl bg-zinc-50 p-4 text-left ring-1 ring-black/5 outline-none transition-transform duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
+              className="flex cursor-pointer flex-col gap-8 rounded-[2px] bg-zinc-50 p-4 text-left ring-1 ring-black/5 outline-none transition-transform duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
             >
               {/* video — full, correct iPhone aspect (no crop), rounded corners */}
               <div className="flex justify-center">

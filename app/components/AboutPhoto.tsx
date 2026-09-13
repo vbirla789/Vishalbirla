@@ -33,11 +33,12 @@ export default function AboutPhoto() {
               and 2px of border, so the picture itself is 52 − 10 = 42px.
               Change the type or the padding and this number has to follow.
 
-              That makes the box wider than it is tall, against a 4:5 source, so
-              object-cover trims the vertical. object-top decides what goes:
-              centring would take 9px off the top and clip the top of his head,
-              and the lap at the bottom is the part worth losing. */}
-          <div className="relative h-[42px] w-[48px] overflow-hidden">
+              Width then follows the photo rather than the other way round:
+              42 × 4/5 = 33.6, so 34px lets the whole frame show instead of
+              cropping it. object-top survives only to absorb the half-pixel
+              that rounding up to 34 leaves over, and it drops that from the
+              lap rather than the top of his head. */}
+          <div className="relative h-[42px] w-[34px] overflow-hidden">
             <Image
               /* Filename carries the crop, so replacing the photo means a new
                  name rather than overwriting this one. next/image keys its
@@ -46,7 +47,7 @@ export default function AboutPhoto() {
               src="/vishal.jpg"
               alt="Vishal Birla"
               fill
-              sizes="48px"
+              sizes="34px"
               /* 90, not a higher number: next.config.ts declares
                  qualities: [75, 90], and anything outside that list fails the
                  production build. */
