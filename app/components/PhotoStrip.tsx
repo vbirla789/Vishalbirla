@@ -103,7 +103,10 @@ export default function PhotoStrip() {
   }, []);
 
   return (
-    <div className="w-[376px] max-w-full select-none">
+    /* 320px, not 376: the frames divide this width between them, so the track
+       is what sets how wide each one gets. At 376 they came out 72px across
+       and read as wide crops rather than as photographs. */
+    <div className="w-[320px] max-w-full select-none">
       {/* pt leaves room for the playhead's head, which sits above the ruler */}
       <div ref={trackRef} className="relative pt-[7px]">
         {/* ruler: a mark every two hours, labelled at noon, 6pm and midnight */}

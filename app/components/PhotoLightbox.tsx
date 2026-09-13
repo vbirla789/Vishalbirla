@@ -6,9 +6,10 @@ import { useCallback, useEffect, useState } from "react";
 /* ----------------------------------------------------------------------------
  * Full-screen photo lightbox / carousel.
  * - Dark, blurred backdrop that fades in/out.
+ * - The photograph sits on that backdrop unmounted — no card, no white.
  * - Slide + fade transition between photos (direction-aware).
- * - Arrow buttons, ← / → keys, swipe (drag), and dot indicators.
- * - Closes on backdrop click, the ✕ button, or Escape. Locks page scroll.
+ * - Close top-right; step back and forward from the bottom bar, ← / → keys,
+ *   or a swipe. Closes on backdrop click or Escape. Locks page scroll.
  * --------------------------------------------------------------------------*/
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -18,6 +19,28 @@ const variants = {
   center: { x: 0, opacity: 1, scale: 1 },
   exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0, scale: 0.98 }),
 };
+
+/** Round control, shared by close and the two step buttons. */
+function ControlButton({
+  label,
+  onClick,
+  children,
+}: {
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function PhotoLightbox({
   photos,
@@ -54,7 +77,7 @@ export default function PhotoLightbox({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-6 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-6 pb-20 pt-16 backdrop-blur-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -63,35 +86,25 @@ export default function PhotoLightbox({
       aria-modal
       role="dialog"
     >
-      {/* close */}
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Close"
-        className="fixed right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <path d="M18 6 6 18M6 6l12 12" />
-        </svg>
-      </button>
+      {/* close, top right */}
+      <div className="fixed right-5 top-5" onClick={stop}>
+        <ControlButton label="Close" onClick={onClose}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </ControlButton>
+      </div>
 
-      {/* prev */}
-      <button
-        type="button"
-        onClick={(e) => { stop(e); paginate(-1); }}
-        aria-label="Previous"
-        className="fixed left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:left-6 sm:flex"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m15 18-6-6 6-6" />
-        </svg>
-      </button>
-
-      {/* stage — photo inside a polaroid frame */}
-      <div className="flex h-[82vh] w-full max-w-[480px] items-center justify-center" onClick={stop}>
+      {/* stage — the photograph itself, nothing behind it. object-contain so a
+          portrait and a landscape shot both show whole rather than being
+          cropped to a fixed frame, which is what the old card forced. */}
+      <div className="flex h-full w-full items-center justify-center" onClick={stop}>
         <AnimatePresence initial={false} custom={dir} mode="wait">
-          <motion.div
+          <motion.img
             key={index}
+            src={photos[index]}
+            alt=""
+            draggable={false}
             custom={dir}
             variants={variants}
             initial="enter"
@@ -105,47 +118,31 @@ export default function PhotoLightbox({
               if (info.offset.x < -70) paginate(1);
               else if (info.offset.x > 70) paginate(-1);
             }}
-            className="cursor-grab rounded-[16px] bg-white p-3 pb-8 shadow-2xl active:cursor-grabbing"
-          >
-            {/* fixed-size frame — image fits inside regardless of orientation */}
-            <div className="aspect-[3/4] h-[56vh] max-h-[540px] overflow-hidden rounded-[8px] bg-zinc-100">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photos[index]}
-                alt=""
-                draggable={false}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </motion.div>
+            className="max-h-full max-w-full cursor-grab rounded-[2px] object-contain active:cursor-grabbing"
+          />
         </AnimatePresence>
       </div>
 
-      {/* next */}
-      <button
-        type="button"
-        onClick={(e) => { stop(e); paginate(1); }}
-        aria-label="Next"
-        className="fixed right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:right-6 sm:flex"
+      {/* step controls, bottom centre, with the position between them */}
+      <div
+        className="fixed inset-x-0 bottom-6 flex items-center justify-center gap-3"
+        onClick={stop}
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m9 18 6-6-6-6" />
-        </svg>
-      </button>
+        <ControlButton label="Previous" onClick={(e) => { stop(e); paginate(-1); }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </ControlButton>
 
-      {/* dots */}
-      <div className="fixed inset-x-0 bottom-6 flex items-center justify-center gap-2" onClick={stop}>
-        {photos.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            aria-label={`Go to photo ${i + 1}`}
-            onClick={() => setState(([cur]) => [i, i > cur ? 1 : -1])}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === index ? "w-5 bg-white" : "w-1.5 bg-white/40 hover:bg-white/60"
-            }`}
-          />
-        ))}
+        <span className="min-w-[56px] text-center text-[13px] tabular-nums text-white/70">
+          {index + 1} of {photos.length}
+        </span>
+
+        <ControlButton label="Next" onClick={(e) => { stop(e); paginate(1); }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </ControlButton>
       </div>
     </motion.div>
   );
