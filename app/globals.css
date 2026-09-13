@@ -526,11 +526,14 @@ html.intro-pending::before {
    panel width, which keeps the content column optically centred in what's
    left of the viewport. */
 .ask-open #page-shell {
-  /* Shift into the existing left gutter only, so the 800px content column can
+  /* Shift into the existing left gutter only, so the 840px content column can
      never be pushed off-screen. A flat 200px clipped the page on ~1060px
      viewports. Caps at 160px on wide screens, collapses to 0 on narrow ones
-     where there's no gutter to spend. */
-  --ask-shift: min(160px, max(0px, (100vw - 860px) / 2));
+     where there's no gutter to spend.
+
+     900px is the column plus the 60px of slack this has always kept beyond
+     it; it tracks the column width, so widening one means widening this. */
+  --ask-shift: min(160px, max(0px, (100vw - 900px) / 2));
   transform: translateX(calc(var(--ask-shift) * -1)) scale(0.97);
   border-radius: 24px;
   overflow: hidden;

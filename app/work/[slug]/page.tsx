@@ -352,9 +352,14 @@ export default async function CaseStudyPage({
               <span>·</span>
               <span>{project.year}</span>
             </div>
+            {/* Ceiling is 1.75rem (28px), down from 2rem — which lands the
+                title on the same 28px as H2_STYLE, so the case study now has
+                one heading size rather than a hero a step above it. The 26px
+                floor and the vw term are unchanged, so narrow screens scale
+                as before. */}
             <h1
               className="w-full"
-              style={{ ...t(type.headline), fontSize: "clamp(1.625rem, 5.5vw, 2rem)", lineHeight: 1.25 }}
+              style={{ ...t(type.headline), fontSize: "clamp(1.625rem, 5.5vw, 1.75rem)", lineHeight: 1.25 }}
             >
               {project.title}
             </h1>

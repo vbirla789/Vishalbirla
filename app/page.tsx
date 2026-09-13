@@ -37,19 +37,19 @@ export default function Home() {
           a child's margin it collapsed through main and dragged the whole box —
           vertical structure lines included — that far below the header hairline
           they're meant to hang from. */}
-      <main className="relative mx-auto w-full max-w-[800px] px-6 pb-24 pt-[84px] sm:pb-32">
+      <main className="relative mx-auto w-full max-w-[840px] px-6 pb-24 pt-[84px] sm:pb-32">
         {/* Vertical structure lines framing the column, per the Arbor
             reference — they drop from the header's hairline, and every
             SectionRule crosses them with a square at the intersection.
-            min-[848px]: below that the column has no outside gutter
-            (800px + 2×24px), so the lines would sit at the screen edge. */}
+            min-[888px]: below that the column has no outside gutter
+            (840px + 2×24px), so the lines would sit at the screen edge. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 hidden w-px bg-[color:var(--c-line)] min-[848px]:block"
+          className="pointer-events-none absolute inset-y-0 left-0 hidden w-px bg-[color:var(--c-line)] min-[888px]:block"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 hidden w-px bg-[color:var(--c-line)] min-[848px]:block"
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-px bg-[color:var(--c-line)] min-[888px]:block"
         />
         {/* Timeline widget (Bengaluru clock + photo strip) — hidden for now.
             Nothing links to #intro, so there are no dead anchors. To restore,
