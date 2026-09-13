@@ -21,13 +21,13 @@ export default function SectionRule() {
        sibling. Real height can't collapse; the line and squares draw along its
        top.
 
-       h-16 (64px) is the space between the line and the section label, and it
-       must equal the section spacing below (space-y-16 in WorkSection) or the
+       84px is the space between the line and the section label, and it must
+       equal the section spacing below (space-y-[84px] in WorkSection) or the
        band around each rule reads lopsided. Change both together. */
-    <div aria-hidden className="relative h-16">
+    <div aria-hidden className="relative h-[84px]">
       {/* hidden sm:block — no structure grid on phones, where the lines read as
           clutter rather than structure. The box keeps its height either way, so
-          the 64px rhythm survives; only the marks go. */}
+          the 84px rhythm survives; only the marks go. */}
       <div className="absolute left-1/2 top-0 hidden h-px w-screen -translate-x-1/2 bg-[color:var(--c-line)] sm:block" />
       {/* Squares centred on the line. From min-[848px] they shift out to the
           column's BOX edges (-left-6 = the px-6 gutter) so they sit exactly on

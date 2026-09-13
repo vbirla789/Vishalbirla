@@ -18,11 +18,11 @@ export default function Home() {
           never make someone play a game first. */}
       <IntroPuzzle />
       <HeaderNav />
-      {/* pt-16 is the 64px below the header, deliberately as PADDING: as a
-          child's margin it collapsed through main and dragged the whole box —
-          vertical structure lines included — 64px below the header hairline
+      {/* pt-[84px] is the space below the header, deliberately as PADDING: as
+          a child's margin it collapsed through main and dragged the whole box —
+          vertical structure lines included — that far below the header hairline
           they're meant to hang from. */}
-      <main className="relative mx-auto w-full max-w-[800px] px-6 pb-24 pt-16 sm:pb-32">
+      <main className="relative mx-auto w-full max-w-[800px] px-6 pb-24 pt-[84px] sm:pb-32">
         {/* Vertical structure lines framing the column, per the Arbor
             reference — they drop from the header's hairline, and every
             SectionRule crosses them with a square at the intersection.
@@ -111,9 +111,9 @@ export default function Home() {
         </section>
 
         {/* work / experience / fun / resume */}
-        {/* mt-16 to match the section spacing inside WorkSection — About sits
-            out here, so this gap is the one above the Work rule. */}
-        <div className="mt-16">
+        {/* mt-[84px] to match the section spacing inside WorkSection — About
+            sits out here, so this gap is the one above the Work rule. */}
+        <div className="mt-[84px]">
           <WorkSection />
         </div>
 
