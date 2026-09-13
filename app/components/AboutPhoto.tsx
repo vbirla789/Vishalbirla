@@ -8,7 +8,7 @@ import { colors, t, type } from "../theme";
 /* Framed portrait with the name and typed line set beside it.
 
    The frame keeps the timeline widget's fill-and-hairline treatment, but both
-   corners are square and the 4px padding is even on all four sides — so the
+   corners are square and the 2px padding is even on all four sides — so the
    outer and inner edges stay parallel with no radius to reconcile between them.
 
    Desaturated at rest so it sits behind the type rather than competing with
@@ -24,21 +24,23 @@ export default function AboutPhoto() {
         transition={{ type: "spring", stiffness: 300, damping: 22 }}
       >
         <div
-          className="border p-[4px] shadow-[0_6px_20px_rgba(0,0,0,0.18)]"
+          className="border p-[2px] shadow-[0_6px_20px_rgba(0,0,0,0.18)]"
           style={{ backgroundColor: colors.panel, borderColor: colors.line }}
         >
           {/* Height is derived, not chosen: the frame is meant to stand exactly
               as tall as the name and typed line beside it. Those are two 24px
-              lines with a 4px gap — 52px — and the frame adds 8px of padding
-              and 2px of border, so the picture itself is 52 − 10 = 42px.
-              Change the type or the padding and this number has to follow.
+              lines with a 4px gap — 52px — and the frame adds 4px of padding
+              and 2px of border, so the picture itself is 52 − 6 = 46px.
+              Change the type or the padding and this number has to follow:
+              tightening the padding from 4px to 2px is what last grew the
+              photo from 42px, since the frame total has to hold at 52.
 
               Width then follows the photo rather than the other way round:
-              42 × 4/5 = 33.6, so 34px lets the whole frame show instead of
-              cropping it. object-top survives only to absorb the half-pixel
-              that rounding up to 34 leaves over, and it drops that from the
+              46 × 4/5 = 36.8, so 37px lets the whole frame show instead of
+              cropping it. object-top survives only to absorb the fraction
+              that rounding up to 37 leaves over, and it drops that from the
               lap rather than the top of his head. */}
-          <div className="relative h-[42px] w-[34px] overflow-hidden">
+          <div className="relative h-[46px] w-[37px] overflow-hidden">
             <Image
               /* Filename carries the crop, so replacing the photo means a new
                  name rather than overwriting this one. next/image keys its
@@ -47,7 +49,7 @@ export default function AboutPhoto() {
               src="/vishal.jpg"
               alt="Vishal Birla"
               fill
-              sizes="34px"
+              sizes="37px"
               /* 90, not a higher number: next.config.ts declares
                  qualities: [75, 90], and anything outside that list fails the
                  production build. */
