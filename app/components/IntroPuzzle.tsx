@@ -23,7 +23,12 @@ import { playHover, playSuccess } from "../lib/sound";
  * - Always skippable — Skip button + Escape. It must never gate content.
  * - Once per session (sessionStorage) — returning visitors go straight in.
  * - Zero assets: DOM squares and CSS only, so the loader can't cost load time.
- * - prefers-reduced-motion users never see it at all.
+ * - prefers-reduced-motion gets a motion-free variant, not a skip: the block
+ *   starts already fitted and the exit is a plain crossfade.
+ *
+ * It plays on EVERY full page load. Every conditional that once guarded it —
+ * a sessionStorage key, a hidden-tab check, a reduced-motion skip — turned out
+ * to be a way for it to silently never appear.
  *
  * The homepage renders underneath from the first paint — this is an overlay,
  * not a gate, so SEO/SSR are untouched.
@@ -122,6 +127,8 @@ export default function IntroPuzzle() {
   const [gapCol, setGapCol] = useState(1);
   const [piece, setPiece] = useState({ col: SPAWN_COL, row: 0 });
   const [status, setStatus] = useState<Status>("falling");
+  /** Motion-free variant: no fall, no staggered dissolve, shorter hold. */
+  const [reduced, setReduced] = useState(false);
   /** Wall clock at the moment the intro appeared — the INTRO_MIN_MS floor. */
   const startedAt = useRef(0);
 
@@ -143,10 +150,13 @@ export default function IntroPuzzle() {
       uncover();
       return;
     }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      uncover();
-      return;
-    }
+    /* Reduced motion used to skip the intro outright. That was the last silent
+       way for it to never appear — anyone with the OS setting on simply got the
+       homepage, with no indication why. Now they get the same screen with the
+       motion removed: the block starts already fitted, and the exit is a plain
+       crossfade instead of a staggered dissolve. The preference is about
+       movement, not about hiding the brand moment. */
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     /* No visibility check any more. Two versions tried to be clever about
        hidden tabs — one marked the intro played (which disabled it for the
@@ -156,8 +166,16 @@ export default function IntroPuzzle() {
        clock, so even in a background tab it resolves and hands over cleanly
        rather than hanging. */
     const options = [0, 1, 2, 6, 7, 8];
-    setGapCol(options[Math.floor(Math.random() * options.length)]);
+    const gap = options[Math.floor(Math.random() * options.length)];
+    setGapCol(gap);
     startedAt.current = Date.now();
+    setReduced(prefersReduced);
+    if (prefersReduced) {
+      /* Start at the finish: the block is already in the notch, so there is no
+         fall to watch and the gravity interval never runs. */
+      setPiece({ col: gap, row: ROWS - 2 });
+      setStatus("won");
+    }
     setShow(true);
   }, []);
 
@@ -221,7 +239,9 @@ export default function IntroPuzzle() {
         rows,
         tiles: Array.from({ length: cols * rows }, (_, i) => ({
           i,
-          delay: CLEAR_HOLD + Math.round(Math.random() * TILE_STAGGER),
+          /* No stagger under reduced motion — every tile clears together, so
+             the exit is a plain crossfade rather than a travelling dissolve. */
+          delay: reduced ? 0 : CLEAR_HOLD + Math.round(Math.random() * TILE_STAGGER),
           /* Only a whisper of tonal variation. At 0-14% the tiles formed a
              harsh light/dark checkerboard over the page; 0-5% still reads as
              pixel texture but dissolves evenly. */
@@ -235,7 +255,10 @@ export default function IntroPuzzle() {
          the completed board, which is the part worth looking at, rather than
          on a half-transparent overlay. */
       const elapsed = Date.now() - startedAt.current;
-      const hold = Math.max(RIPPLE_MS, INTRO_MIN_MS - EXIT_MS - elapsed);
+      /* Reduced motion gets a much shorter floor: the point of the 4s is to
+         make the fall watchable, and there is no fall to watch. */
+      const floor = reduced ? 1500 : INTRO_MIN_MS;
+      const hold = Math.max(RIPPLE_MS, floor - EXIT_MS - elapsed);
       const t = setTimeout(() => setStatus("zoom"), hold);
       return () => clearTimeout(t);
     }
