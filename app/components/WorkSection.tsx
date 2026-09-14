@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { colors, t, type } from "../theme";
 import { playHover } from "../lib/sound";
+import { darkVariant } from "../lib/mockupVariants";
 import ConceptLightbox from "./ConceptLightbox";
 import ExperienceTimeline from "./ExperienceTimeline";
 import SectionLabel from "./SectionLabel";
@@ -173,12 +174,26 @@ export default function WorkSection() {
                     </div>
                   </div>
                 ) : p.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={p.image}
-                    alt={`${p.company} preview`}
-                    className="h-full w-full object-cover transition-[scale,filter] duration-500 ease-out group-hover:scale-[0.97] group-hover:grayscale"
-                  />
+                  /* Two files, not one CSS rule: the sheet's background is
+                     baked into the pixels, so the theme is a different asset.
+                     Both render and the wrong one is hidden. */
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.image}
+                      alt={`${p.company} preview`}
+                      className="h-full w-full object-cover transition-[scale,filter] duration-500 ease-out group-hover:scale-[0.97] group-hover:grayscale dark:hidden"
+                    />
+                    {darkVariant(p.image) && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={darkVariant(p.image) as string}
+                        alt=""
+                        aria-hidden
+                        className="hidden h-full w-full object-cover transition-[scale,filter] duration-500 ease-out group-hover:scale-[0.97] group-hover:grayscale dark:block"
+                      />
+                    )}
+                  </>
                 ) : (
                   <div className="h-full w-full p-8 transition-[scale,filter] duration-500 ease-out group-hover:scale-[0.97] group-hover:grayscale">
                     {p.preview}

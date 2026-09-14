@@ -3,6 +3,7 @@
 import { colors } from "../theme";
 import type { MediaKind } from "../lib/projects";
 import { Zoomable } from "./MediaViewer";
+import { darkVariant } from "../lib/mockupVariants";
 
 /* ----------------------------------------------------------------------------
  * Dummy visual placeholders for case-study sections. No real assets — abstract
@@ -150,18 +151,29 @@ function ImageFrame({
   zoomable?: boolean;
   large?: boolean;
 }) {
-  const img = (
+  const base =
+    large
+      ? "mx-auto max-h-[62vh] w-auto rounded-2xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
+      : "w-full rounded-2xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]";
+
+  /* These sheets carry their background in the pixels, so the theme can't be
+     handled in CSS — it takes a different file. Both are rendered and the
+     wrong one is hidden, which keeps this a server component and means no
+     flash of the wrong background on first paint. */
+  const dark = darkVariant(src);
+
+  const img = dark ? (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt={alt} className={`${base} dark:hidden`} loading="lazy" />
+      {/* aria-hidden: the light copy above already names this image, and only
+          one of the two is ever visible. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={dark} alt="" aria-hidden className={`${base} hidden dark:block`} loading="lazy" />
+    </>
+  ) : (
     // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      className={
-        large
-          ? "mx-auto max-h-[62vh] w-auto rounded-2xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
-          : "w-full rounded-2xl ring-1 ring-black/5 dark:ring-[color:var(--c-line)]"
-      }
-      loading="lazy"
-    />
+    <img src={src} alt={alt} className={base} loading="lazy" />
   );
   if (!zoomable) return img;
   return (
