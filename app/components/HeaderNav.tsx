@@ -178,16 +178,16 @@ export default function HeaderNav() {
           <div className="absolute -bottom-px left-0 h-[5px] w-[5px] -translate-x-1/2 translate-y-1/2 bg-[color:var(--c-accent)]" />
           <div className="absolute -bottom-px right-0 h-[5px] w-[5px] translate-x-1/2 translate-y-1/2 bg-[color:var(--c-accent)]" />
         </div>
-        {/* py-6, not pt-6 pb-3.5: the nav sat optically high in the bar now
-            that a hairline closes it off underneath. */}
-        <div className="relative z-[1] mx-auto flex w-full max-w-[840px] items-center justify-between gap-2 px-4 py-6 sm:gap-3 sm:px-6">
+        {/* Symmetric padding, not pt-N pb-less: the nav sits optically high in
+            the bar otherwise, now that a hairline closes it off underneath. */}
+        <div className="relative z-[1] mx-auto flex w-full max-w-[840px] items-center justify-between gap-2 px-4 py-4 sm:gap-3 sm:px-6">
           {/* Plain text links, no pill and no icons. The active section is
               marked by colour alone — with nothing sliding behind them the
               labels can't shift as the active one changes, which is what the
               pill had to re-measure around. */}
           <nav
             aria-label="Section navigation"
-            className="flex items-center gap-5 sm:gap-7"
+            className="flex items-center gap-3.5 sm:gap-5"
           >
             {items.map((it) => {
               const isActive = active === it.id;
@@ -197,7 +197,7 @@ export default function HeaderNav() {
                   type="button"
                   onClick={() => go(it.id)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`shrink-0 font-mono text-[14px] uppercase leading-none outline-none transition-colors duration-200 ${
+                  className={`shrink-0 font-mono text-[12px] uppercase leading-none outline-none transition-colors duration-200 ${
                     isActive
                       ? "text-[color:var(--c-tab-active)]"
                       : "text-[color:var(--c-tab-inactive)] hover:text-[color:var(--c-tab-inactive-hover)]"
