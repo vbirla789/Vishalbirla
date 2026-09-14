@@ -1,7 +1,7 @@
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
 import IntroPuzzle from "./components/IntroPuzzle";
-import PhotoStrip from "./components/PhotoStrip";
+// import PhotoStrip from "./components/PhotoStrip"; // hidden — see below
 import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
 import Footer from "./components/Footer";
@@ -55,13 +55,17 @@ export default function Home() {
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 hidden w-px bg-[color:var(--c-line)] min-[888px]:block"
         />
-        {/* Photo strip. Opens the page, above the greeting. Nothing in the nav
-            links to #intro, so the id is only here for direct links. */}
+        {/* Photo strip (the clock-driven filmstrip) — hidden for now. Nothing
+            in the nav links to #intro, so there are no dead anchors. To bring
+            it back, uncomment this block and its import at the top of the
+            file, exactly as the timeline widget used to be parked. */}
+        {/*
         <Appear>
           <div id="intro" className="mb-9 scroll-mt-28">
             <PhotoStrip />
           </div>
         </Appear>
+        */}
 
         {/* about / intro */}
         {/* No SectionRule here on purpose: the header's own bottom hairline
