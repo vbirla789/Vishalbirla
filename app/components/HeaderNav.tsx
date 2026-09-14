@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
+import LocalTime from "./LocalTime";
 import { NerdModeToggle } from "./NerdMode";
 import SlidingTabs from "./SlidingTabs";
 
@@ -262,9 +263,12 @@ export default function HeaderNav() {
             onSelect={go}
           />
 
-          <div className="flex shrink-0 items-center gap-1.5">
-            {/* AI glasses now lives here, where Ask Jarvis used to. State comes
-                from NerdModeProvider in the layout via context. */}
+          {/* Right end: where he is and what time it is there, then the AI
+              glasses toggle. Sections stay on the left. */}
+          <div className="flex shrink-0 items-center gap-3">
+            <LocalTime />
+            {/* AI glasses. State comes from NerdModeProvider in the layout via
+                context. */}
             <NerdModeToggle />
           </div>
         </div>
