@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
-import ThemeToggle from "./ThemeToggle";
 import { NerdModeToggle } from "./NerdMode";
 import SlidingTabs from "./SlidingTabs";
 
@@ -264,13 +263,13 @@ export default function HeaderNav() {
           />
 
           <div className="flex shrink-0 items-center gap-1.5">
-            <ThemeToggle />
             {/* AI glasses now lives here, where Ask Jarvis used to. State comes
                 from NerdModeProvider in the layout via context. */}
             <NerdModeToggle />
           </div>
         </div>
       </header>
+
     </>
   );
 }
