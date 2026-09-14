@@ -1,85 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { colors } from "../theme";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
-import LocalTime from "./LocalTime";
 import { NerdModeToggle } from "./NerdMode";
-import SlidingTabs from "./SlidingTabs";
-
-/** Shared wrapper so every nav glyph is identical in size and stroke. */
-function NavIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.9"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      {children}
-    </svg>
-  );
-}
 
 /* Section ids must match the ones rendered in page.tsx / WorkSection.tsx.
-   Each section gets its own glyph, and the icon renders on every tab — not
-   only the active one. Showing it conditionally changed the active tab's
-   width mid-slide, which is what made the pill stutter between sections. */
-const items: { id: string; label: string; icon: React.ReactNode }[] = [
-  {
-    id: "about",
-    label: "About",
-    // person
-    icon: (
-      <NavIcon>
-        <circle cx="12" cy="8" r="3.5" />
-        <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
-      </NavIcon>
-    ),
-  },
-  {
-    id: "work",
-    label: "Work",
-    // briefcase
-    icon: (
-      <NavIcon>
-        <rect x="2.5" y="7" width="19" height="13" rx="2.5" />
-        <path d="M8.5 7V5.5A2 2 0 0 1 10.5 3.5h3a2 2 0 0 1 2 2V7" />
-        <path d="M2.5 12.5h19" />
-      </NavIcon>
-    ),
-  },
-  {
-    id: "experience",
-    label: "Experience",
-    // building
-    icon: (
-      <NavIcon>
-        <path d="M4 21V5.5A1.5 1.5 0 0 1 5.5 4h7A1.5 1.5 0 0 1 14 5.5V21" />
-        <path d="M14 10h4.5A1.5 1.5 0 0 1 20 11.5V21" />
-        <path d="M2.5 21h19" />
-        <path d="M7.5 8.5h3M7.5 12.5h3M7.5 16.5h3" />
-      </NavIcon>
-    ),
-  },
-  {
-    id: "fun",
-    label: "Concepts",
-    // flask / experiment
-    icon: (
-      <NavIcon>
-        <path d="M9 3h6" />
-        <path d="M10 3v5.5L5.5 17A2.5 2.5 0 0 0 7.8 21h8.4a2.5 2.5 0 0 0 2.3-4L14 8.5V3" />
-        <path d="M7.2 14.5h9.6" />
-      </NavIcon>
-    ),
-  },
+   Labels only — the per-section glyphs went with the sliding pill, which was
+   the only thing that drew them. */
+const items: { id: string; label: string }[] = [
+  { id: "about", label: "About" },
+  { id: "work", label: "Work" },
+  { id: "experience", label: "Experience" },
+  { id: "fun", label: "Concepts" },
 ];
 
 export default function HeaderNav() {
@@ -249,26 +181,37 @@ export default function HeaderNav() {
         {/* py-6, not pt-6 pb-3.5: the nav sat optically high in the bar now
             that a hairline closes it off underneath. */}
         <div className="relative z-[1] mx-auto flex w-full max-w-[840px] items-center justify-between gap-2 px-4 py-6 sm:gap-3 sm:px-6">
-          {/* segmented section nav — sliding pill */}
-          <SlidingTabs
-            ariaLabel="Section navigation"
-            tabs={items.map((it) => ({
-              id: it.id,
-              label: it.label,
-              // Active tab only — the pill re-measures after React commits, so
-              // the width change is part of the same 250ms tween.
-              icon: active === it.id ? it.icon : null,
-            }))}
-            activeId={active}
-            onSelect={go}
-          />
+          {/* Plain text links, no pill and no icons. The active section is
+              marked by colour alone — with nothing sliding behind them the
+              labels can't shift as the active one changes, which is what the
+              pill had to re-measure around. */}
+          <nav
+            aria-label="Section navigation"
+            className="flex items-center gap-5 sm:gap-7"
+          >
+            {items.map((it) => {
+              const isActive = active === it.id;
+              return (
+                <button
+                  key={it.id}
+                  type="button"
+                  onClick={() => go(it.id)}
+                  aria-current={isActive ? "true" : undefined}
+                  className={`shrink-0 text-[14px] leading-none outline-none transition-colors duration-200 ${
+                    isActive
+                      ? "text-[color:var(--c-tab-active)]"
+                      : "text-[color:var(--c-tab-inactive)] hover:text-[color:var(--c-tab-inactive-hover)]"
+                  }`}
+                >
+                  {it.label}
+                </button>
+              );
+            })}
+          </nav>
 
-          {/* Right end: where he is and what time it is there, then the AI
-              glasses toggle. Sections stay on the left. */}
-          <div className="flex shrink-0 items-center gap-3">
-            <LocalTime />
-            {/* AI glasses. State comes from NerdModeProvider in the layout via
-                context. */}
+          {/* Right end: AI glasses only. State comes from NerdModeProvider in
+              the layout via context. */}
+          <div className="flex shrink-0 items-center gap-1.5">
             <NerdModeToggle />
           </div>
         </div>
