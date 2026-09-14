@@ -116,7 +116,7 @@ export default function Home() {
           {/* crafted experiences at — client / company logos */}
           <Appear delay={0.26}>
             <div className="mt-9">
-              <SectionLabel>Crafted experiences at</SectionLabel>
+              <SectionLabel>Built experiences at</SectionLabel>
               {/* app-icon marks, reusing the same list the Experience section
                   renders so the two can never drift apart */}
               <div className="flex flex-wrap items-center gap-4">
