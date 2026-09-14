@@ -33,7 +33,18 @@ export const metadata: Metadata = {
     "Product designer based out of India, currently at noon. I shape how things look, then bring them to life with AI, and I'm a Framer expert too.",
 };
 
-/* Before first paint: if the intro loader is going to play, lay a solid
+/* Runs before first paint so a dark-mode visitor never sees a white flash.
+   Reads the saved choice, falling back to the OS preference. Kept as a raw
+   string because it must execute ahead of hydration. */
+const THEME_INIT = `
+(function(){try{
+  var s=localStorage.getItem("theme");
+  var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if(d)document.documentElement.classList.add("dark");
+}catch(e){}})();
+`;
+
+/* Also before first paint: if the intro loader is going to play, lay a solid
    cover over the page NOW.
 
    Without this the homepage flashes first. IntroPuzzle is a client component
@@ -65,29 +76,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    /* `dark` is hard-coded rather than toggled: the site is dark only, so it
-       ships in the server HTML and there is nothing to detect before paint —
-       which is what the old inline theme script existed to do.
-
-       The class stays because it is still the mechanism, not a preference.
-       globals.css declares `@custom-variant dark (&:where(.dark, .dark *))`,
-       so roughly two dozen `dark:` utilities across the case study page,
-       WorkSection and others resolve through it. Remove the class and those
-       silently fall back to their light pairings. */
     <html
       lang="en"
       suppressHydrationWarning
-      className={`dark ${geistSans.variable} ${geistMono.variable} ${geistPixel.variable} antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${geistPixel.variable} antialiased`}
     >
       <head>
-        {/* Must be a raw inline script: it has to run before first paint,
-            which rules out async. next/script's beforeInteractive was tried
-            and is worse here — it renders a sync script that React 19 rejects
-            the same way, and placing it outside <head> produces invalid HTML.
-            React's "script tag while rendering" complaint is a
-            development-only warning; it is not present in the production React
-            build, and the script does execute from the SSR HTML exactly as
-            intended. */}
+        {/* Must be a raw inline script: it has to run before first paint to
+            avoid a light flash, which rules out async. next/script's
+            beforeInteractive was tried and is worse here — it renders a sync
+            script that React 19 rejects the same way, and placing it outside
+            <head> produces invalid HTML. React's "script tag while rendering"
+            complaint is a development-only warning; it is not present in the
+            production React build, and the script does execute from the SSR
+            HTML exactly as intended. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+        {/* Order matters: the theme class must be on <html> before this runs,
+            so the cover paints in the right background colour. */}
         <script dangerouslySetInnerHTML={{ __html: INTRO_INIT }} />
       </head>
       <body
