@@ -158,7 +158,7 @@ export default function WorkSection() {
                   their background is baked into the file, not drawn here. */}
               <div className="h-[240px] overflow-hidden rounded-2xl bg-[color:var(--c-panel)] ring-1 ring-black/5 sm:h-[360px] lg:h-[480px] dark:ring-[color:var(--c-line)]">
                 {p.video ? (
-                  <div className="flex h-full items-center justify-center p-6 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
+                  <div className="flex h-full items-center justify-center p-6 transition-[scale,filter] duration-500 ease-out group-hover:scale-[0.97] group-hover:grayscale">
                     <div className="h-full overflow-hidden rounded-[7px] sm:rounded-[10px] lg:rounded-[24px]">
                       <video
                         src={p.video}
@@ -177,10 +177,10 @@ export default function WorkSection() {
                   <img
                     src={p.image}
                     alt={`${p.company} preview`}
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                    className="h-full w-full object-cover transition-[scale,filter] duration-500 ease-out group-hover:scale-[0.97] group-hover:grayscale"
                   />
                 ) : (
-                  <div className="h-full w-full p-8 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
+                  <div className="h-full w-full p-8 transition-[scale,filter] duration-500 ease-out group-hover:scale-[0.97] group-hover:grayscale">
                     {p.preview}
                   </div>
                 )}
@@ -233,13 +233,19 @@ export default function WorkSection() {
               aria-haspopup="dialog"
               // stays theme-aware: the title and year live *inside* this card,
               // so a permanently-light fill would put white text on white
-              className="flex cursor-pointer flex-col gap-8 rounded-2xl bg-zinc-50 p-4 text-left ring-1 ring-black/5 outline-none transition-transform duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
+              /* transition-[scale], not transition-transform: Tailwind v4's
+                 scale-* utilities set the standalone `scale` property, so
+                 transitioning `transform` animates nothing and the shrink
+                 lands in one frame. */
+              className="group flex cursor-pointer flex-col gap-8 rounded-2xl bg-zinc-50 p-4 text-left ring-1 ring-black/5 outline-none transition-[scale] duration-300 hover:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[color:var(--c-primary)]/40 dark:bg-[color:var(--c-panel)] dark:ring-[color:var(--c-line)]"
             >
               {/* video — full, correct iPhone aspect (no crop), rounded corners */}
               <div className="flex justify-center">
                 <div className="overflow-hidden rounded-[18px]">
                   <video
-                    className="block h-[320px] w-auto object-contain"
+                    /* Drains to grey on hover, matching the Work cards — the
+                       card itself does the shrinking. */
+                    className="block h-[320px] w-auto object-contain transition-[filter] duration-300 ease-out group-hover:grayscale"
                     src={v.src}
                     autoPlay
                     loop
