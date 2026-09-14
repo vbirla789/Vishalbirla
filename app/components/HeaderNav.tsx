@@ -197,7 +197,7 @@ export default function HeaderNav() {
                   type="button"
                   onClick={() => go(it.id)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`shrink-0 text-[14px] leading-none outline-none transition-colors duration-200 ${
+                  className={`shrink-0 font-mono text-[14px] uppercase leading-none outline-none transition-colors duration-200 ${
                     isActive
                       ? "text-[color:var(--c-tab-active)]"
                       : "text-[color:var(--c-tab-inactive)] hover:text-[color:var(--c-tab-inactive-hover)]"
