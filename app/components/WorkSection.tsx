@@ -147,7 +147,11 @@ export default function WorkSection() {
   return (
     <div className="space-y-14 sm:space-y-[84px]">
       {/* WORK */}
-      <Section id="work" label="Work">
+      {/* Labels are written in sentence case and uppercased by SectionLabel,
+          so they read as asides rather than shouting in the source. The nav
+          tabs keep the plain names — Work, Experience, Concepts — so
+          wayfinding survives the jokes. */}
+      <Section id="work" label="Work I pulled off">
         <div className="grid grid-cols-1 gap-16">
           {projects.map((p) => (
             <Link key={p.company} href={`/work/${p.slug}`} className="group block">
@@ -230,12 +234,12 @@ export default function WorkSection() {
       </Section>
 
       {/* EXPERIENCE — timeline accordion */}
-      <Section id="experience" label="Experience">
+      <Section id="experience" label="The boring stuff">
         <ExperienceTimeline />
       </Section>
 
       {/* CONCEPTS — three scaled-down cards that fit the column */}
-      <Section id="fun" label="Concepts">
+      <Section id="fun" label="Things nobody asked for">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           {funVideos.map((v, i) => (
             <button
