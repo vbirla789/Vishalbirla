@@ -152,8 +152,11 @@ export default function PhotoStrip() {
               type="button"
               onClick={() => setLightboxIndex(i)}
               aria-label="Open photo"
-              className="group relative block h-[56px] flex-1 cursor-pointer overflow-hidden rounded-[8px] outline-none"
-              style={{ boxShadow: "inset 0 0 0 1.5px rgba(255,255,255,0.88)" }}
+              /* The print border, inset so it reads as part of the frame.
+                 Two values rather than one: this was a hardcoded white, which
+                 is invisible against the light theme's white page — it was
+                 written while the site was dark only. */
+              className="group relative block h-[56px] flex-1 cursor-pointer overflow-hidden rounded-[8px] outline-none ring-[1.5px] ring-black/15 ring-inset dark:ring-white/90"
             >
               <Image
                 src={src}
