@@ -46,7 +46,11 @@ export function NerdModeToggle() {
       aria-pressed={on}
       aria-label={on ? "Turn off AI glasses" : "Turn on AI glasses (n)"}
       /* Hidden on phones, matching the overlay: the inspector needs a pointer
-         and the measurement chips have nowhere to sit on a 375px screen. */
+         and the measurement chips have nowhere to sit on a 375px screen.
+
+         Mono, uppercase, 12px — the same treatment as the nav links it sits
+         beside, weight included. The font-medium this used to carry would
+         have rendered it a step heavier than them. */
       className="hidden h-9 items-center gap-1.5 rounded-full px-3 font-mono text-[12px] uppercase leading-none outline-none transition-colors duration-200 sm:flex"
       style={{
         backgroundColor: on ? "var(--c-accent)" : "transparent",
