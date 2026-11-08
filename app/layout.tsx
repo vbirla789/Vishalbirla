@@ -50,9 +50,14 @@ export const metadata: Metadata = {
 
    IntroPuzzle still clears the class the moment its exit begins or if it
    declines to run, and the timeout below is a last-resort backstop so a JS
-   error can never leave the site hidden. */
+   error can never leave the site hidden.
+
+   The one condition that stays is the path: IntroPuzzle only mounts on the
+   homepage, so on any other page (a case study, /skill) nothing would ever
+   lift the cover and a direct visit sat blank until the 8s backstop. */
 const INTRO_INIT = `
 (function(){try{
+  if(location.pathname!=="/")return;
   var r=document.documentElement;
   r.classList.add("intro-pending");
   setTimeout(function(){r.classList.remove("intro-pending");},8000);
