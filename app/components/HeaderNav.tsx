@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { playHover, playScroll, preloadAudio, primeAudio } from "../lib/sound";
 import { NerdModeToggle } from "./NerdMode";
 
@@ -14,7 +16,18 @@ const items: { id: string; label: string }[] = [
   { id: "fun", label: "Concepts" },
 ];
 
+/* Tabs that open their own page rather than scrolling the homepage. */
+const pages: { href: string; label: string }[] = [{ href: "/skill", label: "Skills" }];
+
+const TAB = "shrink-0 font-mono text-[12px] uppercase leading-none outline-none transition-colors duration-200";
+const TAB_ACTIVE = "text-[color:var(--c-tab-active)]";
+const TAB_IDLE = "text-[color:var(--c-tab-inactive)] hover:text-[color:var(--c-tab-inactive-hover)]";
+
 export default function HeaderNav() {
+  /* The header also sits on /skill. There the section tabs are links back to
+     the homepage, and scroll-spy / hash handling (homepage-only) stay off. */
+  const pathname = usePathname();
+  const onHome = pathname === "/";
   const [active, setActive] = useState("about");
   // while true, ignore scroll-spy so a click's chosen section stays active mid-scroll
   const lockRef = useRef(false);
@@ -36,6 +49,7 @@ export default function HeaderNav() {
      do nothing. Doing it here also makes deep links (/#experience) work, and
      tolerates a doubled hash like "#work#work". */
   useEffect(() => {
+    if (!onHome) return;
     const raw = window.location.hash.replace(/^#+/, "");
     const id = raw.split("#").filter(Boolean).pop();
     if (!id || !items.some((it) => it.id === id)) return;
@@ -76,7 +90,7 @@ export default function HeaderNav() {
     }, 60);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [onHome]);
 
   /* Scroll-spy, computed directly from scroll position.
    *
@@ -90,6 +104,7 @@ export default function HeaderNav() {
    * section is the last one whose top has passed a line just below the header.
    */
   useEffect(() => {
+    if (!onHome) return;
     /* The activation line, measured from the viewport top. Viewport-relative
      * rather than a fixed offset: #work is ~1750px tall while Experience and
      * Concepts are short and sit at the end of the page. With a line just
@@ -130,7 +145,7 @@ export default function HeaderNav() {
       window.removeEventListener("scroll", pick);
       window.removeEventListener("resize", pick);
     };
-  }, []);
+  }, [onHome]);
 
   const go = (id: string) => {
     playHover();
@@ -186,10 +201,17 @@ export default function HeaderNav() {
               labels can't shift as the active one changes, which is what the
               pill had to re-measure around. */}
           <nav
-            aria-label="Section navigation"
+            aria-label="Site navigation"
             className="flex items-center gap-3.5 sm:gap-5"
           >
             {items.map((it) => {
+              if (!onHome) {
+                return (
+                  <Link key={it.id} href={`/#${it.id}`} onClick={playHover} className={`${TAB} ${TAB_IDLE}`}>
+                    {it.label}
+                  </Link>
+                );
+              }
               const isActive = active === it.id;
               return (
                 <button
@@ -197,14 +219,24 @@ export default function HeaderNav() {
                   type="button"
                   onClick={() => go(it.id)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`shrink-0 font-mono text-[12px] uppercase leading-none outline-none transition-colors duration-200 ${
-                    isActive
-                      ? "text-[color:var(--c-tab-active)]"
-                      : "text-[color:var(--c-tab-inactive)] hover:text-[color:var(--c-tab-inactive-hover)]"
-                  }`}
+                  className={`${TAB} ${isActive ? TAB_ACTIVE : TAB_IDLE}`}
                 >
                   {it.label}
                 </button>
+              );
+            })}
+            {pages.map((pg) => {
+              const isActive = pathname === pg.href;
+              return (
+                <Link
+                  key={pg.href}
+                  href={pg.href}
+                  onClick={playHover}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`${TAB} ${isActive ? TAB_ACTIVE : TAB_IDLE}`}
+                >
+                  {pg.label}
+                </Link>
               );
             })}
           </nav>

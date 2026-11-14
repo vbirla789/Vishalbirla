@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Footer from "../components/Footer";
+import HeaderNav from "../components/HeaderNav";
+import SectionLabel from "../components/SectionLabel";
+import SectionRule from "../components/SectionRule";
 import { colors, t, type } from "../theme";
 import { INSTALL_COMMAND, SKILLS_REPO_URL, skills } from "../lib/skills";
 import CopyCommand from "./CopyCommand";
@@ -17,9 +19,15 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/skill/og.png"] },
 };
 
-/* Page body copy: the 16px body token, regular weight, secondary tone. */
+/* Same lead paragraph as the homepage About: 18/28, regular, primary. */
+const LEAD: React.CSSProperties = {
+  ...t(type.aboutBody),
+  fontSize: "18px",
+  lineHeight: "28px",
+  fontWeight: 400,
+  color: colors.primary,
+};
 const BODY: React.CSSProperties = { ...t(type.aboutBody), fontWeight: 400, color: colors.secondary };
-const HEADING: React.CSSProperties = { ...t(type.projectTitle), fontSize: "16px", lineHeight: "24px" };
 
 function ArrowLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -38,64 +46,78 @@ function ArrowLink({ href, children }: { href: string; children: React.ReactNode
   );
 }
 
+/* Built on the homepage's frame (header, 840px column, structure lines,
+   section rules) so moving between the two feels like one site. */
 export default function SkillPage() {
   return (
-    <main className="relative mx-auto w-full max-w-[640px] px-6 pb-16 pt-20 sm:pt-[120px]">
-      <header>
-        <Link href="/" className="block w-fit" style={{ ...t(type.projectTitle), fontSize: "16px", lineHeight: "24px" }}>
-          Vishal Birla
-        </Link>
-        <p style={{ ...BODY, color: colors.tertiary }}>Product Designer</p>
-      </header>
+    <>
+      <HeaderNav />
+      <main className="relative mx-auto w-full max-w-[840px] px-6 pb-24 pt-14 sm:pb-32 sm:pt-[84px]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 hidden w-px bg-[color:var(--c-line)] min-[888px]:block"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-px bg-[color:var(--c-line)] min-[888px]:block"
+        />
 
-      <section className="mt-20 sm:mt-[120px]">
-        <h1 style={HEADING}>AI Skills for Designers</h1>
-        <p className="mt-4" style={BODY}>
-          For designers who ship prototypes from Figma, so the prototype looks exactly like the design and feels right
-          on a real phone.
-        </p>
-        <div className="mt-6">
-          <CopyCommand command={INSTALL_COMMAND} />
+        <section className="max-w-[640px]">
+          <SectionLabel>AI skills for designers</SectionLabel>
+          <h1 className="font-sans" style={LEAD}>
+            For designers who ship prototypes from Figma, so the prototype looks exactly like the design and feels right
+            on a real phone.
+          </h1>
+          <div className="mt-6">
+            <CopyCommand command={INSTALL_COMMAND} />
+          </div>
+          <p className="mt-6" style={BODY}>
+            Paste a Figma link and the skill builds the prototype, then measures every screen against the Figma export
+            and fixes what&apos;s off, like the padding that&apos;s 4px out or the divider that came out 2px thick, until
+            it matches. Works with Claude Code and other coding agents that have the Figma MCP connected.
+          </p>
+          <div className="mt-6">
+            <ArrowLink href={SKILLS_REPO_URL}>View on GitHub</ArrowLink>
+          </div>
+        </section>
+
+        <div className="mt-14 sm:mt-[84px]">
+          <SectionRule />
+          <section className="max-w-[640px]">
+            <SectionLabel>Available skills</SectionLabel>
+            <ul className="flex flex-col gap-5">
+              {skills.map((s) => (
+                <li key={s.name} style={BODY}>
+                  <code
+                    className="mr-1.5 rounded-[5px] px-1.5 py-0.5 font-mono text-[13px]"
+                    style={{ color: colors.primary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
+                  >
+                    {s.name}
+                  </code>
+                  — {s.description}
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
-        <p className="mt-8" style={BODY}>
-          Paste a Figma link and the skill builds the prototype, then measures every screen against the Figma export and
-          fixes what&apos;s off, like the padding that&apos;s 4px out or the divider that came out 2px thick, until it
-          matches. Works with Claude Code and other coding agents that have the Figma MCP connected.
-        </p>
-        <div className="mt-6">
-          <ArrowLink href={SKILLS_REPO_URL}>View on GitHub</ArrowLink>
+
+        <div className="mt-14 sm:mt-[84px]">
+          <SectionRule />
+          <section className="max-w-[640px]">
+            <SectionLabel>Cheatsheet</SectionLabel>
+            <p style={BODY}>
+              The Figma → CSS translations behind most &ldquo;almost right&rdquo; builds: auto layout, text, strokes and
+              dividers, effects, phone quirks and motion. Useful for any design-to-code review, with or without the
+              skill.
+            </p>
+            <div className="mt-6">
+              <ArrowLink href={`${SKILLS_REPO_URL}/blob/main/fidelity-cheatsheet.md`}>Read the cheatsheet</ArrowLink>
+            </div>
+          </section>
         </div>
-      </section>
 
-      <section className="mt-20 sm:mt-24">
-        <h2 style={HEADING}>Available Skills</h2>
-        <ul className="mt-5 flex flex-col gap-5">
-          {skills.map((s) => (
-            <li key={s.name} style={BODY}>
-              <code
-                className="mr-1.5 rounded-[5px] px-1.5 py-0.5 font-mono text-[13px]"
-                style={{ color: colors.primary, boxShadow: `inset 0 0 0 1px ${colors.line}` }}
-              >
-                {s.name}
-              </code>
-              — {s.description}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mt-20 sm:mt-24">
-        <h2 style={HEADING}>Cheatsheet</h2>
-        <p className="mt-4" style={BODY}>
-          The Figma → CSS translations behind most &ldquo;almost right&rdquo; builds: auto layout, text, strokes and
-          dividers, effects, phone quirks and motion. Useful for any design-to-code review, with or without the skill.
-        </p>
-        <div className="mt-6">
-          <ArrowLink href={`${SKILLS_REPO_URL}/blob/main/fidelity-cheatsheet.md`}>Read the cheatsheet</ArrowLink>
-        </div>
-      </section>
-
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </>
   );
 }

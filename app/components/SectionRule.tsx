@@ -3,8 +3,9 @@
  * accent squares where it crosses the content column's edges — the
  * blueprint-ish look from the Arbor.ai reference.
  *
- * Purely decorative (aria-hidden) and deliberately homepage-only: the case
- * study pages have their own quieter rhythm, so don't reach for this there.
+ * Purely decorative (aria-hidden). Used on the homepage and /skill, which share
+ * its frame; the case study pages have their own quieter rhythm, so don't reach
+ * for this there.
  *
  * The line breaks out of the 840px column with left-1/2 + w-screen. w-screen
  * is 100vw, which on systems with classic (non-overlay) scrollbars is a touch

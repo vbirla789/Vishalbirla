@@ -79,8 +79,14 @@ export default function RootLayout({
        so roughly two dozen `dark:` utilities across the case study page,
        WorkSection and others resolve through it. Remove the class and those
        silently fall back to their light pairings. */
+    /* data-scroll-behavior="smooth": since Next 16 the router no longer turns
+       off the CSS smooth scroll during route changes unless asked, so moving
+       between pages (e.g. the Skills tab) animated part-way and stopped short
+       of the top. With it, page changes jump to the top and in-page scrolls
+       stay smooth. */
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`dark ${geistSans.variable} ${geistMono.variable} ${geistPixel.variable} antialiased`}
     >
