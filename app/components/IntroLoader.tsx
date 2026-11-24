@@ -74,7 +74,7 @@ const MIN_TRAVEL = 16;
 /* Off-screen distance for an edge with no page line to land on. */
 const OFFSCREEN = 24;
 /* Cube → prompt spacing, and the prompt's line box. */
-const PROMPT_GAP = 20;
+const PROMPT_GAP = 32;
 const PROMPT_LINE = 20;
 const GROUP_H = 134 + PROMPT_GAP + PROMPT_LINE; // cube canvas + gap + prompt
 
