@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 /* Before first paint: if the intro loader is going to play, lay a solid
    cover over the page NOW.
 
-   Without this the homepage flashes first. IntroPuzzle is a client component
+   Without this the homepage flashes first. IntroLoader is a client component
    whose `show` starts false, so the server sends the page, the browser paints
    it, and only after hydration does the effect flip `show` — the loader lands
    on top of a page the visitor has already seen.
@@ -48,11 +48,11 @@ export const metadata: Metadata = {
    condition that used to live here turned into a way for the loader to
    silently not appear.
 
-   IntroPuzzle still clears the class the moment its exit begins or if it
+   IntroLoader still clears the class the moment it is on screen or if it
    declines to run, and the timeout below is a last-resort backstop so a JS
    error can never leave the site hidden.
 
-   The one condition that stays is the path: IntroPuzzle only mounts on the
+   The one condition that stays is the path: IntroLoader only mounts on the
    homepage, so on any other page (a case study, /skill) nothing would ever
    lift the cover and a direct visit sat blank until the 8s backstop. */
 const INTRO_INIT = `
@@ -116,7 +116,7 @@ export default function RootLayout({
               position:relative and z-index:1 so the page paints above the
               dither. That also makes it a stacking context, which is why
               full-screen overlays portal to <body> — a z-index inside here
-              can never outrank something outside it. IntroPuzzle learned
+              can never outrank something outside it. IntroLoader learned
               that the hard way. */}
           <div id="page-shell">{children}</div>
         </NerdModeProvider>

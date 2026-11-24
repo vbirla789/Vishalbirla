@@ -1,10 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { playError, playSuccess } from "../lib/sound";
 import { colors } from "../theme";
 
 const EMAIL = "vishalbirla789@gmail.com";
+/* The collapsed pill is its content plus View Resume's px-4 on each side, so
+   the two buttons carry the same inner padding. Measured, because the pill's
+   width has to be a number for the open/close transition to animate; this is
+   only the first-paint fallback (the measured width at 14px Geist). */
+const PILL_PAD = 16;
+const PILL_FALLBACK = 106;
+
 const RESUME_URL =
   "https://drive.google.com/file/d/14npc1TUOoWT9h3OduLrjy6BGQCVMLo5E/view?usp=sharing";
 
@@ -13,6 +20,17 @@ export default function ContactCtas() {
   const [copied, setCopied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const pillContentRef = useRef<HTMLSpanElement>(null);
+  const [pillWidth, setPillWidth] = useState(PILL_FALLBACK);
+
+  useLayoutEffect(() => {
+    const el = pillContentRef.current;
+    if (!el) return;
+    const measure = () => setPillWidth(Math.ceil(el.getBoundingClientRect().width) + PILL_PAD * 2);
+    measure();
+    /* fonts can land after first paint and change the label's width */
+    document.fonts?.ready.then(measure);
+  }, []);
 
   // Check mobile viewport for responsive width
   useEffect(() => {
@@ -73,13 +91,13 @@ export default function ContactCtas() {
 
   return (
     <div className="mt-6 flex items-center gap-3">
-      {/* Layout anchor: reserves exact 116px x 38px inline space */}
-      <div ref={containerRef} className="relative" style={{ width: 116, height: 38 }}>
+      {/* Layout anchor: reserves the collapsed pill's inline space */}
+      <div ref={containerRef} className="relative" style={{ width: pillWidth, height: 38 }}>
         <div
           id="hero-contact"
           className="absolute left-0 top-0 z-40 overflow-hidden bg-[color:var(--c-btn-solid-bg)] text-[color:var(--c-btn-solid-text)] [will-change:width,height,border-radius,box-shadow] transition-[width,height,border-radius,box-shadow] duration-[340ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
-            width: isOpen ? expandedWidth : 116,
+            width: isOpen ? expandedWidth : pillWidth,
             height: isOpen ? expandedHeight : 38,
             borderRadius: isOpen ? 20 : 19,
             boxShadow: isOpen
@@ -94,29 +112,31 @@ export default function ContactCtas() {
             type="button"
             onClick={() => setIsOpen(true)}
             tabIndex={isOpen ? -1 : 0}
-            className={`absolute inset-0 flex items-center justify-center gap-2 text-[14px] font-medium tracking-[-0.01em] outline-none transition-[opacity,filter] duration-150 ease-out ${
+            className={`absolute inset-0 flex items-center justify-center text-[14px] font-medium tracking-[-0.01em] outline-none transition-[opacity,filter] duration-150 ease-out ${
               isOpen ? "pointer-events-none opacity-0 blur-[2px]" : "opacity-100 blur-0 delay-75"
             }`}
           >
-            <span className="-ml-0.5 flex text-[color:var(--c-solid-fg-muted)]">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M22 2L11 13"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M22 2L15 22L11 13L2 9L22 2Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            <span ref={pillContentRef} className="flex items-center gap-2 whitespace-nowrap">
+              <span className="flex text-[color:var(--c-solid-fg-muted)]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M22 2L11 13"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M22 2L15 22L11 13L2 9L22 2Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              Contact
             </span>
-            Contact
           </button>
 
           {/* Expanded Card Container */}

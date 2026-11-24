@@ -374,29 +374,33 @@ body {
     border-radius 480ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ---- INTRO PUZZLE: PIXEL DISSOLVE -----------------------------------------
-   The win exit fades a fine grid of tiles away to reveal the page.
-
-   Opacity ONLY — deliberately no transform. Earlier versions moved the tiles
-   (toward the camera, then away); perspective rescaled them past their own
-   cells, neighbours ended up different sizes overlapping each other, and the
-   whole thing read as broken rendering rather than a dissolve. Tiles that
-   stay put and only fade cannot break.
-
-   Driven by CSS rather than a motion component per tile: there are ~1000 of
-   them, and this way each carries nothing but its own delay.
+/* ---- INTRO LOADER ---------------------------------------------------------
+   While the loader is up, the page itself is hidden but keeps its layout, so
+   the loader can measure the column lines and header hairline it opens onto.
+   The dither backdrop sits outside #page-shell and stays visible: it is the
+   "environment" the loader's veil lifts to reveal, before the content builds
+   in on enter.
    --------------------------------------------------------------------------*/
-.intro-tile {
-  /* `both` fill: a tile holds full opacity until its delay elapses, so the
-     grid is a solid sheet until its own moment to go. */
-  animation: intro-tile-out 620ms cubic-bezier(0.4, 0, 0.3, 1) var(--d, 0ms) both;
+html.intro-playing #page-shell {
+  opacity: 0;
+  pointer-events: none;
 }
 
-@keyframes intro-tile-out {
-  from {
-    opacity: 1;
-  }
-  to {
+/* Fades the page's structure (header, column lines) in under the opening
+   frame rather than popping it. Scoped to the un-hidden state because a
+   transition belongs to the state being entered: hiding (at mount, under the
+   opaque veil) stays instant, and only the reveal on enter is eased. */
+html:not(.intro-playing) #page-shell {
+  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The prompt's trailing cursor. Hard on/off, no fade — a terminal caret. */
+.intro-cursor {
+  animation: intro-cursor 1s steps(1, end) infinite;
+}
+
+@keyframes intro-cursor {
+  50% {
     opacity: 0;
   }
 }
@@ -404,11 +408,12 @@ body {
 /* ---- INTRO COVER ----------------------------------------------------------
    Painted from the very first frame by INTRO_INIT in layout.tsx, so the
    homepage is never visible before the loader mounts. Sits one below the
-   overlay's z-index (10020) — the overlay is opaque while it plays, so this
-   is only doing work in the gap between first paint and hydration.
+   overlay's z-index (10020) and is the same colour as the loader's veil, so
+   the hand-over at mount is invisible.
 
-   IntroPuzzle removes .intro-pending the moment its exit begins, because from
-   that point the reveal needs the page underneath to be visible.
+   IntroLoader swaps it for .intro-playing as soon as it is on screen: from
+   then on the page must stay hidden, but the dither must show through once the
+   veil lifts, which this cover would block.
    --------------------------------------------------------------------------*/
 html.intro-pending::before {
   content: "";

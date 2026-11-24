@@ -1,6 +1,6 @@
 import ContactCtas from "./components/ContactCtas";
 import HeaderNav from "./components/HeaderNav";
-import IntroPuzzle from "./components/IntroPuzzle";
+import IntroLoader from "./components/IntroLoader";
 // import PhotoStrip from "./components/PhotoStrip"; // hidden — see below
 import WorkSection, { LogoMark } from "./components/WorkSection";
 import { experience } from "./lib/experience";
@@ -27,11 +27,11 @@ const ABOUT_PARAGRAPH: React.CSSProperties = {
 export default function Home() {
   return (
     <>
-      {/* Once-per-session intro game. An overlay, not a gate — the page below
+      {/* Intro loader. An overlay, not a gate — the page below
           renders from first paint, so crawlers and reduced-motion users are
           untouched. Homepage only on purpose: a case study deep link should
-          never make someone play a game first. */}
-      <IntroPuzzle />
+          never make someone sit through a loader first. */}
+      <IntroLoader />
       <HeaderNav />
       {/* The space below the header, deliberately as PADDING: as a child's
           margin it collapsed through main and dragged the whole box — vertical
